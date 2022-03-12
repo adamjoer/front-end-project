@@ -1,6 +1,8 @@
+import "./signup.css"
 import UserContext from "../context/user-context";
 import React, {useContext, useState} from "react";
 import {useNavigate} from "react-router-dom";
+import {Box, Button, TextField} from "@mui/material";
 
 export default function SignUp() {
   const {logIn} = useContext(UserContext);
@@ -41,14 +43,25 @@ export default function SignUp() {
   }
 
   return (
-    <form onSubmit={handleSignup}>
-      <input type="text" onChange={handleUsernameChange} autoComplete="off" autoFocus placeholder="Username"/>
-      <input type="password" onChange={handlePasswordChange} placeholder="Password"/>
-      <input type="password" onChange={handleConfirmationPasswordChange} placeholder="Confirm password"/>
-      <input type="submit" value="Sign up" disabled={signupButtonDisabled}/>
-      <span hidden={!passwordWarningEnabled} style={{color: "red"}}>
-        Password and confirmation password do not match!
-      </span>
-    </form>
+    <div id="signup-wrapper">
+      <Box component="form" onSubmit={handleSignup} sx={{'& .MuiTextField-root': {m: 1, width: '25ch'}}}
+           noValidate autoComplete="off">
+        <div>
+          <TextField type="text" onChange={handleUsernameChange} required id="outlined-required" label="Username"/>
+        </div>
+        <div>
+          <TextField type="password" onChange={handlePasswordChange} required id="outlined-password-input"
+                     label="Password"/>
+        </div>
+        <div>
+          <TextField type="password" onChange={handleConfirmationPasswordChange} required id="outlined-password-input"
+                     label="Confirm password"/>
+        </div>
+        <div id="password-warning" hidden={!passwordWarningEnabled}>
+          Password and confirmation password do not match!
+        </div>
+        <Button type="submit" disabled={signupButtonDisabled} variant="outlined">Sign in</Button>
+      </Box>
+    </div>
   )
 }

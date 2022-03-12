@@ -1,6 +1,8 @@
+import "./login.css"
 import React, {useContext, useState} from "react";
 import UserContext from "../context/user-context";
 import {useNavigate} from "react-router-dom";
+import {Box, Button, TextField} from "@mui/material";
 
 export default function Login() {
   const {logIn} = useContext(UserContext);
@@ -31,10 +33,18 @@ export default function Login() {
   }
 
   return (
-    <form onSubmit={handleLogin}>
-      <input type="text" onChange={handleUsernameChange} autoComplete="off" autoFocus placeholder="Username"/>
-      <input type="password" onChange={handlePasswordChange} placeholder="Password"/>
-      <input type="submit" value="Log in" disabled={loginButtonDisabled}/>
-    </form>
+    <div id="login-wrapper">
+      <Box component="form" onSubmit={handleLogin} sx={{'& .MuiTextField-root': {m: 1, width: '25ch'}}}
+           noValidate autoComplete="off">
+        <div>
+          <TextField type="text" onChange={handleUsernameChange} required id="outlined-required" label="Username"/>
+        </div>
+        <div>
+          <TextField type="password" onChange={handlePasswordChange} required id="outlined-password-input"
+                     label="Password"/>
+        </div>
+        <Button type="submit" disabled={loginButtonDisabled} variant="outlined">Log in</Button>
+      </Box>
+    </div>
   )
 }
