@@ -29,8 +29,8 @@ function App() {
     <UserContext.Provider value={{user, logIn, logOut}}>
       <BrowserRouter>
         <Routes>
+          <Route path="/home" element={<Home/>}/>
           <Route path="/" element={<Layout/>}>
-            <Route index element={<Home/>}/>
             <Route path="signup" element={!user ? (<SignUp/>) : (<Navigate replace to="/"/>)}/>
             <Route path="login" element={!user ? (<Login/>) : (<Navigate replace to="/"/>)}/>
             <Route path="myprofile" element={user ? (<Myprofile/>) : (<Navigate replace to="/"/>)}/>
