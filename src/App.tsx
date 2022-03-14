@@ -1,5 +1,4 @@
 import {BrowserRouter, Route, Routes, Navigate} from 'react-router-dom';
-import './App.css';
 import {useState} from "react";
 import UserContext, {User} from "./context/user-context";
 import Home from './pages/home';
