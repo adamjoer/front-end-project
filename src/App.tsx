@@ -4,9 +4,10 @@ import { BrowserRouter, Route, Routes } from 'react-router-dom';
 import Layout from './pages/Layout';
 import Myprofile from './pages/myprofile';
 import Login from './pages/login';
-import Recipes from './pages/recipes';
+// import Recipes from './pages/recipes/recipes';
 import Favorites from './pages/favorites';
 import Lists from './pages/lists';
+import { Recipes } from './pages/recipes/recipes';
 
 function App() {
   return (<>
