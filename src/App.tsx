@@ -29,15 +29,15 @@ function App() {
     <UserContext.Provider value={{user, logIn, logOut}}>
       <BrowserRouter>
         <Routes>
-          <Route path="/home" element={<Home/>}/>
-          <Route path="/" element={<Layout/>}>
-            <Route path="signup" element={!user ? (<SignUp/>) : (<Navigate replace to="/"/>)}/>
-            <Route path="login" element={!user ? (<Login/>) : (<Navigate replace to="/"/>)}/>
-            <Route path="myprofile" element={user ? (<Myprofile/>) : (<Navigate replace to="/"/>)}/>
-            <Route path="recipes" element={user ? (<Recipes/>) : (<Navigate replace to="/"/>)}/>
-            <Route path="favorites" element={user ? (<Favorites/>) : (<Navigate replace to="/"/>)}/>
-            <Route path="lists" element={user ? (<Lists/>) : (<Navigate replace to="/"/>)}/>
-          </Route>
+            <Route path="/" element={<Layout/>}>
+                <Route path="/" element={<Home/>}/>
+              <Route path="signup" element={!user ? (<SignUp/>) : (<Navigate replace to="/"/>)}/>
+              <Route path="login" element={!user ? (<Login/>) : (<Navigate replace to="/"/>)}/>
+              <Route path="myprofile" element={user ? (<Myprofile/>) : (<Navigate replace to="/"/>)}/>
+              <Route path="recipes" element={user ? (<Recipes/>) : (<Navigate replace to="/"/>)}/>
+              <Route path="favorites" element={user ? (<Favorites/>) : (<Navigate replace to="/"/>)}/>
+              <Route path="lists" element={user ? (<Lists/>) : (<Navigate replace to="/"/>)}/>
+            </Route>
         </Routes>
       </BrowserRouter>
     </UserContext.Provider>

@@ -6,7 +6,7 @@
 
 #welcome-box{
     float: left;
-    width: 67.37%;
+    width: 65%;
     height: 409px;
 }
 
@@ -20,20 +20,4 @@
 #welcome-image {
     float:right;
     width: max-content;
-}
-
-#btns {
-    text-align: center;
-    width: 100%;
-}
-
-#btns button{
-    text-align: center;
-    margin-left: 100px;
-    margin-top: 100px;
-    background-color: #FF7F50;
-    color: white;
-    border-radius: 100px;
-    height: 40px;
-    width: 150px;
 }
