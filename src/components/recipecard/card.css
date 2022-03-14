@@ -2,9 +2,9 @@ p.card_text_footer {
   display: -webkit-box;
   -webkit-line-clamp: 2;
   -webkit-box-orient: vertical;
-  overflow: hidden;  
+  overflow: hidden;
 }
 
-div.cardcontentwrap div{
-  padding: 5px 0px; 
+div.cardcontentwrap div {
+  padding: 5px 0px;
 }

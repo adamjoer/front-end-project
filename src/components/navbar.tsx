@@ -33,7 +33,8 @@ export default function Navbar() {
               <IconButton component={Link} to="/myprofile" edge="start" color="inherit" aria-label="menu" sx={{mr: 2}}>
                 My Profile
               </IconButton>
-              <IconButton component={Button} onClick={handleLogout} edge="start" color="inherit" aria-label="menu" sx={{mr: 2}}>
+              <IconButton component={Button} onClick={handleLogout} edge="start" color="inherit" aria-label="menu"
+                          sx={{mr: 2}}>
                 Log Out
               </IconButton>
             </>
