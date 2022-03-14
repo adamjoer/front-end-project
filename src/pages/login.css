@@ -1,0 +1,11 @@
+#login-wrapper {
+  margin-top: 1ch;
+  width: 100%;
+  display: flex;
+  justify-content: center;
+  text-align: center;
+}
+
+#password-warning {
+  color: red;
+}
