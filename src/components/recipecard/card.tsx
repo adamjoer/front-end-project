@@ -1,29 +1,31 @@
-import * as React from 'react';
+import './card.css';
+import React from "react";
 import Card from '@mui/material/Card';
 import CardContent from '@mui/material/CardContent';
 import CardMedia from '@mui/material/CardMedia';
 import Typography from '@mui/material/Typography';
-import { CardActionArea } from '@mui/material';
-import './card.css';
+import {CardActionArea} from '@mui/material';
 import SoupKitchenIcon from '@mui/icons-material/SoupKitchen';
 import AvTimerIcon from '@mui/icons-material/AvTimer';
 import StarIcon from '@mui/icons-material/Star';
 import StarHalfIcon from '@mui/icons-material/StarHalf';
 import StarOutlineIcon from '@mui/icons-material/StarOutline';
 
-
-interface NavbarProps  {
-    imageString: string;
-    titleString: string;
-    rank: Number;
-    skill: string;
-    time: Number;
+interface NavbarProps {
+  imageString: string;
+  titleString: string;
+  rank: Number;
+  skill: string;
+  time: Number;
 }
-const counter = [1,2,3,4,5]
+
+const counter = [1, 2, 3, 4, 5]
 
 const ActionAreaCard: React.FC<NavbarProps> = (props) => {
   return (
-    <Card onClick={() => {console.log("GIVE ME HIYAAA")}}>
+    <Card onClick={() => {
+      console.log("GIVE ME HIYAAA")
+    }}>
       <CardActionArea>
         <CardMedia
           component="img"
@@ -35,27 +37,27 @@ const ActionAreaCard: React.FC<NavbarProps> = (props) => {
           <Typography gutterBottom variant="h5">
             {props.titleString}
           </Typography>
-            <div style={{display: "flex", flexWrap: "nowrap", justifyContent: "space-evenly"}}>
-              {counter.map(x => {
-                if(props.rank > (x-0.25)) {
-                  return <StarIcon key={x}/>
-                } else if (props.rank > (x-0.75)){
-                  return <StarHalfIcon key={x}/>
-                } else {
-                  return <StarOutlineIcon key={x}/>
-                }
-              })}
-            </div>
+          <div style={{display: "flex", flexWrap: "nowrap", justifyContent: "space-evenly"}}>
+            {counter.map(x => {
+              if (props.rank > (x - 0.25)) {
+                return <StarIcon key={x}/>
+              } else if (props.rank > (x - 0.75)) {
+                return <StarHalfIcon key={x}/>
+              } else {
+                return <StarOutlineIcon key={x}/>
+              }
+            })}
+          </div>
           <div style={{display: "flex"}}>
-            <SoupKitchenIcon />
+            <SoupKitchenIcon/>
             <Typography variant="body1" color="text.secondary" className="card_text_footer">
-                {props.skill}
+              {props.skill}
             </Typography>
           </div>
           <div style={{display: "flex"}}>
-            <AvTimerIcon />
+            <AvTimerIcon/>
             <Typography variant="body1" color="text.secondary" className="card_text_footer">
-                {getStringFromTime(props.time)}
+              {getStringFromTime(props.time)}
             </Typography>
           </div>
         </CardContent>

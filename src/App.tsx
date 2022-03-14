@@ -1,16 +1,14 @@
 import {BrowserRouter, Route, Routes, Navigate} from 'react-router-dom';
-import './App.css';
 import {useState} from "react";
 import UserContext, {User} from "./context/user-context";
 import Home from './pages/home';
 import Layout from './pages/Layout';
 import Myprofile from './pages/myprofile';
-import Login from './pages/login';
-// import Recipes from './pages/recipes/recipes';
+import Login from './pages/login/login';
 import Favorites from './pages/favorites';
 import Lists from './pages/lists';
-import { Recipes } from './pages/recipes/recipes';
-import SignUp from "./pages/signup";
+import {Recipes} from './pages/recipes/recipes';
+import SignUp from "./pages/signup/signup";
 
 function App() {
 
