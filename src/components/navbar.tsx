@@ -22,19 +22,19 @@ export default function Navbar() {
 
   const navigate = useNavigate();
 
-  const pages_logged_in = [
+  const pagesLoggedIn = [
     {name: "Home", to: "/"},
     {name: "Recipes", to: "/recipes"},
     {name: "Favorites", to: "/favorites"},
     {name: "Lists", to: "/lists"},
   ];
 
-  const pages_logged_out = [
+  const pagesLoggedOut = [
     {name: "Sign up", to: "/signup"},
     {name: "Log in", to: "/login"},
   ];
 
-  const user_settings = [
+  const userSettings = [
     {
       name: "Profile",
       onClick: () => {
@@ -76,7 +76,7 @@ export default function Navbar() {
             LOGO
           </Typography>
           <Box sx={{flexGrow: 1, display: {xs: 'none', md: 'flex'}}}>
-            {(user ? pages_logged_in : pages_logged_out).map((page) => (
+            {(user ? pagesLoggedIn : pagesLoggedOut).map((page) => (
               <Button key={page.name} onClick={() => {
                 navigate(page.to)
               }} sx={{my: 2, color: 'white', display: 'block'}}>
@@ -93,7 +93,7 @@ export default function Navbar() {
             <Menu id="menu-appbar" anchorEl={anchorElNav} anchorOrigin={{vertical: 'bottom', horizontal: 'left',}}
                   keepMounted transformOrigin={{vertical: 'top', horizontal: 'left',}} open={Boolean(anchorElNav)}
                   onClose={handleCloseNavMenu} sx={{display: {xs: 'block', md: 'none'},}}>
-              {(user ? pages_logged_in : pages_logged_out).map((page) => (
+              {(user ? pagesLoggedIn : pagesLoggedOut).map((page) => (
                 <MenuItem key={page.name} onClick={() => {
                   navigate(page.to);
                   setAnchorElNav(null);
@@ -116,7 +116,7 @@ export default function Navbar() {
                       anchorOrigin={{vertical: 'top', horizontal: 'right',}} keepMounted
                       transformOrigin={{vertical: 'top', horizontal: 'right',}} open={Boolean(anchorElUser)}
                       onClose={handleCloseUserMenu}>
-                  {user_settings.map((setting) => (
+                  {userSettings.map((setting) => (
                     <MenuItem key={setting.name} onClick={setting.onClick}>
                       <Typography textAlign="center">{setting.name}</Typography>
                     </MenuItem>
