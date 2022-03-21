@@ -23,14 +23,12 @@ export default function Navbar() {
   const navigate = useNavigate();
 
   const pagesLoggedIn = [
-    {name: "Home", to: "/"},
     {name: "Recipes", to: "/recipes"},
     {name: "Favorites", to: "/favorites"},
     {name: "Lists", to: "/lists"},
   ];
 
   const pagesLoggedOut = [
-    {name: "Home", to: "/"},
     {name: "Sign up", to: "/signup"},
     {name: "Log in", to: "/login"},
   ];
@@ -73,17 +71,18 @@ export default function Navbar() {
       <Container maxWidth="xl">
         <Toolbar disableGutters>
 
-          <Typography variant="h6" noWrap component="div" sx={{mr: 2, display: {xs: 'none', md: 'flex'}}}>
+          <Typography variant="h6" noWrap component="div" sx={{mr: 2, display: {xs: 'none', md: 'flex'}}}
+                      onClick={() => (navigate("/"))}>
             LOGO
           </Typography>
           <Box sx={{flexGrow: 1, display: {xs: 'none', md: 'flex'}}}>
-            {(user ? pagesLoggedIn : [{name: "Home", to: "/"}]).map((page) => (
-              <Button key={page.name} onClick={() => {
-                navigate(page.to)
-              }} sx={{my: 2, color: 'white', display: 'block'}}>
-                {page.name}
-              </Button>
-            ))}
+            {user &&
+              ((pagesLoggedIn).map((page) => (
+                <Button key={page.name} onClick={() => (navigate(page.to))}
+                        sx={{my: 2, color: 'white', display: 'block'}}>
+                  {page.name}
+                </Button>
+              )))}
           </Box>
 
           <Box sx={{flexGrow: 1, display: {xs: 'flex', md: 'none'}}}>
@@ -94,7 +93,7 @@ export default function Navbar() {
             <Menu id="menu-appbar" anchorEl={anchorElNav} anchorOrigin={{vertical: 'bottom', horizontal: 'left',}}
                   keepMounted transformOrigin={{vertical: 'top', horizontal: 'left',}} open={Boolean(anchorElNav)}
                   onClose={handleCloseNavMenu} sx={{display: {xs: 'block', md: 'none'},}}>
-              {(user ? pagesLoggedIn : pagesLoggedOut).map((page) => (
+              {[{name: "Home", to: "/"}].concat((user ? pagesLoggedIn : pagesLoggedOut)).map((page) => (
                 <MenuItem key={page.name} onClick={() => {
                   navigate(page.to);
                   setAnchorElNav(null);
@@ -126,12 +125,9 @@ export default function Navbar() {
               </Box>
               :
               <Box sx={{flexGrow: 0, display: {xs: 'none', md: 'flex'}}}>
-                {pagesLoggedOut.filter((page) => {
-                  return page.to !== "/"
-                }).map((page) => (
-                  <Button key={page.name} variant="contained" color="secondary" onClick={() => {
-                    navigate(page.to)
-                  }} sx={{my: 2, mx: 1, color: 'white', display: 'block'}}>
+                {pagesLoggedOut.map((page) => (
+                  <Button key={page.name} variant="contained" color="secondary" onClick={() => (navigate(page.to))}
+                          sx={{my: 2, mx: 1, color: 'white', display: 'block'}}>
                     {page.name}
                   </Button>
                 ))}
