@@ -17,6 +17,7 @@ interface NavbarProps {
   rank: Number;
   skill: string;
   time: Number;
+  selectFunc: any;
 }
 
 const counter = [1, 2, 3, 4, 5]
@@ -24,7 +25,7 @@ const counter = [1, 2, 3, 4, 5]
 const ActionAreaCard: React.FC<NavbarProps> = (props) => {
   return (
     <Card onClick={() => {
-      console.log("GIVE ME HIYAAA")
+      props.selectFunc();
     }}>
       <CardActionArea>
         <CardMedia
