@@ -6,29 +6,46 @@ import CardMedia from '@mui/material/CardMedia';
 import Button from '@mui/material/Button';
 import Typography from '@mui/material/Typography';
 import {Grid, Rating} from "@mui/material";
-import { MaterialCommunityIcons } from '@expo/vector-icons';
+import SoupKitchenIcon from '@mui/icons-material/SoupKitchen';
+import AvTimerIcon from '@mui/icons-material/AvTimer';
+import PropTypes from "prop-types";
 
 
-export default function MaterialCard() {
+interface RecipeProps {
+    imageUrl: string;
+    recipeName: string;
+    rank: number;
+    skill: string;
+    time: number;
+}
+
+const MaterialCard: React.FC<RecipeProps> = (props) => {
     return (
-        <Grid item xs={2.4}>
             <Card sx={{ maxWidth: 350}}>
                 <CardMedia
                     component="img"
                     height="140"
-                    image="https://spoonacular.com/recipeImages/362230-556x370.jpeg"
+                    image={props.imageUrl}
                     alt="burger image"
                 />
                 <CardContent>
                     <Typography gutterBottom variant="h5" component="div" textAlign="center">
-                        Burger
+                        {props.recipeName}
                     </Typography>
-                    <Rating name="read-only" defaultValue={2} readOnly/>
-                    <Typography component="legend">Easy</Typography>
-                    <Typography component="legend">30 min</Typography>
+                    <Rating name="read-only" value={props.rank} readOnly/>
+                    <div style={{display: "flex"}}>
+                        <SoupKitchenIcon/>
+                        <Typography variant="body1" color="text.secondary">{props.skill}</Typography>
+                    </div>
+                    <div style={{display: "flex"}}>
+                        <AvTimerIcon/>
+                        <Typography variant="body1" color="text.secondary">Around {props.time} min</Typography>
+                    </div>
 
                 </CardContent>
             </Card>
-        </Grid>
     )
 }
+
+
+export default MaterialCard;
