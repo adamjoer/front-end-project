@@ -55,10 +55,8 @@ export default function SignUp() {
         </div>
         <div>
           <TextField type="password" onChange={handleConfirmationPasswordChange} required id="outlined-password-input"
-                     label="Confirm password"/>
-        </div>
-        <div id="password-warning" hidden={!passwordWarningEnabled}>
-          Password and confirmation password do not match!
+                     label="Confirm password" error={passwordWarningEnabled}
+                     helperText={passwordWarningEnabled ? "Passwords do not match." : ""}/>
         </div>
         <Button type="submit" disabled={signupButtonDisabled} variant="contained" color="secondary">Sign in</Button>
       </Box>
