@@ -18,6 +18,7 @@ interface NavbarProps {
   rank: Number;
   skill: string;
   time: Number;
+  selectFunc: any;
 }
 
 const counter = [1, 2, 3, 4, 5]
@@ -49,23 +50,9 @@ const ActionAreaCard: React.FC<NavbarProps> = (props) => {
   };
 
   return (
-    <Card onClick={
-      handleOpen
-    }>
-      <Modal
-        open={openModal}
-        onClose={handleClose_test}
-        aria-labelledby="modal-modal-title"
-        aria-describedby="modal-modal-description"
-        style={{ overflow: 'scroll' , margin: '30px'}}
-      >
-        <Box sx={style}>
-          <ModalText titleString={props.titleString} imageString={props.imageString} rank={props.rank} time={props.time} skill={props.skill}/>
-          <Button onClick= {handleClose_test}> Close modal</Button>
-        </Box>
-        
-      </Modal>
-      
+    <Card onClick={() => {
+      props.selectFunc();
+    }}>
       <CardActionArea>
         <CardMedia
           component="img"
