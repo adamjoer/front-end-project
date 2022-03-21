@@ -1,13 +1,13 @@
 #content {
     height: 100vh;
     width: 100%;
-    background-color: #355E3B;
 }
 
 #welcome-box{
     float: left;
-    width: 65%;
-    height: 409px;
+    width: 67.1%;
+    height: 408px;
+    background-color: #355E3B;
 }
 
 #welcome-box p {
