@@ -6,7 +6,7 @@ import SoupKitchenIcon from '@mui/icons-material/SoupKitchen';
 import AvTimerIcon from '@mui/icons-material/AvTimer';
 
 import Grid from '@mui/material/Grid';
-import { Typography } from '@mui/material';
+import { Button, Typography } from '@mui/material';
 
 const dummyObject = {
   ingredients: [
@@ -30,6 +30,8 @@ const dummyObject = {
   ],
 };
 
+
+
 const counter = [1, 2, 3, 4, 5]
 
 interface ModalProps {
@@ -43,39 +45,39 @@ interface ModalProps {
 export const ModalText: React.FC<ModalProps> = (props) => {
   return (
     <div>
-      <img alt="food" src={props.imageString}  style={ {marginLeft: 'auto', marginRight: 'auto', marginTop:'100px',  display: 'block', width:'40%', height:'40%'}} />
+      <img alt="food" src={props.imageString}  style={ {marginLeft: 'auto', marginRight: 'auto', marginTop:'10px',  display: 'block', width:'40%', height:'40%'}} />
       <h1 className='title' style={{ textAlign: 'center', padding: '20px'}}>
         {' '}
         {props.titleString}
       </h1>
-      <div style={{display: "flex", flexWrap: "nowrap" ,justifyContent: "space-evenly", margin: '20px'}}>
+      <div style={{display: "flex", flexWrap: "nowrap" ,justifyContent: "space-evenly", margin: '20px' }}>
         <div>
         <Typography variant="body1" color="text.secondary" className="card_text_footer">
               Ranking:
             </Typography>
             {counter.map(x => {
               if (props.rank > (x - 0.25)) {
-                return <StarIcon key={x}/>
+                return <StarIcon key={x} style={{ fill: '#476051' }}/>
               } else if (props.rank > (x - 0.75)) {
-                return <StarHalfIcon key={x}/>
+                return <StarHalfIcon key={x} style={{ fill: '#476051' }}/>
               } else {
-                return <StarOutlineIcon key={x}/>
+                return <StarOutlineIcon key={x} style={{ fill: '#476051' }}/>
               }
             })}
           </div>
           <div >
-          <SoupKitchenIcon style={{float:'left'}}/>
+          <SoupKitchenIcon style={{float:'left', fill: '#476051'}}/>
           <Typography variant="body1" color="text.secondary" className="card_text_footer">
               {props.skill}
             </Typography>
           </div>
           <div style={{display:'flex'}}>
-          <AvTimerIcon />
+          <AvTimerIcon style={{fill: '#476051'}} />
           <Typography variant="body1" color="text.secondary" className="card_text_footer">
               About {props.time} min
             </Typography>
           </div>
-          </div>
+        </div>
       
       
       <Grid container spacing={2}>
@@ -90,7 +92,7 @@ export const ModalText: React.FC<ModalProps> = (props) => {
         >
           <div className='ingredients'>
             <h2 style={{ textAlign: 'center' }}>Ingredients:</h2>
-            <h4> List with ingredients</h4>
+            
             {dummyObject.ingredients.map(x => {
 
               return <Typography>{x}</Typography>
@@ -108,18 +110,24 @@ export const ModalText: React.FC<ModalProps> = (props) => {
         >
           <div className='direction'>
             <h2 style={{ textAlign: 'center' }}>Direction:</h2>
-            <h4> Step by step</h4>
+            
+            <ol>
             {dummyObject.direction.map(x=> {
-              return <Typography>{x}</Typography>
+              return <li>{x}</li>
             })}
+            </ol>
           </div>
         </Grid>
-        <Typography> Give the reciepe a vote:</Typography>
-        {counter.map(x => {
-                return <StarOutlineIcon key={x}/>
-              }
-            )}
-
+        <div>
+        <Typography style={{margin:'10px' , fontWeight: 'bold'}}> Give the reciepe a vote:</Typography>
+        <div style={{display: 'flex', justifyContent: 'space-between'}}> 
+          {counter.map(x => {
+                  return <StarOutlineIcon key={x} style={{fill: '#476051', margin:'10px'}}/>
+                }
+              )}
+            <Button style={{backgroundColor: "#FD8270", padding: "5px 10px", color:'white'}}> Add vote</Button>
+            </div>
+        </div>
       </Grid>
     </div>
   );

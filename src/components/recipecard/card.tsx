@@ -24,15 +24,18 @@ const counter = [1, 2, 3, 4, 5]
 
 const style = {
   position: 'absolute',
-  top: '55%',
+  top: '50%',
   left: '50%',
   transform: 'translate(-50%, -50%)',
   width: 800,
+  height: '80%',
   bgcolor: 'background.paper',
   border: '2px solid #000',
   boxShadow: 24,
   p: 4,
   overflow: "scroll"
+
+ 
 };
 
 const ActionAreaCard: React.FC<NavbarProps> = (props) => {
@@ -40,20 +43,25 @@ const ActionAreaCard: React.FC<NavbarProps> = (props) => {
   const handleOpen = (): void => setOpenModal(true)
   const handleClose = (): void => setOpenModal(false)
 
+  const handleClose_test = ():void => {
+    console.log('testing')
+    setOpenModal(false);
+  };
+
   return (
     <Card onClick={
       handleOpen
     }>
       <Modal
         open={openModal}
-        onClose={handleClose}
+        onClose={handleClose_test}
         aria-labelledby="modal-modal-title"
         aria-describedby="modal-modal-description"
         style={{ overflow: 'scroll' , margin: '30px'}}
       >
         <Box sx={style}>
           <ModalText titleString={props.titleString} imageString={props.imageString} rank={props.rank} time={props.time} skill={props.skill}/>
-          <Button onClick={handleClose}> Close modal</Button>
+          <Button onClick= {handleClose_test}> Close modal</Button>
         </Box>
         
       </Modal>
