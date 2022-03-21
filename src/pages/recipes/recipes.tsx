@@ -13,6 +13,23 @@ type recipeState = {
 
 const typeOfFood = ["Paste", "Pizza", "Salad", "Wok", "Soup", "Other"]
 
+
+const style = {
+position: 'absolute',
+top: '50%',
+left: '50%',
+transform: 'translate(-50%, -50%)',
+width: 800,
+height: '80%',
+bgcolor: 'background.paper',
+border: '2px solid #000',
+boxShadow: 24,
+p: 4,
+overflow: "scroll"
+}
+
+
+
 const testRecipe = [
   {
     name: "Pizza",
@@ -126,7 +143,10 @@ export class Recipes extends Component<{}, recipeState> {
         aria-labelledby="modal-modal-title"
         aria-describedby="modal-modal-description"
       >
-        {ModalText()}
+        <Box sx={style}>
+          <ModalText titleString={"hey"} imageString={"image"} rank={3} skill={"easy"} time={420}/>
+
+        </Box>
       </Modal>
       <Grid container spacing={2}>
         <Grid item xs={4} md={3} lg={3}>
