@@ -10,35 +10,35 @@ const dummyRecipes = [
     {
         imageUrl: "https://spoonacular.com/recipeImages/362230-556x370.jpeg",
         recipeName: "burger",
-        rank: 3,
+        rank: 2,
         skill: "easy",
         time: 30,
     },
     {
         imageUrl: "https://spoonacular.com/recipeImages/362230-556x370.jpeg",
         recipeName: "burger",
-        rank: 3,
+        rank: 2,
         skill: "easy",
         time: 30,
     },
     {
         imageUrl: "https://spoonacular.com/recipeImages/716429-556x370.jpg",
         recipeName: "Pasta with Garlic, Scallions, Cauliflower & Breadcrumbs",
-        rank: 3,
+        rank: 4,
         skill: "easy",
         time: 30,
     },
     {
         imageUrl: "https://spoonacular.com/recipeImages/362230-556x370.jpeg",
         recipeName: "burger",
-        rank: 3,
+        rank: 2,
         skill: "easy",
         time: 30,
     },
     {
         imageUrl: "https://spoonacular.com/recipeImages/716429-556x370.jpg",
         recipeName: "Pasta with Garlic, Scallions, Cauliflower & Breadcrumbs",
-        rank: 3,
+        rank: 4,
         skill: "easy",
         time: 30,
     }
@@ -49,7 +49,7 @@ export default function Home() {
 //img link https://spoonacular.com/recipeImages/362230-556x370.jpeg
 
     const navigate = useNavigate();
-    
+
     const goToRecipes = () => {
         navigate("/recipes")
     }
