@@ -30,6 +30,7 @@ export default function Navbar() {
   ];
 
   const pagesLoggedOut = [
+    {name: "Home", to: "/"},
     {name: "Sign up", to: "/signup"},
     {name: "Log in", to: "/login"},
   ];
@@ -76,7 +77,7 @@ export default function Navbar() {
             LOGO
           </Typography>
           <Box sx={{flexGrow: 1, display: {xs: 'none', md: 'flex'}}}>
-            {(user ? pagesLoggedIn : pagesLoggedOut).map((page) => (
+            {(user ? pagesLoggedIn : [{name: "Home", to: "/"}]).map((page) => (
               <Button key={page.name} onClick={() => {
                 navigate(page.to)
               }} sx={{my: 2, color: 'white', display: 'block'}}>
@@ -124,7 +125,17 @@ export default function Navbar() {
                 </Menu>
               </Box>
               :
-              <></>
+              <Box sx={{flexGrow: 0, display: {xs: 'none', md: 'flex'}}}>
+                {pagesLoggedOut.filter((page) => {
+                  return page.to !== "/"
+                }).map((page) => (
+                  <Button key={page.name} variant="contained" color="secondary" onClick={() => {
+                    navigate(page.to)
+                  }} sx={{my: 2, mx: 1, color: 'white', display: 'block'}}>
+                    {page.name}
+                  </Button>
+                ))}
+              </Box>
           }
         </Toolbar>
       </Container>
