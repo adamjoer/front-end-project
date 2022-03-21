@@ -60,7 +60,7 @@ export default function SignUp() {
         <div id="password-warning" hidden={!passwordWarningEnabled}>
           Password and confirmation password do not match!
         </div>
-        <Button type="submit" disabled={signupButtonDisabled} variant="outlined">Sign in</Button>
+        <Button type="submit" disabled={signupButtonDisabled} variant="contained">Sign in</Button>
       </Box>
     </div>
   )

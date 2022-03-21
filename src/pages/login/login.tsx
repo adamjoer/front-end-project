@@ -43,7 +43,7 @@ export default function Login() {
           <TextField type="password" onChange={handlePasswordChange} required id="outlined-password-input"
                      label="Password"/>
         </div>
-        <Button type="submit" disabled={loginButtonDisabled} variant="outlined">Log in</Button>
+        <Button type="submit" disabled={loginButtonDisabled} variant="contained">Log in</Button>
       </Box>
     </div>
   )
