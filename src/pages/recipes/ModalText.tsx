@@ -42,7 +42,7 @@ interface ModalProps {
   time: Number;
 
 }
-export const ModalText: React.FC<ModalProps> = (props) => {
+export const ModalText: React.FC<ModalProps> = (props: ModalProps = {titleString: "Foo", imageString: "Bar", rank: 23, skill: "qux", time: 420}) => {
   return (
     <div>
       <img alt="food" src={props.imageString}  style={ {marginLeft: 'auto', marginRight: 'auto', marginTop:'10px',  display: 'block', width:'40%', height:'40%'}} />
