@@ -1,7 +1,6 @@
-import "./signup.css"
-import UserContext from "../../context/user-context";
 import React, {useContext, useState} from "react";
-import {useNavigate} from "react-router-dom";
+import UserContext from "../context/user-context";
+import {Link, useNavigate} from "react-router-dom";
 import Card from "@mui/material/Card"
 import CardContent from "@mui/material/CardContent"
 import Box from "@mui/material/Box"
@@ -47,27 +46,22 @@ export default function SignUp() {
   }
 
   return (
-    <div id="signup-wrapper">
+    <Box display="flex" flexDirection="column" alignItems="center" sx={{mt: 3}}>
       <Card>
         <CardContent>
-        <Box component="form" onSubmit={handleSignup} sx={{'& .MuiTextField-root': {m: 1, width: '25ch'}}}
-             noValidate autoComplete="off">
-          <div>
+          <Box component="form" onSubmit={handleSignup} noValidate autoComplete="off" display="flex"
+               flexDirection="column" alignItems="center" sx={{'& .MuiTextField-root': {m: 1, width: '25ch'}}}>
             <TextField type="text" onChange={handleUsernameChange} required id="outlined-required" label="Username"/>
-          </div>
-          <div>
             <TextField type="password" onChange={handlePasswordChange} required id="outlined-password-input"
                        label="Password"/>
-          </div>
-          <div>
             <TextField type="password" onChange={handleConfirmationPasswordChange} required id="outlined-password-input"
                        label="Confirm password" error={passwordWarningEnabled}
                        helperText={passwordWarningEnabled ? "Passwords do not match." : " "}/>
-          </div>
-          <Button type="submit" disabled={signupButtonDisabled} variant="contained" color="secondary">Sign in</Button>
-        </Box>
+            <Button type="submit" disabled={signupButtonDisabled} variant="contained" color="secondary">Sign up</Button>
+          </Box>
         </CardContent>
       </Card>
-    </div>
+      <p>Already have an account? <Link to="/login">Log in</Link></p>
+    </Box>
   )
 }
