@@ -1,15 +1,15 @@
-import AppBar from '@mui/material/AppBar';
-import Box from '@mui/material/Box';
-import Toolbar from '@mui/material/Toolbar';
-import IconButton from '@mui/material/IconButton';
-import Typography from '@mui/material/Typography';
-import Menu from '@mui/material/Menu';
-import MenuIcon from '@mui/icons-material/Menu';
-import Container from '@mui/material/Container';
-import Avatar from '@mui/material/Avatar';
-import Button from '@mui/material/Button';
-import Tooltip from '@mui/material/Tooltip';
-import MenuItem from '@mui/material/MenuItem';
+import AppBar from "@mui/material/AppBar";
+import Box from "@mui/material/Box";
+import Toolbar from "@mui/material/Toolbar";
+import IconButton from "@mui/material/IconButton";
+import Typography from "@mui/material/Typography";
+import Menu from "@mui/material/Menu";
+import MenuIcon from "@mui/icons-material/Menu";
+import Container from "@mui/material/Container";
+import Avatar from "@mui/material/Avatar";
+import Button from "@mui/material/Button";
+import Tooltip from "@mui/material/Tooltip";
+import MenuItem from "@mui/material/MenuItem";
 import {useNavigate} from "react-router-dom";
 import UserContext from "../context/user-context";
 import React, {useContext, useState} from "react";
@@ -71,29 +71,29 @@ export default function Navbar() {
       <Container maxWidth="xl">
         <Toolbar disableGutters>
 
-          <Typography variant="h6" noWrap component="div" sx={{mr: 2, display: {xs: 'none', md: 'flex'}}}
+          <Typography variant="h6" noWrap component="div" sx={{mr: 2, display: {xs: "none", md: "flex"}}}
                       onClick={() => (navigate("/"))}>
             LOGO
           </Typography>
-          <Box sx={{flexGrow: 1, display: {xs: 'none', md: 'flex'}}}>
+          <Box sx={{flexGrow: 1, display: {xs: "none", md: "flex"}}}>
             {user &&
-              ((pagesLoggedIn).map((page) => (
+              (pagesLoggedIn).map((page) => (
                 <Button key={page.name} onClick={() => (navigate(page.to))}
-                        sx={{my: 2, color: 'white', display: 'block'}}>
+                        sx={{my: 2, color: "white", display: "block"}}>
                   {page.name}
                 </Button>
-              )))}
+              ))}
           </Box>
 
-          <Box sx={{flexGrow: 1, display: {xs: 'flex', md: 'none'}}}>
+          <Box sx={{flexGrow: 1, display: {xs: "flex", md: "none"}}}>
             <IconButton size="large" aria-controls="menu-appbar" aria-haspopup="true" onClick={handleOpenNavMenu}
                         color="inherit">
               <MenuIcon/>
             </IconButton>
-            <Menu id="menu-appbar" anchorEl={anchorElNav} anchorOrigin={{vertical: 'bottom', horizontal: 'left',}}
-                  keepMounted transformOrigin={{vertical: 'top', horizontal: 'left',}} open={Boolean(anchorElNav)}
-                  onClose={handleCloseNavMenu} sx={{display: {xs: 'block', md: 'none'},}}>
-              {[{name: "Home", to: "/"}].concat((user ? pagesLoggedIn : pagesLoggedOut)).map((page) => (
+            <Menu id="menu-appbar" anchorEl={anchorElNav} anchorOrigin={{vertical: "bottom", horizontal: "left",}}
+                  keepMounted transformOrigin={{vertical: "top", horizontal: "left",}} open={Boolean(anchorElNav)}
+                  onClose={handleCloseNavMenu} sx={{display: {xs: "block", md: "none"},}}>
+              {[{name: "Home", to: "/"}].concat(user ? pagesLoggedIn : pagesLoggedOut).map((page) => (
                 <MenuItem key={page.name} onClick={() => {
                   navigate(page.to);
                   setAnchorElNav(null);
@@ -112,9 +112,9 @@ export default function Navbar() {
                     <Avatar alt="Remy Sharp"/>
                   </IconButton>
                 </Tooltip>
-                <Menu sx={{mt: '45px'}} id="menu-appbar" anchorEl={anchorElUser}
-                      anchorOrigin={{vertical: 'top', horizontal: 'right',}} keepMounted
-                      transformOrigin={{vertical: 'top', horizontal: 'right',}} open={Boolean(anchorElUser)}
+                <Menu sx={{mt: "45px"}} id="menu-appbar" anchorEl={anchorElUser}
+                      anchorOrigin={{vertical: "top", horizontal: "right",}} keepMounted
+                      transformOrigin={{vertical: "top", horizontal: "right",}} open={Boolean(anchorElUser)}
                       onClose={handleCloseUserMenu}>
                   {userSettings.map((setting) => (
                     <MenuItem key={setting.name} onClick={setting.onClick}>
@@ -124,10 +124,10 @@ export default function Navbar() {
                 </Menu>
               </Box>
               :
-              <Box sx={{flexGrow: 0, display: {xs: 'none', md: 'flex'}}}>
+              <Box sx={{flexGrow: 0, display: {xs: "none", md: "flex"}}}>
                 {pagesLoggedOut.map((page) => (
                   <Button key={page.name} variant="contained" color="secondary" onClick={() => (navigate(page.to))}
-                          sx={{my: 2, mx: 1, color: 'white', display: 'block'}}>
+                          sx={{my: 2, mx: 1, color: "white", display: "block"}}>
                     {page.name}
                   </Button>
                 ))}
