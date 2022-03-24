@@ -18,29 +18,29 @@ interface RecipeProps {
 
 const MaterialCard: React.FC<RecipeProps> = (props) => {
     return (
-            <Card sx={{ maxWidth: 350}}>
-                <CardMedia
-                    component="img"
-                    height="140"
-                    image={props.imageUrl}
-                    alt="burger image"
-                />
-                <CardContent>
-                    <Typography gutterBottom variant="h5" component="div" textAlign="center">
-                        {props.recipeName}
-                    </Typography>
-                    <Rating name="read-only" value={props.rank} readOnly/>
-                    <div style={{display: "flex"}}>
-                        <SoupKitchenIcon/>
-                        <Typography variant="body1" color="text.secondary">{props.skill}</Typography>
-                    </div>
-                    <div style={{display: "flex"}}>
-                        <AvTimerIcon/>
-                        <Typography variant="body1" color="text.secondary">Around {props.time} min</Typography>
-                    </div>
+        <Card sx={{ maxWidth: 350}}>
+            <CardMedia
+                component="img"
+                height="140"
+                image={props.imageUrl}
+                alt="burger image"
+            />
+            <CardContent>
+                <Typography gutterBottom variant="h5" component="div" textAlign="center">
+                    {props.recipeName}
+                </Typography>
+                <Rating name="half-rating" value={props.rank} precision={0.5} readOnly/>
+                <div style={{display: "flex"}}>
+                    <SoupKitchenIcon/>
+                    <Typography variant="body1" color="text.secondary">{props.skill}</Typography>
+                </div>
+                <div style={{display: "flex"}}>
+                    <AvTimerIcon/>
+                    <Typography variant="body1" color="text.secondary">Around {props.time} min</Typography>
+                </div>
 
-                </CardContent>
-            </Card>
+            </CardContent>
+        </Card>
     )
 }
 
