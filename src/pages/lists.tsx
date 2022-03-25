@@ -158,6 +158,10 @@ export default function Lists() {
     setFilterString(event.target.value);
   }
 
+  const handleListFilterChange = (event: ChangeEvent<HTMLInputElement>, checked: boolean) => {
+    setListFilters(prevState => ({...prevState, [event.target.name]: checked}))
+  }
+
   return (
     <>
       <Grid container spacing={2}>
@@ -166,7 +170,8 @@ export default function Lists() {
         </Grid>
         <Grid item xs={8} md={9} lg={9}>
           <div style={{padding: "20px 15px 0px 0px"}}>
-            <TextField onChange={handleFilterStringChange} fullWidth label="Search for a recipe name" variant="outlined"/>
+            <TextField onChange={handleFilterStringChange} fullWidth label="Search for a recipe name"
+                       variant="outlined"/>
           </div>
         </Grid>
       </Grid>
@@ -179,13 +184,9 @@ export default function Lists() {
           <hr/>
           <FormGroup>
             {listNames.map((listName) => (
-              <FormControlLabel key={listName}
-                                control={<Checkbox/>}
-                                label={listName} checked={listFilters[listName]}
-                                onChange={(event, checked) => setListFilters(prevState => ({
-                                  ...prevState,
-                                  [listName]: checked
-                                }))}/>
+              <FormControlLabel key={listName} label={listName}
+                                control={<Checkbox name={listName} checked={listFilters[listName]}
+                                                   onChange={handleListFilterChange}/>}/>
             ))}
           </FormGroup>
         </Grid>
