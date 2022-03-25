@@ -1,3 +1,7 @@
+import React, {ChangeEvent, useState} from "react";
+import {Checkbox, FormControlLabel, FormGroup, Grid, TextField} from "@mui/material";
+import ActionAreaCard from "../components/recipecard/card";
+
 export default function Lists() {
 
   const dummyData = [
@@ -141,11 +145,67 @@ export default function Lists() {
     }
   ]
 
+  const listNames = dummyData.map(list => list.name)
+
+  const [filterString, setFilterString] = useState("");
+
+  const [listFilters, setListFilters] = useState<{ [key: string]: boolean }>(listNames.reduce((listOptions, listOption) => ({
+    ...listOptions,
+    [listOption]: true
+  }), {}))
+
+  const handleFilterStringChange = (event: ChangeEvent<HTMLInputElement>) => {
+    setFilterString(event.target.value);
+  }
+
   return (
     <>
-      {dummyData.map((list) => (
-        <p>{list.name}: {list.recipes.length}</p>
-      ))}
+      <Grid container spacing={2}>
+        <Grid item xs={4} md={3} lg={3}>
+          <h1 style={{paddingLeft: "25px"}}>Lists</h1>
+        </Grid>
+        <Grid item xs={8} md={9} lg={9}>
+          <div style={{padding: "20px 15px 0px 0px"}}>
+            <TextField onChange={handleFilterStringChange} fullWidth label="Search for a recipe name" variant="outlined"/>
+          </div>
+        </Grid>
+      </Grid>
+
+      <hr/>
+
+      <Grid container spacing={2}>
+        <Grid item xs={4} md={3} lg={3}>
+          <b>Filter</b>
+          <hr/>
+          <FormGroup>
+            {listNames.map((listName) => (
+              <FormControlLabel key={listName}
+                                control={<Checkbox/>}
+                                label={listName} checked={listFilters[listName]}
+                                onChange={(event, checked) => setListFilters(prevState => ({
+                                  ...prevState,
+                                  [listName]: checked
+                                }))}/>
+            ))}
+          </FormGroup>
+        </Grid>
+
+        <Grid item xs={8} md={9} lg={9}>
+          {dummyData.filter((list) => listFilters[list.name]).map((list) => (
+            <div key={list.id}>
+              <h2>{list.name}</h2>
+              <Grid container spacing={2}>
+                {list.recipes.filter(recipe => recipe.name.toUpperCase().includes(filterString.toUpperCase())).map((recipe) => (
+                  <Grid key={recipe.id} item xs={4} md={3} lg={3}>
+                    <ActionAreaCard imageString={recipe.imageString} titleString={recipe.name} rank={recipe.rank}
+                                    skill={recipe.skill} time={recipe.time} selectFunc={() => console.log(recipe)}/>
+                  </Grid>
+                ))}
+              </Grid>
+            </div>
+          ))}
+        </Grid>
+      </Grid>
     </>
   )
 }
