@@ -1,14 +1,34 @@
 import './recipes.css';
-import {Component} from "react";
-import {Checkbox, FormControlLabel, FormGroup, Grid, TextField} from "@mui/material";
+import { Component } from "react";
+import { Checkbox, FormControlLabel, FormGroup, Grid, Modal, TextField, Typography } from "@mui/material";
 import ActionAreaCard from "../../components/recipecard/card";
+import { Box } from '@mui/system';
+import { ModalText } from './ModalText';
 
 type recipeState = {
   filterString: string,
   typeFilter: string,
+  selectedRecipe: any;
 }
 
 const typeOfFood = ["Paste", "Pizza", "Salad", "Wok", "Soup", "Other"]
+
+
+const style = {
+position: 'absolute',
+top: '50%',
+left: '50%',
+transform: 'translate(-50%, -50%)',
+width: 800,
+height: '80%',
+bgcolor: 'background.paper',
+border: '2px solid #000',
+boxShadow: 24,
+p: 4,
+overflow: "scroll"
+}
+
+
 
 const testRecipe = [
   {
@@ -107,13 +127,27 @@ export class Recipes extends Component<{}, recipeState> {
   componentWillMount() {
     this.setState({
       filterString: "",
-      typeFilter: ""
+      typeFilter: "",
+      selectedRecipe: undefined,
     })
   }
 
   render() {
-    const {filterString, typeFilter} = this.state;
+    const { filterString, typeFilter, selectedRecipe } = this.state;
+    console.log(selectedRecipe)
     return <div className="recipy_wrapper">
+
+      <Modal
+        open={selectedRecipe !== undefined}
+        onClose={() => this.setState({selectedRecipe: undefined})}
+        aria-labelledby="modal-modal-title"
+        aria-describedby="modal-modal-description"
+      >
+        <Box sx={style}>
+          <ModalText titleString={"hey"} imageString={"image"} rank={3} skill={"easy"} time={420}/>
+
+        </Box>
+      </Modal>
       <Grid container spacing={2}>
         <Grid item xs={4} md={3} lg={3}>
           <div className="recipy_filter_wrapper">
@@ -121,39 +155,39 @@ export class Recipes extends Component<{}, recipeState> {
           </div>
         </Grid>
         <Grid item xs={8} md={9} lg={9}>
-          <div style={{padding: "20px 15px 0px 0px"}}>
+          <div style={{ padding: "20px 15px 0px 0px" }}>
             <TextField fullWidth id="outlined-basic" value={filterString} onChange={x => {
-              this.setState({filterString: x.target.value})
-            }} label="Search for a recipe name" variant="outlined"/>
+              this.setState({ filterString: x.target.value })
+            }} label="Search for a recipe name" variant="outlined" />
           </div>
         </Grid>
       </Grid>
-      <hr/>
+      <hr />
       <Grid container spacing={2}>
         <Grid item xs={4} md={3} lg={3}>
           <div className="recipy_filter_wrapper">
             <b>Filter</b>
-            <hr/>
+            <hr />
             <FormGroup>
               {typeOfFood.map(object => {
                 const key = object;
                 return <FormControlLabel key={object} onChange={() => {
                   if (!typeFilter.includes(object)) {
-                    this.setState({typeFilter: typeFilter + key + ", "})
+                    this.setState({ typeFilter: typeFilter + key + ", " })
                   } else {
-                    this.setState({typeFilter: typeFilter.replace(key + ", ", "")})
+                    this.setState({ typeFilter: typeFilter.replace(key + ", ", "") })
                   }
-                }} control={<Checkbox checked={!typeFilter.includes(object)}/>} label={object}/>
+                }} control={<Checkbox checked={!typeFilter.includes(object)} />} label={object} />
               })}
             </FormGroup>
           </div>
         </Grid>
         <Grid item xs={8} md={9} lg={9}>
-          <Grid container spacing={2} style={{marginTop: "0px", paddingLeft: "10px"}}>
+          <Grid container spacing={2} style={{ marginTop: "0px", paddingLeft: "10px" }}>
             {testRecipe.filter(y => (y.name.toUpperCase().includes(filterString.toUpperCase()) && !typeFilter.toUpperCase().includes(y.type.toUpperCase()))).map(x => {
               return <Grid key={x.id} item xs={4} md={3} lg={3}>
                 <ActionAreaCard imageString={x.imageString} titleString={x.name} rank={x.rank} skill={x.skill}
-                                time={x.time}/>
+                  time={x.time} selectFunc={() => { this.setState({ selectedRecipe: x }) }} />
               </Grid>
             })}
           </Grid>

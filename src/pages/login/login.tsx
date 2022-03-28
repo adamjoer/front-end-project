@@ -2,7 +2,11 @@ import "./login.css"
 import React, {useContext, useState} from "react";
 import UserContext from "../../context/user-context";
 import {useNavigate} from "react-router-dom";
-import {Box, Button, TextField} from "@mui/material";
+import Card from "@mui/material/Card"
+import CardContent from "@mui/material/CardContent"
+import Box from "@mui/material/Box"
+import TextField from "@mui/material/TextField"
+import Button from "@mui/material/Button"
 
 export default function Login() {
   const {logIn} = useContext(UserContext);
@@ -34,17 +38,21 @@ export default function Login() {
 
   return (
     <div id="login-wrapper">
-      <Box component="form" onSubmit={handleLogin} sx={{'& .MuiTextField-root': {m: 1, width: '25ch'}}}
-           noValidate autoComplete="off">
-        <div>
-          <TextField type="text" onChange={handleUsernameChange} required id="outlined-required" label="Username"/>
-        </div>
-        <div>
-          <TextField type="password" onChange={handlePasswordChange} required id="outlined-password-input"
-                     label="Password"/>
-        </div>
-        <Button type="submit" disabled={loginButtonDisabled} variant="outlined">Log in</Button>
-      </Box>
+      <Card>
+        <CardContent>
+          <Box component="form" onSubmit={handleLogin} sx={{'& .MuiTextField-root': {m: 1, width: '25ch'}}}
+               noValidate autoComplete="off">
+            <div>
+              <TextField type="text" onChange={handleUsernameChange} required id="outlined-required" label="Username"/>
+            </div>
+            <div>
+              <TextField type="password" onChange={handlePasswordChange} required id="outlined-password-input"
+                         label="Password"/>
+            </div>
+            <Button type="submit" disabled={loginButtonDisabled} variant="contained" color="secondary">Log in</Button>
+          </Box>
+        </CardContent>
+      </Card>
     </div>
   )
 }

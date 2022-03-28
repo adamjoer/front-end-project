@@ -9,6 +9,7 @@ import Favorites from './pages/favorites';
 import Lists from './pages/lists';
 import {Recipes} from './pages/recipes/recipes';
 import SignUp from "./pages/signup/signup";
+import {createTheme, ThemeProvider} from "@mui/material";
 
 function App() {
 
@@ -24,12 +25,24 @@ function App() {
     setUser(null)
   }
 
+  const theme = createTheme({
+    palette: {
+      primary: {
+        main: "#476051",
+      },
+      secondary: {
+        main: "#FD8270"
+      }
+    }
+  })
+
   return (
-    <UserContext.Provider value={{user, logIn, logOut}}>
-      <BrowserRouter>
-        <Routes>
+    <ThemeProvider theme={theme}>
+      <UserContext.Provider value={{user, logIn, logOut}}>
+        <BrowserRouter>
+          <Routes>
             <Route path="/" element={<Layout/>}>
-                <Route path="/" element={<Home/>}/>
+              <Route index element={<Home/>}/>
               <Route path="signup" element={!user ? (<SignUp/>) : (<Navigate replace to="/"/>)}/>
               <Route path="login" element={!user ? (<Login/>) : (<Navigate replace to="/"/>)}/>
               <Route path="myprofile" element={user ? (<Myprofile/>) : (<Navigate replace to="/"/>)}/>
@@ -37,9 +50,10 @@ function App() {
               <Route path="favorites" element={user ? (<Favorites/>) : (<Navigate replace to="/"/>)}/>
               <Route path="lists" element={user ? (<Lists/>) : (<Navigate replace to="/"/>)}/>
             </Route>
-        </Routes>
-      </BrowserRouter>
-    </UserContext.Provider>
+          </Routes>
+        </BrowserRouter>
+      </UserContext.Provider>
+    </ThemeProvider>
   );
 }
 
