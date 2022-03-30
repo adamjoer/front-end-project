@@ -8,12 +8,30 @@ import {
   Typography,
 } from '@mui/material';
 
+import Avatar from '@mui/material/Avatar';
+import Accordion from '@mui/material/Accordion';
+import AccordionSummary from '@mui/material/AccordionSummary';
+import AccordionDetails from '@mui/material/AccordionDetails';
+
+import ExpandMoreIcon from '@mui/icons-material/ExpandMore';
+
+import { makeStyles } from '@mui/styles';
+import SaveButton from '../components/SaveButton'
+
+const useStyles = makeStyles({
+  content: {
+    justifyContent: "center"
+  }
+});
+
 const dummyPerson = {
   name: 'Petter Hansen',
   username: 'PetterH',
+  email: 'Petter.Hansen@gmail.com',
 };
 
 export default function Myprofile() {
+  const classes = useStyles();
   return (
     <div>
       <Grid sx={{ flexGrow: 1 }} container spacing={2}>
@@ -22,7 +40,7 @@ export default function Myprofile() {
             <Grid item>
               <Paper
                 sx={{
-                  height: 400,
+                  height: 800,
                   width: 600,
                   backgroundColor: '#E0E0E0',
                   margin: '15px',
@@ -44,14 +62,23 @@ export default function Myprofile() {
                     }}
                   >
                     <CardContent>
+                      <Avatar
+                        alt='Remy Sharp'
+                        sx={{ width: 64, height: 64, bgcolor: '#FD8270' }}
+                        style={{ margin: 'auto' }}
+                      >
+                        {' '}
+                        PH{' '}
+                      </Avatar>
+
                       <Typography
                         variant='body1'
                         color='text.secondary'
                         className='card_text_footer'
                         style={{
-                          padding: '20px',
+                          padding: '10px',
                           textAlign: 'left',
-                          display: 'inline',
+
                           fontWeight: 'bold',
                         }}
                       >
@@ -63,15 +90,42 @@ export default function Myprofile() {
                         color='text.secondary'
                         className='card_text_footer'
                         style={{
-                          padding: '20px',
-                          textAlign: 'right',
-                          display: 'inline',
+                          padding: '10px',
+                          textAlign: 'left',
+
                           fontWeight: 'bold',
                         }}
                       >
                         {' '}
                         Username: {dummyPerson.username}
                       </Typography>
+                      <Typography
+                        variant='body1'
+                        color='text.secondary'
+                        className='card_text_footer'
+                        style={{
+                          padding: '10px',
+                          textAlign: 'left',
+
+                          fontWeight: 'bold',
+                        }}
+                      >
+                        {' '}
+                        Email: {dummyPerson.email}
+                      </Typography>
+                      
+                    </CardContent>
+                    <Accordion>
+                      <AccordionSummary
+                      classes={{ content: classes.content }}
+                        expandIcon={<ExpandMoreIcon />}
+                        aria-controls='panel1a-content'
+                        id='panel1a-header'
+                        
+                      >
+                        <Typography style={{textAlign: 'center'}}>Edit your profile</Typography>
+                      </AccordionSummary>
+                      <AccordionDetails>
                       <Typography
                         variant='body1'
                         color='text.secondary'
@@ -87,17 +141,23 @@ export default function Myprofile() {
                           label='New username'
                         />
                       </div>
-                      <Button
-                        style={{
-                          backgroundColor: '#FD8270',
-                          padding: '5px 10px',
-                          margin: '10px',
-                          color: 'white',
-                          width: '200px',
-                        }}
+                      <SaveButton/>
+                      <Typography
+                        variant='body1'
+                        color='text.secondary'
+                        className='card_text_footer'
+                        style={{ padding: '10px' }}
                       >
-                        Change username
-                      </Button>
+                        Change your email:{' '}
+                      </Typography>
+                      <div>
+                        <TextField
+                          type='username'
+                          id='outlined-password-input'
+                          label='New email'
+                        />
+                      </div>
+                      <SaveButton/>
                       <Typography
                         variant='body1'
                         color='text.secondary'
@@ -113,28 +173,11 @@ export default function Myprofile() {
                           label='New password'
                         />
                       </div>
-                      <Button
-                        style={{
-                          backgroundColor: '#FD8270',
-                          padding: '5px 10px',
-                          margin: '10px',
-                          color: 'white',
-                          width: '200px',
-                        }}
-                      >
-                        Change password
-                      </Button>
-                    </CardContent>
+                      <SaveButton/>
+                      </AccordionDetails>
+                    </Accordion>
                   </Card>
                 </Grid>
-
-                <div
-                  style={{
-                    display: 'flex',
-                    flexWrap: 'nowrap',
-                    justifyContent: 'space-evenly',
-                  }}
-                ></div>
               </Paper>
             </Grid>
           </Grid>
@@ -144,47 +187,3 @@ export default function Myprofile() {
   );
 }
 
-/** 
-<div style={{ display: 'flex', padding: '10px' }}>
-                  {testRecipe.map((x) => {
-                    return (
-                      <Card style={{ width: '20%', margin: '10px' }}>
-                        <CardMedia
-                          component='img'
-                          height='100'
-                          image={x.imageString}
-                          alt='green iguana'
-                        />
-                        <div> {x.name}</div>
-
-                        <div>Your rate: {x.rank}</div>
-                      </Card>
-                    );
-                  })}
-                </div>
-
-                <Box
-                  display='flex'
-                  flexDirection='row'
-                  alignItems='stretch'
-                  padding={1}
-                >
-                  {testRecipe.map((x) => {
-                    return (
-                      <CardActionArea>
-                        <Card style={{ margin: '10px' }}>
-                          <CardMedia
-                            component='img'
-                            height='100'
-                            image={x.imageString}
-                            alt='green iguana'
-                          />
-                          <div> {x.name}</div>
-
-                          <div>Your rate: {x.rank}</div>
-                        </Card>
-                      </CardActionArea>
-                    );
-                  })}
-                </Box>
-                */
