@@ -9,55 +9,93 @@ import Button from "@mui/material/Button"
 
 export default function SignUp() {
   const {logIn} = useContext(UserContext);
-
-  const [username, setUsername] = useState("");
-  const [password, setPassword] = useState("");
-  const [confirmationPassword, setConfirmationPassword] = useState("");
-  const [signupButtonDisabled, setSignupButtonDisabled] = useState(true);
-  const [passwordWarningEnabled, setPasswordWarningEnabled] = useState(false);
-
   const navigate = useNavigate();
 
-  // FIXME: Avoid having to use event.target.value in the handlers, instead of the updated state variables
+  const [username, setUsername] = useState("");
+  const [usernameError, setUsernameError] = useState("");
+
+  const [password, setPassword] = useState("");
+  const [passwordError, setPasswordError] = useState("");
+
+  const [confirmationPassword, setConfirmationPassword] = useState("");
+  const [confirmationPasswordError, setConfirmationPasswordError] = useState("");
 
   const handleUsernameChange = (event: React.ChangeEvent<HTMLInputElement>) => {
     setUsername(event.target.value);
-
-    setSignupButtonDisabled(event.target.value.length <= 0 || password.length <= 0 || confirmationPassword.length <= 0)
   }
 
   const handlePasswordChange = (event: React.ChangeEvent<HTMLInputElement>) => {
     setPassword(event.target.value)
-
-    setSignupButtonDisabled(username.length <= 0 || event.target.value.length <= 0 || confirmationPassword.length <= 0 || confirmationPassword !== event.target.value)
-    setPasswordWarningEnabled(confirmationPassword.length > 0 && confirmationPassword !== event.target.value)
   }
 
   const handleConfirmationPasswordChange = (event: React.ChangeEvent<HTMLInputElement>) => {
     setConfirmationPassword(event.target.value);
-
-    setSignupButtonDisabled(username.length <= 0 || password.length <= 0 || event.target.value.length <= 0 || password !== event.target.value)
-    setPasswordWarningEnabled(event.target.value.length > 0 && password !== event.target.value);
   }
 
-  const handleSignup = () => {
+  const handleSubmitForm = (event: React.FormEvent) => {
+    event.preventDefault();
+
+    if (!validateForm())
+      return;
+
     logIn(username);
     navigate("/");
+  }
+
+  const validateForm = (): boolean => {
+    // TODO: Put these constants a more appropriate place
+    const usernameMinLength = 3;
+    const usernameMaxLength = 30;
+    const usernameRegex = /^[a-zA-Z0-9-_]+$/;
+
+    const passwordMinLength = 3;
+    const passwordMaxLength = 30;
+
+    let formIsValid = true;
+
+    if (username.length < usernameMinLength || username.length > usernameMaxLength) {
+      setUsernameError(`Length needs to be between ${usernameMinLength} and ${usernameMaxLength}`);
+      formIsValid = false;
+
+    } else if (!usernameRegex.test(username)) {
+      setUsernameError("Can only contain letters, numbers, dashes, and underscores.")
+      formIsValid = false;
+
+    } else {
+      setUsernameError("");
+    }
+
+    if (password.length < passwordMinLength || password.length > passwordMaxLength) {
+      setPasswordError(`Length needs to be between ${passwordMinLength} and ${passwordMaxLength}`);
+      formIsValid = false;
+    } else {
+      setPasswordError("");
+    }
+
+    if (confirmationPassword !== password) {
+      setConfirmationPasswordError("Confirmation password needs to match the password");
+      formIsValid = false;
+    } else {
+      setConfirmationPasswordError("");
+    }
+
+    return formIsValid;
   }
 
   return (
     <Box display="flex" flexDirection="column" alignItems="center" sx={{mt: 3}}>
       <Card>
         <CardContent>
-          <Box component="form" onSubmit={handleSignup} noValidate autoComplete="off" display="flex"
+          <Box component="form" onSubmit={handleSubmitForm} noValidate autoComplete="off" display="flex"
                flexDirection="column" alignItems="center" sx={{'& .MuiTextField-root': {m: 1, width: '25ch'}}}>
-            <TextField type="text" onChange={handleUsernameChange} required id="outlined-required" label="Username"/>
+            <TextField type="text" onChange={handleUsernameChange} required id="outlined-required"
+                       label="Username" error={usernameError.length > 0} helperText={usernameError}/>
             <TextField type="password" onChange={handlePasswordChange} required id="outlined-password-input"
-                       label="Password"/>
+                       label="Password" error={passwordError.length > 0} helperText={passwordError}/>
             <TextField type="password" onChange={handleConfirmationPasswordChange} required id="outlined-password-input"
-                       label="Confirm password" error={passwordWarningEnabled}
-                       helperText={passwordWarningEnabled ? "Passwords do not match." : " "}/>
-            <Button type="submit" disabled={signupButtonDisabled} variant="contained" color="secondary">Sign up</Button>
+                       label="Confirm password" error={confirmationPasswordError.length > 0}
+                       helperText={confirmationPasswordError}/>
+            <Button type="submit" variant="contained" color="secondary">Sign up</Button>
           </Box>
         </CardContent>
       </Card>

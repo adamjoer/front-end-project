@@ -9,42 +9,70 @@ import Button from "@mui/material/Button"
 
 export default function Login() {
   const {logIn} = useContext(UserContext);
-
-  const [username, setUsername] = useState("");
-  const [password, setPassword] = useState("");
-  const [loginButtonDisabled, setLoginButtonDisabled] = useState(true);
-
   const navigate = useNavigate();
 
-  // FIXME: Avoid having to use event.target.value in the handlers, instead of the updated state variables
+  const [username, setUsername] = useState("");
+  const [usernameError, setUsernameError] = useState("");
+
+  const [password, setPassword] = useState("");
+  const [passwordError, setPasswordError] = useState("");
 
   const handleUsernameChange = (event: React.ChangeEvent<HTMLInputElement>) => {
     setUsername(event.target.value);
-
-    setLoginButtonDisabled(event.target.value.length <= 0 || password.length <= 0)
   }
 
   const handlePasswordChange = (event: React.ChangeEvent<HTMLInputElement>) => {
     setPassword(event.target.value)
-
-    setLoginButtonDisabled(username.length <= 0 || event.target.value.length <= 0)
   }
 
-  const handleLogin = () => {
+  const handleSubmitForm = (event: React.FormEvent) => {
+    event.preventDefault();
+
+    if (!validateForm())
+      return;
+
     logIn(username);
     navigate("/");
+  }
+
+  const validateForm = (): boolean => {
+    // TODO: Put these constants a more appropriate place
+    const usernameMinLength = 3;
+    const usernameMaxLength = 30;
+
+    const passwordMinLength = 3;
+    const passwordMaxLength = 30;
+
+    let formIsValid = true;
+
+    if (username.length < usernameMinLength || username.length > usernameMaxLength) {
+      setUsernameError(`Length needs to be between ${usernameMinLength} and ${usernameMaxLength}`);
+      formIsValid = false;
+    } else {
+      setUsernameError("");
+    }
+
+    if (password.length < passwordMinLength || password.length > passwordMaxLength) {
+      setPasswordError(`Length needs to be between ${passwordMinLength} and ${passwordMaxLength}`);
+      formIsValid = false;
+    } else {
+      setPasswordError("");
+    }
+
+    return formIsValid;
   }
 
   return (
     <Box display="flex" flexDirection="column" alignItems="center" sx={{mt: 3}}>
       <Card>
         <CardContent>
-          <Box component="form" onSubmit={handleLogin} noValidate autoComplete="off" display="flex"
+          <Box component="form" onSubmit={handleSubmitForm} noValidate autoComplete="off" display="flex"
                flexDirection="column" alignItems="center" sx={{'& .MuiTextField-root': {m: 1, width: '25ch'}}}>
-            <TextField type="text" onChange={handleUsernameChange} required id="outlined-required" label="Username"/>
+            <TextField type="text" onChange={handleUsernameChange} required id="outlined-required"
+                       label="Username" error={usernameError.length > 0} helperText={usernameError}/>
             <TextField type="password" onChange={handlePasswordChange} required id="outlined-password-input"
-                       label="Password"/>
-            <Button type="submit" disabled={loginButtonDisabled} variant="contained" color="secondary">Log in</Button>
+                       label="Password" error={passwordError.length > 0} helperText={passwordError}/>
+            <Button type="submit" variant="contained" color="secondary">Log in</Button>
           </Box>
         </CardContent>
       </Card>
