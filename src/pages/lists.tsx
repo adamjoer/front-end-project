@@ -191,7 +191,7 @@ export default function Lists() {
           </FormGroup>
         </Grid>
 
-        <Grid item xs={8} md={9} lg={9}>
+        <Grid item xs={8} md={9} lg={9} sx={{pr: 2}}>
           {dummyData.filter((list) => listFilters[list.name]).map((list) => (
             <div key={list.id}>
               <h2>{list.name}</h2>
