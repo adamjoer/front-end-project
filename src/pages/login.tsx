@@ -46,28 +46,28 @@ export default function Login() {
     const passwordMinLength = 3;
     const passwordMaxLength = 30;
 
+    const validateLength = (input: string, minLength: number, maxLength: number, errorFunc: (errorMsg: string) => void): boolean => {
+      if (input.length < minLength || input.length > maxLength) {
+        errorFunc(`Length must be between ${minLength} and ${maxLength}`);
+        formIsValid = false;
+        return false;
+
+      } else {
+        errorFunc("");
+        return true;
+      }
+    }
+
     let formIsValid = true;
 
     // Validate username
-    if (username.length < usernameMinLength || username.length > usernameMaxLength) {
-      setUsernameError(`Length must be between ${usernameMinLength} and ${usernameMaxLength}`);
+    if (validateLength(username, usernameMinLength, usernameMaxLength, setUsernameError) && !usernameRegex.test(username)) {
+      setUsernameError("Must only contain letters, numbers, dashes, and underscores.");
       formIsValid = false;
-
-    } else if (!usernameRegex.test(username)) {
-      setUsernameError("Must only contain letters, numbers, dashes, and underscores.")
-      formIsValid = false;
-
-    } else {
-      setUsernameError("");
     }
 
     // Validate password
-    if (password.length < passwordMinLength || password.length > passwordMaxLength) {
-      setPasswordError(`Length must be between ${passwordMinLength} and ${passwordMaxLength}`);
-      formIsValid = false;
-    } else {
-      setPasswordError("");
-    }
+    validateLength(password, passwordMinLength, passwordMaxLength, setPasswordError);
 
     return formIsValid;
   }

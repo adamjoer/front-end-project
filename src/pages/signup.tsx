@@ -83,35 +83,30 @@ export default function SignUp() {
     // From https://www.emailregex.com/
     const emailRegex = /^(([^<>()[\]\\.,;:\s@"]+(\.[^<>()[\]\\.,;:\s@"]+)*)|(".+"))@((\[[0-9]{1,3}\.[0-9]{1,3}\.[0-9]{1,3}\.[0-9]{1,3}])|(([a-zA-Z\-0-9]+\.)+[a-zA-Z]{2,}))$/;
 
+    const validateLength = (input: string, minLength: number, maxLength: number, errorFunc: (errorMsg: string) => void): boolean => {
+      if (input.length < minLength || input.length > maxLength) {
+        errorFunc(`Length must be between ${minLength} and ${maxLength}`);
+        formIsValid = false;
+        return false;
+
+      } else {
+        errorFunc("");
+        return true;
+      }
+    }
+
     let formIsValid = true;
 
     // Validate first name
-    if (firstName.length < firstNameMinLength || firstName.length > firstNameMaxLength) {
-      setFirstNameError(`Length must be between ${firstNameMinLength} and ${firstNameMaxLength}`);
-      formIsValid = false;
-    } else {
-      setFirstNameError("");
-    }
+    validateLength(firstName, firstNameMinLength, firstNameMaxLength, setFirstNameError);
 
     // Validate last name
-    if (lastName.length < lastNameMinLength || lastName.length > lastNameMaxLength) {
-      setLastNameError(`Length must be between ${lastNameMinLength} and ${lastNameMaxLength}`);
-      formIsValid = false;
-    } else {
-      setLastNameError("");
-    }
+    validateLength(lastName, lastNameMinLength, lastNameMaxLength, setLastNameError);
 
     // Validate username
-    if (username.length < usernameMinLength || username.length > usernameMaxLength) {
-      setUsernameError(`Length must be between ${usernameMinLength} and ${usernameMaxLength}`);
+    if (validateLength(username, usernameMinLength, usernameMaxLength, setUsernameError) && !usernameRegex.test(username)) {
+      setUsernameError("Must only contain letters, numbers, dashes, and underscores.");
       formIsValid = false;
-
-    } else if (!usernameRegex.test(username)) {
-      setUsernameError("Must only contain letters, numbers, dashes, and underscores.")
-      formIsValid = false;
-
-    } else {
-      setUsernameError("");
     }
 
     // Validate email if it has been submitted
@@ -123,19 +118,12 @@ export default function SignUp() {
     }
 
     // Validate password
-    if (password.length < passwordMinLength || password.length > passwordMaxLength) {
-      setPasswordError(`Length must be between ${passwordMinLength} and ${passwordMaxLength}`);
-      formIsValid = false;
-    } else {
-      setPasswordError("");
-    }
+    validateLength(password, passwordMinLength, passwordMaxLength, setPasswordError);
 
     // Validate confirmation password
-    if (confirmationPassword !== password) {
+    if (validateLength(confirmationPassword, passwordMinLength, passwordMaxLength, setConfirmationPasswordError) && confirmationPassword !== password) {
       setConfirmationPasswordError("Confirmation password must match password");
       formIsValid = false;
-    } else {
-      setConfirmationPasswordError("");
     }
 
     return formIsValid;
@@ -171,7 +159,8 @@ export default function SignUp() {
               </Grid>
               <Grid item xs={12} sm={6}>
                 <TextField label="Confirm password" type="password" required onChange={handleConfirmationPasswordChange}
-                           error={confirmationPasswordError.length > 0} helperText={confirmationPasswordError} fullWidth/>
+                           error={confirmationPasswordError.length > 0} helperText={confirmationPasswordError}
+                           fullWidth/>
               </Grid>
 
               <Grid item xs={12} display="flex" flexDirection="column" alignItems="center">
