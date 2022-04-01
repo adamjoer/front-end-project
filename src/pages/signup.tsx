@@ -80,6 +80,8 @@ export default function SignUp() {
     const passwordMinLength = 3;
     const passwordMaxLength = 30;
 
+    const emailMinLength = 0;
+    const emailMaxLength = 50;
     // From https://www.emailregex.com/
     const emailRegex = /^(([^<>()[\]\\.,;:\s@"]+(\.[^<>()[\]\\.,;:\s@"]+)*)|(".+"))@((\[[0-9]{1,3}\.[0-9]{1,3}\.[0-9]{1,3}\.[0-9]{1,3}])|(([a-zA-Z\-0-9]+\.)+[a-zA-Z]{2,}))$/;
 
@@ -110,11 +112,9 @@ export default function SignUp() {
     }
 
     // Validate email if it has been submitted
-    if (email.length > 0 && !emailRegex.test(email)) {
+    if (validateLength(email, emailMinLength, emailMaxLength, setEmailError) && email.length > 0 && !emailRegex.test(email)) {
       setEmailError("Must to be a valid email address");
       formIsValid = false;
-    } else {
-      setEmailError("");
     }
 
     // Validate password
