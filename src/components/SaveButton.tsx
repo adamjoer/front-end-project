@@ -11,6 +11,7 @@ export default function SaveButton() {
         margin: '10px',
         color: '#FD8270',
         width: '200px',
+      
       }}
     >
       Save

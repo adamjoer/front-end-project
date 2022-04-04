@@ -16,12 +16,12 @@ import AccordionDetails from '@mui/material/AccordionDetails';
 import ExpandMoreIcon from '@mui/icons-material/ExpandMore';
 
 import { makeStyles } from '@mui/styles';
-import SaveButton from '../components/SaveButton'
+import SaveButton from '../components/SaveButton';
 
 const useStyles = makeStyles({
   content: {
-    justifyContent: "center"
-  }
+    justifyContent: 'center',
+  },
 });
 
 const dummyPerson = {
@@ -40,7 +40,7 @@ export default function Myprofile() {
             <Grid item>
               <Paper
                 sx={{
-                  height: 800,
+                  height: 650,
                   width: 600,
                   backgroundColor: '#E0E0E0',
                   margin: '15px',
@@ -113,67 +113,73 @@ export default function Myprofile() {
                         {' '}
                         Email: {dummyPerson.email}
                       </Typography>
-                      
                     </CardContent>
                     <Accordion>
                       <AccordionSummary
-                      classes={{ content: classes.content }}
+                        classes={{ content: classes.content }}
                         expandIcon={<ExpandMoreIcon />}
                         aria-controls='panel1a-content'
                         id='panel1a-header'
-                        
                       >
-                        <Typography style={{textAlign: 'center'}}>Edit your profile</Typography>
+                        <Typography style={{ textAlign: 'center' }}>
+                          Edit your profile
+                        </Typography>
                       </AccordionSummary>
                       <AccordionDetails>
-                      <Typography
-                        variant='body1'
-                        color='text.secondary'
-                        className='card_text_footer'
-                        style={{ padding: '10px' }}
-                      >
-                        Change your username:{' '}
-                      </Typography>
-                      <div>
-                        <TextField
-                          type='username'
-                          id='outlined-password-input'
-                          label='New username'
-                        />
-                      </div>
-                      <SaveButton/>
-                      <Typography
-                        variant='body1'
-                        color='text.secondary'
-                        className='card_text_footer'
-                        style={{ padding: '10px' }}
-                      >
-                        Change your email:{' '}
-                      </Typography>
-                      <div>
-                        <TextField
-                          type='username'
-                          id='outlined-password-input'
-                          label='New email'
-                        />
-                      </div>
-                      <SaveButton/>
-                      <Typography
-                        variant='body1'
-                        color='text.secondary'
-                        className='card_text_footer'
-                        style={{ padding: '10px' }}
-                      >
-                        Change your password:{' '}
-                      </Typography>
-                      <div>
-                        <TextField
-                          type='password'
-                          id='outlined-password-input'
-                          label='New password'
-                        />
-                      </div>
-                      <SaveButton/>
+                        <Typography
+                          variant='body1'
+                          color='text.secondary'
+                          className='card_text_footer'
+                          style={{ padding: '10px' }}
+                        >
+                          Change your username:{' '}
+                        </Typography>
+                        <div style={{ whiteSpace: 'nowrap' }}>
+                          <TextField
+                            type='username'
+                            id='outlined-password-input'
+                            label='New username'
+                            style={{ display: 'inline-block' }}
+                          />
+
+                          <SaveButton />
+                        </div>
+                        <Typography
+                          variant='body1'
+                          color='text.secondary'
+                          className='card_text_footer'
+                          style={{ padding: '10px' }}
+                        >
+                          Change your email:{' '}
+                        </Typography>
+                        <div style={{ whiteSpace: 'nowrap' }}>
+                          <TextField
+                            type='username'
+                            id='outlined-password-input'
+                            label='New email'
+                            style={{ display: 'inline-block' }}
+                          />
+
+                          <SaveButton />
+                        </div>
+                        <Typography
+                          variant='body1'
+                          color='text.secondary'
+                          className='card_text_footer'
+                          style={{ padding: '10px' }}
+                        >
+                          Change your password:{' '}
+                        </Typography>
+                        <div style={{ whiteSpace: 'nowrap' }}>
+                          <TextField
+                            type='password'
+                            id='outlined-password-input'
+                            label='New password'
+                            style={{ display: 'inline-block'}}
+                          />
+
+                          <SaveButton />
+                        </div>
                       </AccordionDetails>
                     </Accordion>
                   </Card>
@@ -186,4 +192,3 @@ export default function Myprofile() {
     </div>
   );
 }
-
