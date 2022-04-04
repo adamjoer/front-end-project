@@ -1,15 +1,16 @@
 import './card.css';
-import React from "react";
+import React, { useState } from "react";
 import Card from '@mui/material/Card';
 import CardContent from '@mui/material/CardContent';
 import CardMedia from '@mui/material/CardMedia';
 import Typography from '@mui/material/Typography';
-import {CardActionArea} from '@mui/material';
+import {CardActionArea, Modal, Box, Button} from '@mui/material';
 import SoupKitchenIcon from '@mui/icons-material/SoupKitchen';
 import AvTimerIcon from '@mui/icons-material/AvTimer';
 import StarIcon from '@mui/icons-material/Star';
 import StarHalfIcon from '@mui/icons-material/StarHalf';
 import StarOutlineIcon from '@mui/icons-material/StarOutline';
+import { ModalText } from '../../pages/recipes/ModalText';
 
 interface NavbarProps {
   imageString: string;
@@ -17,14 +18,40 @@ interface NavbarProps {
   rank: Number;
   skill: string;
   time: Number;
+  selectFunc: any;
 }
 
 const counter = [1, 2, 3, 4, 5]
 
+const style = {
+  position: 'absolute',
+  top: '50%',
+  left: '50%',
+  transform: 'translate(-50%, -50%)',
+  width: 800,
+  height: '80%',
+  bgcolor: 'background.paper',
+  border: '2px solid #000',
+  boxShadow: 24,
+  p: 4,
+  overflow: "scroll"
+
+ 
+};
+
 const ActionAreaCard: React.FC<NavbarProps> = (props) => {
+  const [openModal, setOpenModal] = useState<boolean>(false)
+  const handleOpen = (): void => setOpenModal(true)
+  const handleClose = (): void => setOpenModal(false)
+
+  const handleClose_test = ():void => {
+    console.log('testing')
+    setOpenModal(false);
+  };
+
   return (
     <Card onClick={() => {
-      console.log("GIVE ME HIYAAA")
+      props.selectFunc();
     }}>
       <CardActionArea>
         <CardMedia
@@ -93,3 +120,5 @@ function getStringFromTime(timeInMin: Number) {
 }
 
 export default ActionAreaCard;
+
+
