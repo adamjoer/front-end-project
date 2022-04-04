@@ -1,0 +1,32 @@
+#content {
+  height: 100%;
+  width: 100%;
+}
+
+#welcome-box{
+  float: left;
+  width: 67.1%;
+  height: 408px;
+  background-color: #355E3B;
+}
+
+#welcome-box p {
+  margin-left:50px;
+  color: white;
+  width: 300px;
+  font-size: 30px;
+}
+
+#welcome-image {
+  float:right;
+  width: max-content;
+}
+
+#btn-all-recipes {
+  border-radius: 12px;
+  margin-top: 30px;
+}
+
+#row {
+  margin-left: 20px;
+}
