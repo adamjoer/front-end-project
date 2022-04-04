@@ -15,14 +15,8 @@ import AccordionDetails from '@mui/material/AccordionDetails';
 
 import ExpandMoreIcon from '@mui/icons-material/ExpandMore';
 
-import { makeStyles } from '@mui/styles';
-import SaveButton from '../components/SaveButton';
 
-const useStyles = makeStyles({
-  content: {
-    justifyContent: 'center',
-  },
-});
+import SaveButton from '../components/SaveButton';
 
 const dummyPerson = {
   name: 'Petter Hansen',
@@ -31,7 +25,7 @@ const dummyPerson = {
 };
 
 export default function Myprofile() {
-  const classes = useStyles();
+
   return (
     <div>
       <Grid sx={{ flexGrow: 1 }} container spacing={2}>
@@ -116,12 +110,11 @@ export default function Myprofile() {
                     </CardContent>
                     <Accordion>
                       <AccordionSummary
-                        classes={{ content: classes.content }}
                         expandIcon={<ExpandMoreIcon />}
                         aria-controls='panel1a-content'
                         id='panel1a-header'
                       >
-                        <Typography style={{ textAlign: 'center' }}>
+                        <Typography style={{ textAlign: 'center', width: "100%" }}>
                           Edit your profile
                         </Typography>
                       </AccordionSummary>
