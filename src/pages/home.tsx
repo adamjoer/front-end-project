@@ -6,7 +6,6 @@ import {Button, Grid} from "@mui/material";
 import {useNavigate} from "react-router-dom";
 import UserContext from "../context/user-context";
 import ActionAreaCard from "../components/recipecard/card";
-import { createTheme, ThemeProvider } from '@mui/material/styles';
 
 const dummyRecipes = [
   {
@@ -52,33 +51,6 @@ const dummyRecipes = [
 
 ]
 
-/*const theme = createTheme({
-    palette: {
-        primary: {
-            light: '#ff7961',
-            main: '#f44336',
-            dark: '#ba000d',
-            contrastText: '#000',
-        },
-        background: {
-            default: "#F7F9FC"
-        },
-    },
-});*/
-
-const theme = createTheme({
-  palette: {
-    primary: {
-      main: "#e3f2fd"
-    },
-    secondary: {
-      main: "#e57373",
-      contrastText: "#e3f2fd"
-    }
-
-  }
-});
-
 export default function Home() {
 //img link https://spoonacular.com/recipeImages/362230-556x370.jpeg
   //TODO: change so that when screen is xs, the picture doesnt go over the welcome box
@@ -115,9 +87,7 @@ export default function Home() {
             </Grid>
           })}
         </Grid>
-        <ThemeProvider theme={theme}>
-          <Button id="btn-all-recipes" onClick={goToRecipes} disabled={!user} color="secondary" variant="contained">See all recipes</Button>
-        </ThemeProvider>
+          <Button sx={{color: "white"}} id="btn-all-recipes" onClick={goToRecipes} disabled={!user} color="secondary" variant="contained">See all recipes</Button>
       </div>
     </div>
   );
