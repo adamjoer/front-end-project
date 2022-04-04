@@ -1,5 +1,5 @@
 #content {
-    height: 100vh;
+    height: 100%;
     width: 100%;
 }
 
@@ -23,8 +23,6 @@
 }
 
 #btn-all-recipes {
-    background-color: chocolate;
-    color: white;
     border-radius: 12px;
     margin-top: 30px;
 }

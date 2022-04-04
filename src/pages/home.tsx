@@ -2,10 +2,11 @@ import "./home.css"
 import Image from "../../src/images/food_image.jpg"
 import Logo from "../../src/images/food_logo.png"
 import React, {useContext} from "react";
-import MaterialCard from "../components/materialcard";
 import {Button, Grid} from "@mui/material";
 import {useNavigate} from "react-router-dom";
 import UserContext from "../context/user-context";
+import ActionAreaCard from "../components/recipecard/card";
+import { createTheme, ThemeProvider } from '@mui/material/styles';
 
 const dummyRecipes = [
     {
@@ -14,6 +15,7 @@ const dummyRecipes = [
         rank: 2,
         skill: "easy",
         time: 30,
+        id: 1,
     },
     {
         imageUrl: "https://spoonacular.com/recipeImages/362230-556x370.jpeg",
@@ -21,6 +23,7 @@ const dummyRecipes = [
         rank: 2,
         skill: "easy",
         time: 30,
+        id: 2,
     },
     {
         imageUrl: "https://spoonacular.com/recipeImages/716429-556x370.jpg",
@@ -28,6 +31,7 @@ const dummyRecipes = [
         rank: 4,
         skill: "easy",
         time: 30,
+        id: 3,
     },
     {
         imageUrl: "https://spoonacular.com/recipeImages/362230-556x370.jpeg",
@@ -35,6 +39,7 @@ const dummyRecipes = [
         rank: 2,
         skill: "easy",
         time: 30,
+        id: 4,
     },
     {
         imageUrl: "https://spoonacular.com/recipeImages/716429-556x370.jpg",
@@ -42,9 +47,37 @@ const dummyRecipes = [
         rank: 4,
         skill: "easy",
         time: 30,
+        id: 5,
     }
 
 ]
+
+/*const theme = createTheme({
+    palette: {
+        primary: {
+            light: '#ff7961',
+            main: '#f44336',
+            dark: '#ba000d',
+            contrastText: '#000',
+        },
+        background: {
+            default: "#F7F9FC"
+        },
+    },
+});*/
+
+const theme = createTheme({
+    palette: {
+        primary: {
+            main: "#e3f2fd"
+        },
+        secondary: {
+            main: "#e57373",
+            contrastText: "#e3f2fd"
+        }
+
+    }
+});
 
 export default function Home() {
 //img link https://spoonacular.com/recipeImages/362230-556x370.jpeg
@@ -76,12 +109,14 @@ export default function Home() {
                 <Grid container spacing={2}>
                     {dummyRecipes.map(x => {
 
-                        return <Grid item xs={4} md={3} lg={2}>
-                            <MaterialCard imageUrl={x.imageUrl} recipeName={x.recipeName} rank={x.rank} skill={x.skill} time={x.time}/>
+                        return <Grid key={x.id} item xs={4} md={3} lg={2}>
+                            <ActionAreaCard imageString={x.imageUrl} titleString={x.recipeName} rank={x.rank} skill={x.skill} time={x.time}/>
                         </Grid>
                     })}
                 </Grid>
-                <Button id="btn-all-recipes" onClick={goToRecipes} disabled={!user}>See all recipes</Button>
+                <ThemeProvider theme={theme}>
+                    <Button id="btn-all-recipes" onClick={goToRecipes} disabled={!user} color="secondary" variant="contained">See all recipes</Button>
+                </ThemeProvider>
             </div>
         </div>
     );
