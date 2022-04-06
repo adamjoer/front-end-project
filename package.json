@@ -17,6 +17,7 @@
     "@types/react": "^17.0.39",
     "@types/react-dom": "^17.0.13",
     "@types/react-router": "^5.1.18",
+    "axios": "^0.26.1",
     "material-ui-community-icons": "^0.15.0",
     "react": "^17.0.2",
     "react-dom": "^17.0.2",
