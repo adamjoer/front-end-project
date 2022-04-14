@@ -71,11 +71,11 @@ export default function Navbar() {
       <Container maxWidth="xl">
         <Toolbar disableGutters>
 
-          <Typography variant="h6" noWrap component="div" sx={{mr: 2, display: {xs: "none", md: "flex"}}}
+          <Typography variant="h6" noWrap component="div" sx={{mr: 2, display: {xs: "none", sm: "flex"}}}
                       onClick={() => (navigate("/"))}>
             LOGO
           </Typography>
-          <Box sx={{flexGrow: 1, display: {xs: "none", md: "flex"}}}>
+          <Box sx={{flexGrow: 1, display: {xs: "none", sm: "flex"}}}>
             {user &&
               (pagesLoggedIn).map((page) => (
                 <Button key={page.name} onClick={() => (navigate(page.to))}
@@ -85,14 +85,14 @@ export default function Navbar() {
               ))}
           </Box>
 
-          <Box sx={{flexGrow: 1, display: {xs: "flex", md: "none"}}}>
+          <Box sx={{flexGrow: 1, display: {xs: "flex", sm: "none"}}}>
             <IconButton size="large" aria-controls="menu-appbar" aria-haspopup="true" onClick={handleOpenNavMenu}
                         color="inherit">
               <MenuIcon/>
             </IconButton>
             <Menu id="menu-appbar" anchorEl={anchorElNav} anchorOrigin={{vertical: "bottom", horizontal: "left",}}
-                  keepMounted transformOrigin={{vertical: "top", horizontal: "left",}} open={Boolean(anchorElNav)}
-                  onClose={handleCloseNavMenu} sx={{display: {xs: "block", md: "none"},}}>
+                  keepMounted transformOrigin={{vertical: "top", horizontal: "left",}} open={anchorElNav != null}
+                  onClose={handleCloseNavMenu} sx={{display: {xs: "block", sm: "none"},}}>
               {[{name: "Home", to: "/"}].concat(user ? pagesLoggedIn : pagesLoggedOut).map((page) => (
                 <MenuItem key={page.name} onClick={() => {
                   navigate(page.to);
@@ -114,7 +114,7 @@ export default function Navbar() {
                 </Tooltip>
                 <Menu sx={{mt: "45px"}} id="menu-appbar" anchorEl={anchorElUser}
                       anchorOrigin={{vertical: "top", horizontal: "right",}} keepMounted
-                      transformOrigin={{vertical: "top", horizontal: "right",}} open={Boolean(anchorElUser)}
+                      transformOrigin={{vertical: "top", horizontal: "right",}} open={anchorElUser != null}
                       onClose={handleCloseUserMenu}>
                   {userSettings.map((setting) => (
                     <MenuItem key={setting.name} onClick={setting.onClick}>
@@ -124,7 +124,7 @@ export default function Navbar() {
                 </Menu>
               </Box>
               :
-              <Box sx={{flexGrow: 0, display: {xs: "none", md: "flex"}}}>
+              <Box sx={{flexGrow: 0, display: {xs: "none", sm: "flex"}}}>
                 {pagesLoggedOut.map((page) => (
                   <Button key={page.name} variant="contained" color="secondary" onClick={() => (navigate(page.to))}
                           sx={{my: 2, mx: 1, color: "white", display: "block"}}>
