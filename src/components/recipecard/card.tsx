@@ -56,6 +56,7 @@ const ActionAreaCard = (props: ActionAreaCardProps) => {
           height="140"
           image={props.imageString}
           alt={props.titleString}
+          loading="lazy"
         />
         <CardContent className="cardcontentwrap">
           <Typography gutterBottom variant="h5">
