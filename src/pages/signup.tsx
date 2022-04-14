@@ -130,8 +130,8 @@ export default function SignUp() {
   }
 
   return (
-    <Box display="flex" flexDirection="column" alignItems="center" sx={{ml: 3, mr: 3, mt: 3}}>
-      <Card sx={{minWidth: '300px', maxWidth: '600px'}}>
+    <Box display="flex" flexDirection="column" alignItems="center" sx={{ml: 2, mr: 2, mt: 3}}>
+      <Card sx={{minWidth: "250px", maxWidth: "600px"}}>
         <CardContent>
           <Box component="form" onSubmit={handleSubmitForm} noValidate autoComplete="off">
             <Grid container spacing={2}>
