@@ -1,5 +1,5 @@
 import './recipes.css';
-import {useState} from "react";
+import React, {useState} from "react";
 import {Button, Grid, Modal, TextField} from "@mui/material";
 import ActionAreaCard from "../../components/recipecard/card";
 import {Box} from '@mui/system';
@@ -112,7 +112,9 @@ export default function Recipes() {
 
   const [listOfRecipes, setListOfRecipes] = useState<Recipe[]>([]);
 
-  const handleSearch = () => {
+  const handleSearch = (event: React.FormEvent) => {
+    event.preventDefault();
+
     const newList = testRecipe.filter(y => y.name.toUpperCase().includes(filterString.toUpperCase()));
     console.log(newList);
 
@@ -141,11 +143,13 @@ export default function Recipes() {
         <Grid item xs={12} sm={9} lg={9}>
           <div style={{padding: "18px 16px 8px 16px"}}>
 
-            <TextField fullWidth id="outlined-basic" value={filterString}
-                       onChange={x => setFilterString(x.target.value)} label="Search for a recipe name"
-                       variant="outlined"
-                       InputProps={{endAdornment: <Button onClick={handleSearch} variant="outlined">Search</Button>}}
-            />
+            <Box component="form" onSubmit={handleSearch}>
+              <TextField fullWidth type="text" value={filterString}
+                         onChange={x => setFilterString(x.target.value)} label="Search for a recipe name"
+                         variant="outlined"
+                         InputProps={{endAdornment: <Button type="submit" variant="outlined">Search</Button>}}
+              />
+            </Box>
           </div>
         </Grid>
       </Grid>
