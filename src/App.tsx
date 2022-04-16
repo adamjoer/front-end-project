@@ -7,7 +7,7 @@ import Myprofile from './pages/myprofile';
 import Login from './pages/login';
 import Favorites from './pages/favorites';
 import Lists from './pages/lists';
-import {Recipes} from './pages/recipes/recipes';
+import Recipes from './pages/recipes/recipes';
 import SignUp from "./pages/signup";
 import {createTheme, ThemeProvider} from "@mui/material";
 

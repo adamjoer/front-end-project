@@ -20,7 +20,7 @@ interface ActionAreaCardProps {
   selectFunc: any;
 }
 
-const ActionAreaCard = (props: ActionAreaCardProps) => {
+export default function ActionAreaCard(props: ActionAreaCardProps) {
 
   const counter = [1, 2, 3, 4, 5]
 
@@ -90,7 +90,3 @@ const ActionAreaCard = (props: ActionAreaCardProps) => {
     </Card>
   );
 }
-
-export default ActionAreaCard;
-
-
