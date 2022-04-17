@@ -162,7 +162,13 @@ export class Recipes extends Component<{}, recipeState> {
             <TextField fullWidth id="outlined-basic" value={filterString} onChange={x => {
               this.setState({ filterString: x.target.value })
             }} label="Search for a recipe name" variant="outlined"
-              InputProps={{ endAdornment: <Button onClick={() => this.handleSearch()} variant="outlined">Search</Button> }}
+              InputProps={{ endAdornment: 
+              <Button 
+              onClick={() => this.handleSearch()} 
+              variant="outlined" 
+              sx={{bgcolor: "white", color: "#FD8270", ':hover':{bgcolor: '#FD8270', color:"white", transition: '0.5s'}}}>
+                Search
+                </Button> }}
             />
 
 

@@ -89,7 +89,7 @@ export default function Login() {
               </Grid>
 
               <Grid item xs={12} display="flex" flexDirection="column" alignItems="center">
-                <Button type="submit" variant="contained" color="secondary" sx={{color: "white"}}>Log in</Button>
+                <Button type="submit" variant="contained" color="secondary" sx={{color: "white", ':hover':{ transition: '0.5s', fontSize:'18px'}}}>Log in</Button>
               </Grid>
             </Grid>
           </Box>

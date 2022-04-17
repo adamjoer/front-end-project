@@ -133,6 +133,7 @@ export default function Myprofile() {
                             id='outlined-password-input'
                             label='New username'
                             style={{ display: 'inline-block' }}
+                            sx={{':hover':{bgcolor:"#E0E0E0", transition: '0.5s'}}}
                           />
 
                           <SaveButton />
@@ -151,6 +152,7 @@ export default function Myprofile() {
                             id='outlined-password-input'
                             label='New email'
                             style={{ display: 'inline-block' }}
+                            sx={{':hover':{bgcolor:"#E0E0E0", transition: '0.5s'}}}
                           />
 
                           <SaveButton />
@@ -169,6 +171,7 @@ export default function Myprofile() {
                             id='outlined-password-input'
                             label='New password'
                             style={{ display: 'inline-block'}}
+                            sx={{':hover':{bgcolor:"#E0E0E0", transition: '0.5s'}}}
                           />
 
                           <SaveButton />

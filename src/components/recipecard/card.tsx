@@ -50,7 +50,9 @@ const ActionAreaCard: React.FC<NavbarProps> = (props) => {
   };
 
   return (
-    <Card onClick={() => {
+    <Card 
+    sx={{':hover':{bgcolor:"#DCE3DF", transition: '0.5s'}}}
+    onClick={() => {
       props.selectFunc();
     }}>
       <CardActionArea>
@@ -59,6 +61,7 @@ const ActionAreaCard: React.FC<NavbarProps> = (props) => {
           height="140"
           image={props.imageString}
           alt="green iguana"
+          
         />
         <CardContent className='cardcontentwrap'>
           <Typography gutterBottom variant="h5">
