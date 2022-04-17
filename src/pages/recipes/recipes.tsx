@@ -135,7 +135,7 @@ export default function Recipes() {
       </Modal>
 
       <Grid container spacing={2}>
-        <Grid item xs={0} sm={3} lg={3} display={{xs: "none", sm: "block"}}>
+        <Grid item xs={1} sm={3} lg={3} display={{xs: "none", sm: "initial"}}>
           <div className="recipy_filter_wrapper">
             <h1>Recipes</h1>
           </div>
@@ -158,7 +158,7 @@ export default function Recipes() {
 
       <Grid container spacing={2} sx={{pt: 1, pl: 2, pb: 2, pr: 2}}>
         {listOfRecipes.map(x => (
-          <Grid key={x.id} item xs={12} sm={6} md={3} xl={2}>
+          <Grid key={x.id} item xs={12} sm={4} md={3} lg={2.4} xl={2}>
             <ActionAreaCard imageString={x.imageString} titleString={x.name} rank={x.rank} skill={x.skill}
                             time={x.time} selectFunc={() => setSelectedRecipe(x)}/>
           </Grid>

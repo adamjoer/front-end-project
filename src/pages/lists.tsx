@@ -1,5 +1,5 @@
 import React, {ChangeEvent, useState} from "react";
-import {Checkbox, FormControlLabel, FormGroup, Grid, TextField} from "@mui/material";
+import {Checkbox, FormControlLabel, FormGroup, TextField, Grid, Box} from "@mui/material";
 import ActionAreaCard from "../components/recipecard/card";
 
 type Recipe = { name: string, imageString: string, rank: number, skill: string, time: number, id: number }
@@ -182,9 +182,10 @@ export default function Lists() {
   return (
     <>
       <Grid container spacing={2}>
-        <Grid item xs={0} sm={3} lg={3} display={{xs: "none", sm: "block"}}>
+        <Grid item xs={1} sm={3} lg={3} display={{xs: "none", sm: "initial"}}>
           <h1 style={{paddingLeft: "25px"}}>Lists</h1>
         </Grid>
+
         <Grid item xs={12} sm={9} lg={9}>
           <div style={{padding: "18px 16px 8px 16px"}}>
             <TextField onChange={handleFilterStringChange} fullWidth label="Search for a recipe name"
@@ -195,8 +196,8 @@ export default function Lists() {
 
       <hr/>
 
-      <Grid container spacing={2}>
-        <Grid item xs={4} md={3} lg={2}>
+      <Grid container>
+        <Grid item xs={12} sm={4} md={3} lg={2.4} xl={2}>
           <b>Filter</b>
           <hr/>
           <FormGroup>
@@ -206,21 +207,24 @@ export default function Lists() {
                                                    onChange={handleListFilterChange}/>}/>
             ))}
           </FormGroup>
+          <Box component="div" display={{xs: "initial", sm: "none"}}>
+            <hr/>
+          </Box>
         </Grid>
 
-        <Grid item xs={8} md={9} lg={10} sx={{pr: 2}}>
+        <Grid item xs={12} sm={8} md={9} lg={9.6} xl={10}>
           {dummyData.filter((list) => listFilters[list.name]).map((list) => (
-            <div key={list.id}>
+            <Box key={list.id} component="div" sx={{pr: 2, pl: 2}}>
               <h2>{list.name}</h2>
               <Grid container spacing={2}>
                 {list.recipes.filter(recipe => recipe.name.toUpperCase().includes(filterString.toUpperCase())).map((recipe) => (
-                  <Grid key={recipe.id} item xs={12} sm={6} md={3} xl={2.4}>
+                  <Grid key={recipe.id} item xs={12} sm={6} md={4} lg={3} xl={2.4}>
                     <ActionAreaCard imageString={recipe.imageString} titleString={recipe.name} rank={recipe.rank}
                                     skill={recipe.skill} time={recipe.time} selectFunc={() => console.log(recipe)}/>
                   </Grid>
                 ))}
               </Grid>
-            </div>
+            </Box>
           ))}
         </Grid>
       </Grid>
