@@ -1,6 +1,7 @@
+import "./lists.css"
 import React, {ChangeEvent, useState} from "react";
 import {Checkbox, FormControlLabel, FormGroup, TextField, Grid, Box} from "@mui/material";
-import ActionAreaCard from "../components/recipecard/card";
+import ActionAreaCard from "../../components/recipecard/card";
 
 type Recipe = { name: string, imageString: string, rank: number, skill: string, time: number, id: number }
 type List = { name: string, recipes: Recipe[], id: number }
@@ -183,7 +184,7 @@ export default function Lists() {
     <>
       <Grid container spacing={2}>
         <Grid item xs={1} sm={3} lg={3} display={{xs: "none", sm: "initial"}}>
-          <h1 style={{paddingLeft: "16px", marginBottom: "0"}}>Lists</h1>
+          <h1 id="main-header">Lists</h1>
         </Grid>
         <Grid item xs={12} sm={9} lg={9}>
           <Box component="form" sx={{pt: 2, pr: 2, pb: 1, pl: 2}}>
@@ -197,23 +198,27 @@ export default function Lists() {
 
       <Grid container>
         <Grid item xs={12} sm={4} md={3} lg={2.4} xl={2} sx={{pl: 2}}>
-          <u><h3 style={{marginTop: "10px", marginBottom: "10px"}}>Filter</h3></u>
-          <FormGroup>
-            {listNames.map((listName) => (
-              <FormControlLabel key={listName} label={listName}
-                                control={<Checkbox name={listName} checked={listFilters[listName]}
-                                                   onChange={handleListFilterChange}/>}/>
-            ))}
-          </FormGroup>
+          <Box component="aside" sx={{position: {xs: "static", sm: "sticky"}, top: "85px"}}>
+            <u><h3 id="filter-header">Filter</h3></u>
+            <FormGroup>
+              {listNames.map((listName) => (
+                <FormControlLabel key={listName} label={listName}
+                                  control={<Checkbox name={listName} checked={listFilters[listName]}
+                                                     onChange={handleListFilterChange}/>}/>
+              ))}
+            </FormGroup>
+          </Box>
         </Grid>
         <Grid item xs={12} display={{xs: "initial", sm: "none"}}>
           <hr/>
         </Grid>
         <Grid item xs={12} sm={8} md={9} lg={9.6} xl={10}>
           {dummyData.filter((list) => listFilters[list.name]).map((list) => (
-            <Box key={list.id} component="div" sx={{pr: 2, pl: 2}}>
-              <h2>{list.name}</h2>
-              <Grid container spacing={2}>
+            <Box key={list.id} component="div" sx={{mt: 1, pr: 2, pl: 2}}>
+              <Box component="div" className="list-header" sx={{top: {xs: "56px", sm: "68px"}}}>
+                <h2>{list.name}</h2>
+              </Box>
+              <Grid container spacing={2} sx={{pt: 1, pb: 2}}>
                 {list.recipes.filter(recipe => recipe.name.toUpperCase().includes(filterString.toUpperCase())).map((recipe) => (
                   <Grid key={recipe.id} item xs={12} sm={6} md={4} lg={3} xl={2.4}>
                     <ActionAreaCard imageString={recipe.imageString} titleString={recipe.name} rank={recipe.rank}
