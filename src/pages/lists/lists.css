@@ -10,6 +10,7 @@
 
 .list-header {
   position: sticky;
+  top: 70px;
   z-index: 1;
   background-color: white;
   border-bottom-left-radius: 4px;

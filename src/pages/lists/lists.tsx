@@ -198,7 +198,7 @@ export default function Lists() {
 
       <Grid container>
         <Grid item xs={12} sm={4} md={3} lg={2.4} xl={2} sx={{pl: 2}}>
-          <Box component="aside" sx={{position: {xs: "static", sm: "sticky"}, top: "85px"}}>
+          <Box component="aside" sx={{position: {xs: "static", sm: "sticky"}, top: "86px"}}>
             <u><h3 id="filter-header">Filter</h3></u>
             <FormGroup>
               {listNames.map((listName) => (
@@ -215,7 +215,7 @@ export default function Lists() {
         <Grid item xs={12} sm={8} md={9} lg={9.6} xl={10}>
           {dummyData.filter((list) => listFilters[list.name]).map((list) => (
             <Box key={list.id} component="div" sx={{mt: 1, pr: 2, pl: 2}}>
-              <Box component="div" className="list-header" sx={{top: {xs: "56px", sm: "68px"}}}>
+              <Box component="div" className="list-header">
                 <h2>{list.name}</h2>
               </Box>
               <Grid container spacing={2} sx={{pt: 1, pb: 2}}>

@@ -67,8 +67,8 @@ export default function Navbar() {
   };
 
   return (
-    <AppBar position="sticky">
-      <Container maxWidth="xl">
+    <AppBar position="sticky" sx={{height: "70px"}}>
+      <Container maxWidth="xl" sx={{position: "relative", top: "50%", transform: "translateY(-50%)"}}>
         <Toolbar disableGutters>
 
           <Typography variant="h6" noWrap component="div" sx={{mr: 2, display: {xs: "none", sm: "flex"}}}
