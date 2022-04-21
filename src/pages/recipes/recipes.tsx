@@ -1,4 +1,3 @@
-import './recipes.css';
 import React, {useState} from "react";
 import {Button, Grid, Modal, TextField} from "@mui/material";
 import ActionAreaCard from "../../components/recipecard/card";
@@ -135,22 +134,17 @@ export default function Recipes() {
       </Modal>
 
       <Grid container spacing={2}>
-        <Grid item xs={1} sm={3} lg={3} display={{xs: "none", sm: "initial"}}>
-          <div className="recipy_filter_wrapper">
-            <h1>Recipes</h1>
-          </div>
+        <Grid item xs={1} sm={3} display={{xs: "none", sm: "initial"}}>
+            <h1 style={{paddingLeft: "16px", marginBottom: "0"}}>Recipes</h1>
         </Grid>
-        <Grid item xs={12} sm={9} lg={9}>
-          <div style={{padding: "18px 16px 8px 16px"}}>
-
-            <Box component="form" onSubmit={handleSearch}>
-              <TextField fullWidth type="text" value={filterString}
-                         onChange={x => setFilterString(x.target.value)} label="Search for a recipe name"
-                         variant="outlined"
-                         InputProps={{endAdornment: <Button type="submit" variant="outlined">Search</Button>}}
-              />
-            </Box>
-          </div>
+        <Grid item xs={12} sm={9}>
+          <Box component="form" onSubmit={handleSearch} sx={{pt: 2, pr: 2, pb: 1, pl: 2}}>
+            <TextField fullWidth type="text" value={filterString}
+                       onChange={x => setFilterString(x.target.value)} label="Search for a recipe name"
+                       variant="outlined"
+                       InputProps={{endAdornment: <Button type="submit" variant="outlined">Search</Button>}}
+            />
+          </Box>
         </Grid>
       </Grid>
 
