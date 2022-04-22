@@ -215,9 +215,7 @@ export default function Lists() {
         <Grid item xs={12} sm={8} md={9} lg={9.6} xl={10}>
           {dummyData.filter((list) => listFilters[list.name]).map((list) => (
             <Box key={list.id} component="div" sx={{mt: 1, pr: 2, pl: 2}}>
-              <Box component="div" className="list-header">
-                <h2>{list.name}</h2>
-              </Box>
+              <h2 className="list-header">{list.name}</h2>
               <Grid container spacing={2} sx={{pt: 1, pb: 2}}>
                 {list.recipes.filter(recipe => recipe.name.toUpperCase().includes(filterString.toUpperCase())).map((recipe) => (
                   <Grid key={recipe.id} item xs={12} sm={6} md={4} lg={3} xl={2.4}>
