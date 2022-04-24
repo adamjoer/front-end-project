@@ -36,7 +36,7 @@ export default function Navbar() {
     {
       name: "Profile",
       onClick: () => {
-        navigate("/myprofile");
+        navigate("/my-profile");
         setAnchorElUser(null);
       }
     },
