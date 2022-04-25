@@ -66,15 +66,15 @@ export default function Navbar() {
   };
 
   return (
-    <AppBar position="sticky">
-      <Container maxWidth="xl">
+    <AppBar position="sticky" sx={{height: "70px"}}>
+      <Container maxWidth="xl" sx={{position: "relative", top: "50%", transform: "translateY(-50%)"}}>
         <Toolbar disableGutters>
 
           <Typography variant="h6" noWrap component={Link} to="/"
                       sx={{textDecoration: "none", color: "white", mr: 2, display: {xs: "none", md: "flex"}}}>
             LOGO
           </Typography>
-          <Box sx={{flexGrow: 1, display: {xs: "none", md: "flex"}}}>
+          <Box sx={{flexGrow: 1, display: {xs: "none", sm: "flex"}}}>
             {user &&
               (pagesLoggedIn).map((page) => (
                 <Button key={page.name} component={Link} to={page.to}
@@ -84,14 +84,14 @@ export default function Navbar() {
               ))}
           </Box>
 
-          <Box sx={{flexGrow: 1, display: {xs: "flex", md: "none"}}}>
+          <Box sx={{flexGrow: 1, display: {xs: "flex", sm: "none"}}}>
             <IconButton size="large" aria-controls="menu-appbar" aria-haspopup="true" onClick={handleOpenNavMenu}
                         color="inherit">
               <MenuIcon/>
             </IconButton>
             <Menu id="menu-appbar" anchorEl={anchorElNav} anchorOrigin={{vertical: "bottom", horizontal: "left",}}
-                  keepMounted transformOrigin={{vertical: "top", horizontal: "left",}} open={Boolean(anchorElNav)}
-                  onClose={handleCloseNavMenu} sx={{display: {xs: "block", md: "none"},}}>
+                  keepMounted transformOrigin={{vertical: "top", horizontal: "left",}} open={anchorElNav != null}
+                  onClose={handleCloseNavMenu} sx={{display: {xs: "block", sm: "none"},}}>
               {[{name: "Home", to: "/"}].concat(user ? pagesLoggedIn : pagesLoggedOut).map((page) => (
                 <MenuItem key={page.name} component={Link} to={page.to} onClick={handleCloseNavMenu}>
                   <Typography textAlign="center">{page.name}</Typography>
@@ -110,7 +110,7 @@ export default function Navbar() {
                 </Tooltip>
                 <Menu sx={{mt: "45px"}} id="menu-appbar" anchorEl={anchorElUser}
                       anchorOrigin={{vertical: "top", horizontal: "right",}} keepMounted
-                      transformOrigin={{vertical: "top", horizontal: "right",}} open={Boolean(anchorElUser)}
+                      transformOrigin={{vertical: "top", horizontal: "right",}} open={anchorElUser != null}
                       onClose={handleCloseUserMenu}>
                   {userSettings.map((setting) => (
                     <MenuItem key={setting.name} onClick={setting.onClick}>
@@ -120,7 +120,7 @@ export default function Navbar() {
                 </Menu>
               </Box>
               :
-              <Box sx={{flexGrow: 0, display: {xs: "none", md: "flex"}}}>
+              <Box sx={{flexGrow: 0, display: {xs: "none", sm: "flex"}}}>
                 {pagesLoggedOut.map((page) => (
                   <Button key={page.name} component={Link} to={page.to} variant="contained" color="secondary"
                           sx={{my: 2, mx: 1, color: "white", display: "block"}}>
