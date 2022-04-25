@@ -1,12 +1,15 @@
 import {createContext} from "react";
 
 export type User = {
-  name: String,
+  firstName: String,
+  lastName: String,
+  username: String,
+  email: String | null,
 }
 
 export type UserContextType = {
   user: User | null,
-  logIn: (username: String) => void,
+  logIn: (user: User) => void,
   logOut: () => void,
 }
 

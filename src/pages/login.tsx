@@ -32,7 +32,12 @@ export default function Login() {
     if (!validateForm())
       return;
 
-    logIn(username);
+    logIn({
+      firstName: "John",
+      lastName: "Doe",
+      username,
+      email: "johndoe@example.com"
+    });
     navigate("/");
   }
 
@@ -73,8 +78,8 @@ export default function Login() {
   }
 
   return (
-    <Box display="flex" flexDirection="column" alignItems="center" sx={{ml: 3, mr: 3, mt: 3}}>
-      <Card sx={{width: '300px'}}>
+    <Box display="flex" flexDirection="column" alignItems="center" sx={{m: 2}}>
+      <Card sx={{maxWidth: "500px"}}>
         <CardContent>
           <Box component="form" onSubmit={handleSubmitForm} noValidate autoComplete="off">
             <Grid container spacing={2}>
