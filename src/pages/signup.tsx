@@ -60,7 +60,12 @@ export default function SignUp() {
     if (!validateForm())
       return;
 
-    logIn(username);
+    logIn({
+      firstName,
+      lastName,
+      username,
+      email: email.length > 0 ? email : null
+    });
     navigate("/");
   }
 

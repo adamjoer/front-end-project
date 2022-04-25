@@ -1,3 +1,6 @@
+import {useContext} from "react";
+import UserContext from "../context/user-context";
+import {Navigate} from "react-router-dom";
 import Card from "@mui/material/Card";
 import CardContent from "@mui/material/CardContent";
 import Typography from "@mui/material/Typography";
@@ -11,13 +14,10 @@ import SaveButton from '../components/save-button';
 import Box from "@mui/material/Box";
 import Grid from "@mui/material/Grid";
 
-const dummyPerson = {
-  name: 'Petter Hansen',
-  username: 'PetterH',
-  email: 'Petter.Hansen@gmail.com',
-};
-
 export default function MyProfile() {
+  const {user} = useContext(UserContext);
+  if (!user)
+    return <Navigate replace to="/"/>
 
   return (
     <Box component="div" display="flex" flexDirection="column" alignItems="center" sx={{m: 2}}>
@@ -25,42 +25,48 @@ export default function MyProfile() {
       <Card sx={{maxWidth: "500px"}}>
         <CardContent sx={{width: "auto"}}>
           <Avatar alt='Remy Sharp' sx={{width: 64, height: 64, margin: "auto", backgroundColor: '#FD8270'}}>
-            PH
+            {`${user.firstName[0].toUpperCase()}${user.lastName[0].toUpperCase()}`}
           </Avatar>
 
           <Grid container spacing={1} sx={{mt: 1}}>
-            <Grid item xs={12} sm={3}>
+            <Grid item xs={4}>
               <Typography variant='body1' color='text.secondary' sx={{wordBreak: "break-all", fontWeight: "bold"}}>
                 Name:
               </Typography>
             </Grid>
-            <Grid item xs={12} sm={9}>
+            <Grid item xs={8}>
               <Typography variant='body1' color='text.secondary' sx={{wordBreak: "break-all"}}>
-                {dummyPerson.name}
+                {`${user.firstName} ${user.lastName}`}
               </Typography>
             </Grid>
 
-            <Grid item xs={12} sm={3}>
+            <Grid item xs={4}>
               <Typography variant='body1' color='text.secondary' sx={{wordBreak: "break-all", fontWeight: "bold"}}>
                 Username:
               </Typography>
             </Grid>
-            <Grid item xs={12} sm={9}>
+            <Grid item xs={8}>
               <Typography variant='body1' color='text.secondary' sx={{wordBreak: "break-all"}}>
-                {dummyPerson.username}
+                {user.username}
               </Typography>
             </Grid>
 
-            <Grid item xs={12} sm={3}>
-              <Typography variant='body1' color='text.secondary' sx={{wordBreak: "break-all", fontWeight: "bold"}}>
-                Email:
-              </Typography>
-            </Grid>
-            <Grid item xs={12} sm={9}>
-              <Typography variant='body1' color='text.secondary' sx={{wordBreak: "break-all"}}>
-                {dummyPerson.email}
-              </Typography>
-            </Grid>
+            {
+              user.email &&
+                <>
+                  <Grid item xs={4}>
+                    <Typography variant='body1' color='text.secondary'
+                                sx={{wordBreak: "break-all", fontWeight: "bold"}}>
+                      Email:
+                    </Typography>
+                  </Grid>
+                  <Grid item xs={8}>
+                    <Typography variant='body1' color='text.secondary' sx={{wordBreak: "break-all"}}>
+                      {user.email}
+                    </Typography>
+                  </Grid>
+              </>
+            }
           </Grid>
         </CardContent>
 
@@ -100,6 +106,23 @@ export default function MyProfile() {
                 <SaveButton/>
               </Grid>
 
+              {
+                !user.email &&
+                  <>
+                    <Grid item xs={12}>
+                      <Typography variant='body1' color='text.secondary' sx={{p: 1}}>
+                        Add your email-address:
+                      </Typography>
+                    </Grid>
+                    <Grid item xs={8}>
+                      <TextField type="text" label="Email" fullWidth/>
+                    </Grid>
+                    <Grid item xs={4}>
+                      <SaveButton/>
+                    </Grid>
+                  </>
+              }
+
               <Grid item xs={12}>
                 <Typography variant='body1' color='text.secondary' sx={{p: 1}}>
                   Change your password:
@@ -111,11 +134,11 @@ export default function MyProfile() {
               <Grid item xs={8}>
                 <TextField type="password" label="New password" fullWidth/>
               </Grid>
-              <Grid item xs={4}>
-                <SaveButton/>
-              </Grid>
               <Grid item xs={8}>
                 <TextField type="password" label="Confirm new password" fullWidth/>
+              </Grid>
+              <Grid item xs={4}>
+                <SaveButton/>
               </Grid>
             </Grid>
           </AccordionDetails>

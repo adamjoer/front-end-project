@@ -15,10 +15,8 @@ function App() {
 
   const [user, setUser] = useState<User | null>(null)
 
-  const logIn = (username: String) => {
-    setUser({
-      name: username,
-    })
+  const logIn = (user: User) => {
+    setUser(user)
   }
 
   const logOut = () => {

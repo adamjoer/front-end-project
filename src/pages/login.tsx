@@ -32,7 +32,12 @@ export default function Login() {
     if (!validateForm())
       return;
 
-    logIn(username);
+    logIn({
+      firstName: "John",
+      lastName: "Doe",
+      username,
+      email: "johndoe@example.com"
+    });
     navigate("/");
   }
 
