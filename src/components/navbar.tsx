@@ -10,17 +10,16 @@ import Avatar from "@mui/material/Avatar";
 import Button from "@mui/material/Button";
 import Tooltip from "@mui/material/Tooltip";
 import MenuItem from "@mui/material/MenuItem";
-import {useNavigate} from "react-router-dom";
+import {Link, useNavigate} from "react-router-dom";
 import UserContext from "../context/user-context";
 import React, {useContext, useState} from "react";
 
 export default function Navbar() {
   const {user, logOut} = useContext(UserContext);
+  const navigate = useNavigate();
 
   const [anchorElNav, setAnchorElNav] = useState<HTMLElement | null>(null);
   const [anchorElUser, setAnchorElUser] = useState<HTMLElement | null>(null);
-
-  const navigate = useNavigate();
 
   const pagesLoggedIn = [
     {name: "Recipes", to: "/recipes"},
@@ -37,7 +36,7 @@ export default function Navbar() {
     {
       name: "Profile",
       onClick: () => {
-        navigate("/myprofile");
+        navigate("/my-profile");
         setAnchorElUser(null);
       }
     },
@@ -71,14 +70,14 @@ export default function Navbar() {
       <Container maxWidth="xl" sx={{position: "relative", top: "50%", transform: "translateY(-50%)"}}>
         <Toolbar disableGutters>
 
-          <Typography variant="h6" noWrap component="div" sx={{mr: 2, display: {xs: "none", sm: "flex"}}}
-                      onClick={() => (navigate("/"))}>
+          <Typography variant="h6" noWrap component={Link} to="/"
+                      sx={{textDecoration: "none", color: "white", mr: 2, display: {xs: "none", md: "flex"}}}>
             LOGO
           </Typography>
           <Box sx={{flexGrow: 1, display: {xs: "none", sm: "flex"}}}>
             {user &&
               (pagesLoggedIn).map((page) => (
-                <Button key={page.name} onClick={() => (navigate(page.to))}
+                <Button key={page.name} component={Link} to={page.to}
                         sx={{my: 2, color: "white", display: "block"}}>
                   {page.name}
                 </Button>
@@ -94,10 +93,7 @@ export default function Navbar() {
                   keepMounted transformOrigin={{vertical: "top", horizontal: "left",}} open={anchorElNav != null}
                   onClose={handleCloseNavMenu} sx={{display: {xs: "block", sm: "none"},}}>
               {[{name: "Home", to: "/"}].concat(user ? pagesLoggedIn : pagesLoggedOut).map((page) => (
-                <MenuItem key={page.name} onClick={() => {
-                  navigate(page.to);
-                  setAnchorElNav(null);
-                }}>
+                <MenuItem key={page.name} component={Link} to={page.to} onClick={handleCloseNavMenu}>
                   <Typography textAlign="center">{page.name}</Typography>
                 </MenuItem>
               ))}
@@ -126,7 +122,7 @@ export default function Navbar() {
               :
               <Box sx={{flexGrow: 0, display: {xs: "none", sm: "flex"}}}>
                 {pagesLoggedOut.map((page) => (
-                  <Button key={page.name} variant="contained" color="secondary" onClick={() => (navigate(page.to))}
+                  <Button key={page.name} component={Link} to={page.to} variant="contained" color="secondary"
                           sx={{my: 2, mx: 1, color: "white", display: "block"}}>
                     {page.name}
                   </Button>
