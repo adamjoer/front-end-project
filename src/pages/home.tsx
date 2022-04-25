@@ -87,7 +87,7 @@ export default function Home() {
             </Grid>
           })}
         </Grid>
-          <Button sx={{color: "white"}} id="btn-all-recipes" onClick={goToRecipes} disabled={!user} color="secondary" variant="contained">See all recipes</Button>
+        <Button sx={{color: "white"}} id="btn-all-recipes" onClick={goToRecipes} disabled={!user} color="secondary" variant="contained">See all recipes</Button>
       </div>
     </div>
   );
