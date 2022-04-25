@@ -49,7 +49,7 @@ export default function ActionAreaCard(props: ActionAreaCardProps) {
   }
 
   return (
-    <Card onClick={() => props.selectFunc()}>
+    <Card onClick={() => props.selectFunc()} sx={{':hover': {bgcolor: "#DCE3DF", transition: '0.5s'}}}>
       <CardActionArea>
         <CardMedia
           component="img"

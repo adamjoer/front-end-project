@@ -135,14 +135,20 @@ export default function Recipes() {
 
       <Grid container spacing={2}>
         <Grid item xs={1} sm={3} display={{xs: "none", sm: "initial"}}>
-            <h1 style={{paddingLeft: "16px", marginBottom: "0"}}>Recipes</h1>
+          <h1 style={{paddingLeft: "16px", marginBottom: "0"}}>Recipes</h1>
         </Grid>
         <Grid item xs={12} sm={9}>
           <Box component="form" onSubmit={handleSearch} sx={{pt: 2, pr: 2, pb: 1, pl: 2}}>
             <TextField fullWidth type="text" value={filterString}
                        onChange={x => setFilterString(x.target.value)} label="Search for a recipe name"
                        variant="outlined"
-                       InputProps={{endAdornment: <Button type="submit" variant="outlined">Search</Button>}}
+                       InputProps={{
+                         endAdornment: <Button type="submit" variant="outlined" sx={{
+                           backgroundColor: "white",
+                           color: "#FD8270",
+                           ':hover': {backgroundColor: '#FD8270', color: "white", transition: '0.5s'}
+                         }}>Search</Button>
+                       }}
             />
           </Box>
         </Grid>

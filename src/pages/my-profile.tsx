@@ -88,7 +88,8 @@ export default function MyProfile() {
                 </Typography>
               </Grid>
               <Grid item xs={8}>
-                <TextField type="text" label="New first name" fullWidth/>
+                <TextField type="text" label="New first name" fullWidth
+                           sx={{':hover': {backgroundColor: "#E0E0E0", transition: '0.5s'}}}/>
               </Grid>
               <Grid item xs={4}>
                 <SaveButton/>
@@ -100,7 +101,8 @@ export default function MyProfile() {
                 </Typography>
               </Grid>
               <Grid item xs={8}>
-                <TextField type="text" label="New last name" fullWidth/>
+                <TextField type="text" label="New last name" fullWidth
+                           sx={{':hover': {backgroundColor: "#E0E0E0", transition: '0.5s'}}}/>
               </Grid>
               <Grid item xs={4}>
                 <SaveButton/>
@@ -115,7 +117,8 @@ export default function MyProfile() {
                       </Typography>
                     </Grid>
                     <Grid item xs={8}>
-                      <TextField type="text" label="Email" fullWidth/>
+                        <TextField type="text" label="Email" fullWidth
+                                   sx={{':hover': {backgroundColor: "#E0E0E0", transition: '0.5s'}}}/>
                     </Grid>
                     <Grid item xs={4}>
                       <SaveButton/>
@@ -129,13 +132,16 @@ export default function MyProfile() {
                 </Typography>
               </Grid>
               <Grid item xs={8}>
-                <TextField type="password" label="Old password" fullWidth/>
+                <TextField type="password" label="Old password" fullWidth
+                           sx={{':hover': {backgroundColor: "#E0E0E0", transition: '0.5s'}}}/>
               </Grid>
               <Grid item xs={8}>
-                <TextField type="password" label="New password" fullWidth/>
+                <TextField type="password" label="New password" fullWidth
+                           sx={{':hover': {backgroundColor: "#E0E0E0", transition: '0.5s'}}}/>
               </Grid>
               <Grid item xs={8}>
-                <TextField type="password" label="Confirm new password" fullWidth/>
+                <TextField type="password" label="Confirm new password" fullWidth
+                           sx={{':hover': {backgroundColor: "#E0E0E0", transition: '0.5s'}}}/>
               </Grid>
               <Grid item xs={4}>
                 <SaveButton/>

@@ -78,7 +78,12 @@ export default function Navbar() {
             {user &&
               (pagesLoggedIn).map((page) => (
                 <Button key={page.name} component={Link} to={page.to}
-                        sx={{my: 2, color: "white", display: "block"}}>
+                        sx={{
+                          my: 2,
+                          color: "white",
+                          display: "block",
+                          ':hover': {backgroundColor: '#FD8270', transition: '0.5s', fontSize: '18px'}
+                        }}>
                   {page.name}
                 </Button>
               ))}
@@ -123,7 +128,13 @@ export default function Navbar() {
               <Box sx={{flexGrow: 0, display: {xs: "none", sm: "flex"}}}>
                 {pagesLoggedOut.map((page) => (
                   <Button key={page.name} component={Link} to={page.to} variant="contained" color="secondary"
-                          sx={{my: 2, mx: 1, color: "white", display: "block"}}>
+                          sx={{
+                            my: 2,
+                            mx: 1,
+                            color: "white",
+                            display: "block",
+                            ':hover': {backgroundColor: '#FD8270', transition: '0.5s', fontSize: '18px'}
+                          }}>
                     {page.name}
                   </Button>
                 ))}

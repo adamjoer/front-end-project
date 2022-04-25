@@ -1,5 +1,6 @@
 import "./home.css"
 import Image from "../../src/images/food_image.jpg"
+
 import Logo from "../../src/images/food_logo.png"
 import React, {useContext} from "react";
 import {Button, Grid} from "@mui/material";
@@ -87,7 +88,7 @@ export default function Home() {
             </Grid>
           })}
         </Grid>
-        <Button sx={{color: "white"}} id="btn-all-recipes" onClick={goToRecipes} disabled={!user} color="secondary" variant="contained">See all recipes</Button>
+        <Button sx={{color: "white", ':hover':{ transition: '0.5s', fontSize:'18px'}}} id="btn-all-recipes" onClick={goToRecipes} disabled={!user} color="secondary" variant="contained">See all recipes</Button>
       </div>
     </div>
   );

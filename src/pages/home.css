@@ -3,22 +3,22 @@
   width: 100%;
 }
 
-#welcome-box{
+#welcome-box {
   float: left;
   width: 67.1%;
   height: 408px;
-  background-color: #355E3B;
+  background-color: #476051;
 }
 
 #welcome-box p {
-  margin-left:50px;
+  margin-left: 50px;
   color: white;
   width: 300px;
   font-size: 30px;
 }
 
 #welcome-image {
-  float:right;
+  float: right;
   width: max-content;
 }
 
