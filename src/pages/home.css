@@ -13,8 +13,9 @@
 #welcome-box p {
   margin-left: 50px;
   color: white;
-  width: 300px;
+  width: 500px;
   font-size: 30px;
+  font-family: 'Gill Sans', 'Gill Sans MT', Calibri, 'Trebuchet MS', sans-serif;
 }
 
 #welcome-image {
@@ -28,5 +29,10 @@
 }
 
 #row {
+  margin-left: 20px;
+}
+
+#title-recipes {
+  font-family: 'Gill Sans', 'Gill Sans MT', Calibri, 'Trebuchet MS', sans-serif;
   margin-left: 20px;
 }

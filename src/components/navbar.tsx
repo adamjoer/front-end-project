@@ -79,7 +79,7 @@ export default function Navbar() {
             {user &&
               (pagesLoggedIn).map((page) => (
                 <Button key={page.name} onClick={() => (navigate(page.to))}
-                        sx={{my: 2, color: "white", display: "block", ':hover':{bgcolor: '#FD8270', transition: '0.5s', fontSize:'18px'} }}>
+                        sx={{my: 2, color: "white", display: "block", ':hover':{bgcolor: '#FD8270', transition: '0.3s', fontSize:'16px'} }}>
                   {page.name}
                 </Button>
               ))}
@@ -127,7 +127,7 @@ export default function Navbar() {
               <Box sx={{flexGrow: 0, display: {xs: "none", md: "flex"}}}>
                 {pagesLoggedOut.map((page) => (
                   <Button key={page.name} variant="contained" color="secondary" onClick={() => (navigate(page.to))}
-                          sx={{my: 2, mx: 1, color: "white", display: "block", ':hover':{bgcolor: '#FD8270', transition: '0.5s', fontSize:'18px'}}}>
+                          sx={{my: 2, mx: 1, color: "white", display: "block", ':hover':{bgcolor: '#FD8270', transition: '0.3s', fontSize:'16px'}}}>
                     {page.name}
                   </Button>
                 ))}

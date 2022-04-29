@@ -125,7 +125,13 @@ export const ModalText: React.FC<ModalProps> = (props: ModalProps = {titleString
                   return <StarOutlineIcon key={x} style={{fill: '#476051', margin:'10px'}}/>
                 }
               )}
-            <Button style={{backgroundColor: "#FD8270", padding: "5px 10px", color:'white'}}> Add vote</Button>
+            <Button sx={{bgcolor: "white", color: "#FD8270", ':hover':{bgcolor: '#FD8270', color:"white", transition: '0.3s'}}}
+      style={{
+        border: '2px #FD8270 solid',
+        
+        margin: '10px',
+      
+      }}> Add vote</Button>
             </div>
         </div>
       </Grid>

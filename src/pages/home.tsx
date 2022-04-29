@@ -69,7 +69,7 @@ export default function Home() {
       <div style={{display: "flex"}}>
         <div id="welcome-box" style={{width: "calc(100vw - 643px)"}}>
           <img src={Logo}/>
-          <p>Find popular dishes, make food and vote with *name *</p>
+          <p>Find inspiration and discover recipes on everyday dishes, and vote to save them for later. </p>
         </div>
         <div id="welcome-image" style={{width: "400px"}}>
           <img src={Image}/>
@@ -77,7 +77,7 @@ export default function Home() {
 
       </div>
 
-      <h2>Popular recipes this week:</h2>
+      <h2 id="title-recipes">Popular recipes this week:</h2>
       <div id="row">
         <Grid container spacing={2}>
           {dummyRecipes.map(x => {
