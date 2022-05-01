@@ -42,18 +42,18 @@ class BackendApi{
   }
 
   public addListToUser(userId: number, listTitle: String){
-    axios.post<String>(`${this.BASE_URL}/lists`, {user_id: userId, title: listTitle}).then(value => console.log(value.data)) //This is for logging the response of the post
+    return axios.post<String>(`${this.BASE_URL}/lists`, {user_id: userId, title: listTitle}).then(value => console.log(value.data)) //This is for logging the response of the post
   }
 
   public addRecipeToList(recipeId: number, listId: number){
-    axios.post<String>(`${this.BASE_URL}/lists/recipe`, {recipe_id: recipeId, list_id: listId}).then(value => console.log(value.data))
+    return axios.post<String>(`${this.BASE_URL}/lists/recipe`, {recipe_id: recipeId, list_id: listId}).then(value => console.log(value.data))
   }
 
   public addToRatings(recipeId: number, userId: number, ratingScore: number){
-    axios.post<String>(`${this.BASE_URL}/ratings`, {recipe_id: recipeId, user_id: userId, score: ratingScore}).then(value => console.log(value.data))
+    return axios.post<String>(`${this.BASE_URL}/ratings`, {recipe_id: recipeId, user_id: userId, score: ratingScore}).then(value => console.log(value.data))
   }
 
   public addUser(userName: String, firstName: String, lastName: String, email: String, passwordHash: String){
-    axios.post<String>(`${this.BASE_URL}/users/register`, {username: userName, first_name: firstName, last_name: lastName, email: email, password_hash: passwordHash}).then(value => console.log(value.data))
+    return axios.post<String>(`${this.BASE_URL}/users/register`, {username: userName, first_name: firstName, last_name: lastName, email: email, password_hash: passwordHash}).then(value => console.log(value.data))
   }
 }
