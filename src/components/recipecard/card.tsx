@@ -59,7 +59,7 @@ export default function ActionAreaCard(props: ActionAreaCardProps) {
           loading="lazy"
         />
         <CardContent className="cardcontentwrap">
-          <Typography gutterBottom variant="h5">
+          <Typography gutterBottom variant="h5" style={{whiteSpace: "nowrap", textOverflow: "ellipsis", overflow: "hidden", display: "inherit"}}>
             {props.titleString}
           </Typography>
           <div style={{display: "flex", flexWrap: "nowrap", justifyContent: "space-evenly"}}>

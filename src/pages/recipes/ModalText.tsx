@@ -6,7 +6,7 @@ import SoupKitchenIcon from '@mui/icons-material/SoupKitchen';
 import AvTimerIcon from '@mui/icons-material/AvTimer';
 import Grid from '@mui/material/Grid';
 import Card from '@mui/material/Card';
-import {CardActionArea} from "@mui/material";
+import {Button, CardActionArea} from "@mui/material";
 import CardMedia from "@mui/material/CardMedia";
 import Typography from "@mui/material/Typography";
 import CardContent from "@mui/material/CardContent";
@@ -41,10 +41,18 @@ interface ModalProps {
   rank: Number;
   skill: string;
   time: Number;
-
+  directionRes: string[];
+  ingredientRes: any[];
+  saveRecipeList: string[];
+  id: string;
+  removeOrAddIdToList: (id:string, type:string) => void,
 }
 
 export default function ModalText(props: ModalProps) {
+  const isSaved = props.saveRecipeList.includes(props.id.toString());
+  console.log(isSaved)
+
+  
   return (
     <div className='content_wrapper_1' style={{height: "100%", width: "100%", overflow: "hidden"}}>
       <div className='content_wrapper_2' style={{height: "100%", width: "100%", overflow: "auto", paddingRight: "20px"}}>
@@ -60,9 +68,9 @@ export default function ModalText(props: ModalProps) {
           </CardActionArea>
 
           <CardContent className='cardcontentwrap'>
-            <Typography gutterBottom variant="h5" style={{textAlign: "center"}}>
-              {props.titleString}
-            </Typography>
+              <Typography gutterBottom variant="h5" style={{textAlign: "center"}}>
+                {props.titleString}
+              </Typography>
 
             <div style={{display: "flex", flexWrap: "nowrap", justifyContent: "space-evenly", margin: '20px'}}>
               <div>
@@ -90,7 +98,16 @@ export default function ModalText(props: ModalProps) {
                 <Typography variant="body1" color="text.secondary" className="card_text_footer">
                   About {props.time} min
                 </Typography>
-              </div>
+              </div>x
+              <Button 
+                variant={isSaved ? "contained" : "outlined"} 
+                style={{height: "40px", width: "100px"}}
+                // onClick={() => {props.removeOrAddIdToList(props.id.toString())}}
+              >
+                {isSaved ? "Remove" : "Save"}
+              </Button>
+               
+
             </div>
 
             <Grid container spacing={2} style={{width: "calc(100%)", paddingLeft: "20px"}}>
@@ -107,8 +124,7 @@ export default function ModalText(props: ModalProps) {
                 <div className='ingredients'>
                   <h2 style={{textAlign: 'center'}}>Ingredients:</h2>
 
-                  {dummyObject.ingredients.map(x => {
-
+                  {props.ingredientRes.map(x => {
                     return <Typography key={x}>{x}</Typography>
                   })}
                 </div>
@@ -127,7 +143,7 @@ export default function ModalText(props: ModalProps) {
                   <h2 style={{textAlign: 'center'}}>Direction:</h2>
 
                   <ol>
-                    {dummyObject.direction.map(x => {
+                    {props.directionRes.map(x => {
                       return <li key={x}>{x}</li>
                     })}
                   </ol>

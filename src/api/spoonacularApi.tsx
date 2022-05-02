@@ -9,7 +9,7 @@ getRandomRecipes("x", 2).then(recipes => {
 
 */
 
-class RecipeApi{
+export class RecipeApi{
   private static instance: RecipeApi;
   private readonly BASE_URL = "https://api.spoonacular.com/recipes";
 

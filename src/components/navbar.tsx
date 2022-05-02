@@ -23,7 +23,7 @@ export default function Navbar() {
 
   const pagesLoggedIn = [
     {name: "Recipes", to: "/recipes"},
-    {name: "Favorites", to: "/favorites"},
+    // {name: "Favorites", to: "/favorites"},
     {name: "Lists", to: "/lists"},
   ];
 

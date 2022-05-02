@@ -65,7 +65,7 @@ export default function SignUp() {
       lastName,
       username,
       email: email.length > 0 ? email : null
-    });
+    }, "hej");
     navigate("/");
   }
 

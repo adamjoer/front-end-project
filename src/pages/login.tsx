@@ -37,7 +37,7 @@ export default function Login() {
       lastName: "Doe",
       username,
       email: "johndoe@example.com"
-    });
+    }, "tester12");
     navigate("/");
   }
 

@@ -1,8 +1,11 @@
-import React, {useState} from "react";
+import React, {useContext, useState} from "react";
 import {Button, Grid, Modal, TextField} from "@mui/material";
 import ActionAreaCard from "../../components/recipecard/card";
 import { Box } from '@mui/system';
 import ModalText from "./ModalText";
+import RecipeApi from "../../api/spoonacularApi";
+import { getDatabase, ref, onValue, off, set} from "firebase/database";
+import UserContext from "../../context/user-context";
 
 const style = {
   position: 'absolute',
@@ -17,106 +20,70 @@ const style = {
   p: 4
 }
 
-type Recipe = { name: string, imageString: string, rank: number, skill: string, time: number, id: number }
 
-const testRecipe: Recipe[] = [
-  {
-    name: "Pizza",
-    imageString: "https://img.mummum.dk/wp-content/uploads/2020/09/pizza-med-pepperoni-.jpg",
-    rank: 1.1,
-    skill: "Easy",
-    time: 65,
-    id: 0
-  },
-  {
-    name: "Soup",
-    imageString: "https://static.onecms.io/wp-content/uploads/sites/44/2021/05/28/spaghetti-squash-soup.jpg",
-    rank: 2.76,
-    skill: "Easy",
-    time: 25,
-    id: 1
-  },
-  {
-    name: "Pizzza",
-    imageString: "https://img.mummum.dk/wp-content/uploads/2020/09/pizza-med-pepperoni-.jpg",
-    rank: 1.1,
-    skill: "Easy",
-    time: 65,
-    id: 2
-  },
-  {
-    name: "Soupsss",
-    imageString: "https://static.onecms.io/wp-content/uploads/sites/44/2021/05/28/spaghetti-squash-soup.jpg",
-    rank: 2.76,
-    skill: "Easy",
-    time: 25,
-    id: 3
-  },
-  {
-    name: "Fish N Chips",
-    imageString: "https://madfilosofie.dk/wp-content/uploads/2019/03/fish-n-chips13.jpg",
-    rank: 4.26,
-    skill: "Easy",
-    time: 35,
-    id: 9
-  },
-  {
-    name: "Pizzzza",
-    imageString: "https://img.mummum.dk/wp-content/uploads/2020/09/pizza-med-pepperoni-.jpg",
-    rank: 1.1,
-    skill: "Easy",
-    time: 65,
-    id: 4
-  },
-  {
-    name: "Soupss",
-    imageString: "https://static.onecms.io/wp-content/uploads/sites/44/2021/05/28/spaghetti-squash-soup.jpg",
-    rank: 2.76,
-    skill: "Easy",
-    time: 25,
-    id: 5
-  },
-  {
-    name: "Pizzzzza",
-    imageString: "https://img.mummum.dk/wp-content/uploads/2020/09/pizza-med-pepperoni-.jpg",
-    rank: 1.1,
-    skill: "Easy",
-    time: 65,
-    id: 6
-  },
-  {
-    name: "Soups",
-    imageString: "https://static.onecms.io/wp-content/uploads/sites/44/2021/05/28/spaghetti-squash-soup.jpg",
-    rank: 2.76,
-    skill: "Easy",
-    time: 25,
-    id: 7
-  },
-  {
-    name: "Fish N Chips",
-    imageString: "https://madfilosofie.dk/wp-content/uploads/2019/03/fish-n-chips13.jpg",
-    rank: 4.26,
-    skill: "Easy",
-    time: 35,
-    id: 8
-  }
-]
+
+type Recipe = { name: string, imageString: string, rank: number, skill: string, time: number, id: string, directionRes: string[], ingredientRes: string[] }
+type SaveRecipeType = {id: string, list: string}
 
 export default function Recipes() {
 
   const [filterString, setFilterString] = useState("");
-
   const [selectedRecipe, setSelectedRecipe] = useState<Recipe | null>(null);
-
   const [listOfRecipes, setListOfRecipes] = useState<Recipe[]>([]);
+  const {user} = useContext(UserContext);
+  const [saveRecipeList, setSaveRecipeList] = useState<string[]>([])
+  
+  const db = getDatabase();
+  const starCountRef = ref(db, 'users/' + (user ? user.username : ""));
+
+  const removeOrAddIdFromList = (id:string, type:string) => {
+    if (saveRecipeList.includes(id)){
+      setSaveRecipeList(saveRecipeList.filter((x:string) => {return x !== id}))
+    } else {
+      const test = ref(db, 'users/' + (user ? user.username : "")+id);
+      // test.update({"hej": "hej"})
+      set(test, id)
+      console.log(test)
+    }
+
+  }
+
+  console.log(saveRecipeList)
 
   const handleSearch = (event: React.FormEvent) => {
     event.preventDefault();
 
-    const newList = testRecipe.filter(y => y.name.toUpperCase().includes(filterString.toUpperCase()));
-    console.log(newList);
+    onValue(starCountRef, (snapshot) => {
+        const data = snapshot.val();
+        const keys = Object.keys(data.list);
+        setSaveRecipeList(keys)
+        off(starCountRef)
+    });
 
-    setListOfRecipes(newList);
+
+    // const newList = testRecipe.filter(y => y.name.toUpperCase().includes(filterString.toUpperCase()));
+    // console.log(newList);
+    const spoonacularList: Recipe[] = [];
+    RecipeApi.getRecipeFromString("148c595d613541f1aa97db48517343ba", filterString, 10).then(result => {
+      result.results.forEach((element: any) => {
+        const listOfSteps: string[] = [];
+        const listOfIngre: string[] = [];
+
+
+        element.analyzedInstructions[0].steps.forEach((step: any) => {
+          listOfSteps.push(step.step)
+          step.ingredients.forEach((ingredientInStep: any) => {
+            if (!listOfIngre.includes(ingredientInStep.name)){
+              listOfIngre.push(ingredientInStep.name)
+            }
+          })
+        })
+          // console.log(listOfIngre)
+          spoonacularList.push({"name": element.title, "imageString": element.image, "rank": 3, skill: "easy", "time": element.readyInMinutes, "id": element.id, "directionRes": listOfSteps, "ingredientRes": listOfIngre})
+          // console.log(element)
+      });
+      setListOfRecipes(spoonacularList);
+    })
   }
 
   return (
@@ -126,10 +93,22 @@ export default function Recipes() {
         onClose={() => setSelectedRecipe(null)}
         aria-labelledby="modal-modal-title"
         aria-describedby="modal-modal-description"
-      >
+      > 
         
         <div style={{width: "800px", height: "80%", position: "absolute", top: "50%", left: "50%", transform: "translate(-50%, -50%)"}}>
-          <ModalText titleString={"hey"} imageString={"https://static.onecms.io/wp-content/uploads/sites/44/2021/05/28/spaghetti-squash-soup.jpg"} rank={3} skill={"easy"} time={420} />
+          <ModalText 
+            removeOrAddIdToList={ removeOrAddIdFromList}
+            saveRecipeList={saveRecipeList ? saveRecipeList : [""]} 
+            titleString={selectedRecipe ? selectedRecipe.name : ""} 
+            imageString={selectedRecipe ? selectedRecipe.imageString : ""} 
+            rank={selectedRecipe ? selectedRecipe.rank : 0} 
+            skill={selectedRecipe ? selectedRecipe.skill : ""}
+            id={selectedRecipe ? selectedRecipe.id : "0"} 
+            time={selectedRecipe ? selectedRecipe.time : 0} 
+            directionRes={selectedRecipe ? selectedRecipe.directionRes : [""]}
+            ingredientRes={selectedRecipe ? selectedRecipe.ingredientRes : [""]}
+          />
+          {console.log(selectedRecipe)}
         </div>
 
       </Modal>

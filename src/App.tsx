@@ -11,15 +11,53 @@ import Recipes from './pages/recipes/recipes';
 import SignUp from "./pages/signup";
 import {createTheme, ThemeProvider} from "@mui/material";
 
-function App() {
+// Import the functions you need from the SDKs you need
+import { initializeApp } from "firebase/app";
+import { getAnalytics } from "firebase/analytics";
+import { getAuth, signInWithPopup, GoogleAuthProvider, signOut,signInWithEmailAndPassword} from "firebase/auth";
+// TODO: Add SDKs for Firebase products that you want to use
+// https://firebase.google.com/docs/web/setup#available-libraries
 
+// Your web app's Firebase configuration
+// For Firebase JS SDK v7.20.0 and later, measurementId is optional
+const firebaseConfig = {
+  apiKey: "AIzaSyD43KvYWj6dAG_ILb5tkDgXLKXbHxXYuf0",
+  authDomain: "food2side.firebaseapp.com",
+  databaseURL: "https://food2side-default-rtdb.europe-west1.firebasedatabase.app",
+  projectId: "food2side",
+  storageBucket: "food2side.appspot.com",
+  messagingSenderId: "616953678318",
+  appId: "1:616953678318:web:2a4cad4ed1528458e0a6ff",
+  measurementId: "G-N5ST53G5HR"
+};
+
+
+// Initialize Firebase
+const app = initializeApp(firebaseConfig);
+const analytics = getAnalytics(app);
+const auth = getAuth();
+
+function App() {  
   const [user, setUser] = useState<User | null>(null)
 
-  const logIn = (user: User) => {
-    setUser(user)
+  auth.onAuthStateChanged(fbuser => {
+    if (fbuser) {
+      if (!user){
+        setUser({firstName: "r", lastName: "d", username: fbuser.uid, email: fbuser.email})
+      } 
+    } else {
+      setUser(null)
+    }
+  })
+
+  const logIn = (user: User, pw: string) => {
+    // setUser(user)
+
+    signInWithEmailAndPassword(auth, "test@test.com", "test12");
   }
 
   const logOut = () => {
+    signOut(auth);
     setUser(null)
   }
 
