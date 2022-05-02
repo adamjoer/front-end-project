@@ -7,23 +7,8 @@ import RecipeApi from "../../api/spoonacularApi";
 import { getDatabase, ref, onValue, off, set} from "firebase/database";
 import UserContext from "../../context/user-context";
 
-const style = {
-  position: 'absolute',
-  top: '50%',
-  left: '50%',
-  transform: 'translate(-50%, -50%)',
-  width: 800,
-  height: '80%',
-  bgcolor: 'background.paper',
-  border: '2px solid #000',
-  boxShadow: 24,
-  p: 4
-}
-
-
-
 type Recipe = { name: string, imageString: string, rank: number, skill: string, time: number, id: string, directionRes: string[], ingredientRes: string[] }
-type SaveRecipeType = {id: string, list: string}
+
 
 export default function Recipes() {
 
@@ -37,17 +22,16 @@ export default function Recipes() {
   const starCountRef = ref(db, 'users/' + (user ? user.username : ""));
 
   const removeOrAddIdFromList = (id:string, type:any) => {
-    if (saveRecipeList.includes(id)){
-      setSaveRecipeList(saveRecipeList.filter((x:string) => {return x !== id}))
-    } else {
-      const test = ref(db, 'users/' + (user ? user.username : "")+'/list/'+id);
-      set(test, type)
-      
-    }
+    const test = ref(db, 'users/' + (user ? user.username : "")+'/list/'+id);
+    set(test, type); //Setting data in data.
 
+    onValue(starCountRef, (snapshot) => {
+      const data = snapshot.val();
+      const keys = Object.keys(data.list);
+      setSaveRecipeList(keys)
+      off(starCountRef)
+    });
   }
-
-  console.log(saveRecipeList)
 
   const handleSearch = (event: React.FormEvent) => {
     event.preventDefault();
@@ -84,7 +68,7 @@ export default function Recipes() {
       setListOfRecipes(spoonacularList);
     })
   }
-
+  
   return (
     <>
       <Modal
@@ -119,7 +103,7 @@ export default function Recipes() {
         <Grid item xs={12} sm={9}>
           <Box component="form" onSubmit={handleSearch} sx={{pt: 2, pr: 2, pb: 1, pl: 2}}>
             <TextField fullWidth type="text" value={filterString}
-                       onChange={x => setFilterString(x.target.value)} label="Search for a recipe name"
+                       onChange={(x:any) => setFilterString(x.target.value)} label="Search for a recipe name"
                        variant="outlined"
                        InputProps={{
                          endAdornment: <Button type="submit" variant="outlined" sx={{

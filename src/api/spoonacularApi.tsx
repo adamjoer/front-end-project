@@ -28,7 +28,7 @@ export class RecipeApi{
   }
 
   public getRecipesFromIdBulk(apiKey: String, stringIdBulk: String){
-    return axios.get(`${this.BASE_URL}/informationBulks?apiKey=${apiKey}&ids=${stringIdBulk}`).then(value => value.data)
+    return axios.get(`${this.BASE_URL}/informationBulk?apiKey=${apiKey}&ids=${stringIdBulk}`).then(value => value.data)
   }
 }
 

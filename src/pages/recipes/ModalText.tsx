@@ -98,7 +98,7 @@ export default function ModalText(props: ModalProps) {
                 <Typography variant="body1" color="text.secondary" className="card_text_footer">
                   About {props.time} min
                 </Typography>
-              </div>x
+              </div>
               <Button 
                 variant={isSaved ? "contained" : "outlined"} 
                 style={{height: "40px", width: "100px"}}
