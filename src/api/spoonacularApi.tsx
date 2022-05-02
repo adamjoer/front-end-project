@@ -9,26 +9,29 @@ getRandomRecipes("x", 2).then(recipes => {
 
 */
 
-export class RecipeApi{
+class RecipeApi {
   private static instance: RecipeApi;
   private readonly BASE_URL = "https://api.spoonacular.com/recipes";
+  private readonly apiKey;
 
-  public static getInstance(): RecipeApi{
-    if(!RecipeApi.instance)
-      RecipeApi.instance = new RecipeApi();
-    return RecipeApi.instance;
+  private constructor() {
+    this.apiKey = process.env.REACT_APP_SPOONACULAR_API_KEY;
   }
 
-  public getRecipeFromString(apiKey: String, recipeName: String, amount: number){
-    return axios.get(`${this.BASE_URL}/complexSearch?apiKey=${apiKey}&query=${recipeName}&number=${amount}&addRecipeInformation=true`).then(value => value.data)
+  public static getInstance(): RecipeApi {
+    return this.instance || (this.instance = new this());
   }
 
-  public getRandomRecipes(apiKey: String, amount: number){
-    return axios.get(`${this.BASE_URL}/random?apiKey=${apiKey}&number=${amount}`).then(value => value.data)
+  public getRecipeFromString(searchQuery: string, amount: number) {
+    return axios.get(`${this.BASE_URL}/complexSearch?apiKey=${this.apiKey}&query=${searchQuery}&number=${amount}&addRecipeInformation=true`).then(value => value.data)
   }
 
-  public getRecipesFromIdBulk(apiKey: String, stringIdBulk: String){
-    return axios.get(`${this.BASE_URL}/informationBulks?apiKey=${apiKey}&ids=${stringIdBulk}`).then(value => value.data)
+  public getRandomRecipes(amount: number) {
+    return axios.get(`${this.BASE_URL}/random?apiKey=${this.apiKey}&number=${amount}`).then(value => value.data)
+  }
+
+  public getRecipesFromIdBulk(stringIdBulk: string) {
+    return axios.get(`${this.BASE_URL}/informationBulks?apiKey=${this.apiKey}&ids=${stringIdBulk}`).then(value => value.data)
   }
 }
 
