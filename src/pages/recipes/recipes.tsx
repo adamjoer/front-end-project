@@ -54,14 +54,16 @@ export default function Recipes() {
           const listOfSteps: string[] = [];
           const listOfIngredients: string[] = [];
 
-          element.analyzedInstructions[0].steps.forEach((step: any) => {
-            listOfSteps.push(step.step)
-            step.ingredients.forEach((ingredientInStep: any) => {
-              if (!listOfIngredients.includes(ingredientInStep.name)) {
-                listOfIngredients.push(ingredientInStep.name)
-              }
+          if (element.analyzedInstructions.length > 0) {
+            element.analyzedInstructions[0].steps.forEach((step: any) => {
+              listOfSteps.push(step.step)
+              step.ingredients.forEach((ingredientInStep: any) => {
+                if (!listOfIngredients.includes(ingredientInStep.name)) {
+                  listOfIngredients.push(ingredientInStep.name)
+                }
+              })
             })
-          })
+          }
 
           // console.log(listOfIngredients)
           spoonacularList.push({
@@ -87,7 +89,7 @@ export default function Recipes() {
   return (
     <>
       <Backdrop open={isLoadingAnimationEnabled} onClick={() => setLoadingAnimationEnabled(!isLoadingAnimationEnabled)}
-                sx={{zIndex: (theme) => theme.zIndex.drawer + 1}}>
+                sx={{zIndex: (theme) => theme.zIndex.drawer + 1 }}>
         <CircularProgress color="secondary"/>
       </Backdrop>
 
