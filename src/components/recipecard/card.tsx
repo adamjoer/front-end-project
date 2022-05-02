@@ -10,7 +10,6 @@ import AvTimerIcon from '@mui/icons-material/AvTimer';
 import StarIcon from '@mui/icons-material/Star';
 import StarHalfIcon from '@mui/icons-material/StarHalf';
 import StarOutlineIcon from '@mui/icons-material/StarOutline';
-import { ModalText } from '../../pages/recipes/ModalText';
 
 interface NavbarProps {
   imageString: string;

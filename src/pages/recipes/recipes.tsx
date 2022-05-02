@@ -3,7 +3,7 @@ import { Component } from "react";
 import { Button, Checkbox, FormControlLabel, FormGroup, Grid, Modal, TextField, Typography } from "@mui/material";
 import ActionAreaCard from "../../components/recipecard/card";
 import { Box } from '@mui/system';
-import { ModalText } from './ModalText';
+import ModalText from "./ModalText";
 
 type recipeState = {
   filterString: string,
