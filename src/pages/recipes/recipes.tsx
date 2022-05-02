@@ -25,8 +25,7 @@ const style = {
   bgcolor: 'background.paper',
   border: '2px solid #000',
   boxShadow: 24,
-  p: 4,
-  overflow: "scroll"
+  p: 4
 }
 
 
@@ -145,10 +144,14 @@ export class Recipes extends Component<{}, recipeState> {
         aria-labelledby="modal-modal-title"
         aria-describedby="modal-modal-description"
       >
-        <Box sx={style}>
-          <ModalText titleString={"hey"} imageString={"image"} rank={3} skill={"easy"} time={420} />
+        {/* <Box sx={style}> */}
+        
+        <div style={{width: "800px", height: "80%", position: "absolute", top: "50%", left: "50%", transform: "translate(-50%, -50%)"}}>
+          <ModalText titleString={"hey"} imageString={"https://static.onecms.io/wp-content/uploads/sites/44/2021/05/28/spaghetti-squash-soup.jpg"} rank={3} skill={"easy"} time={420} />
+        </div>
 
-        </Box>
+
+        {/* </Box> */}
       </Modal>
       <Grid container spacing={2}>
         <Grid item xs={4} md={3} lg={3}>
