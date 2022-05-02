@@ -13,6 +13,7 @@ import MenuItem from "@mui/material/MenuItem";
 import {Link, useNavigate} from "react-router-dom";
 import UserContext from "../context/user-context";
 import React, {useContext, useState} from "react";
+import Image from "../images/logo2.png"
 
 export default function Navbar() {
   const {user, logOut} = useContext(UserContext);
@@ -70,10 +71,10 @@ export default function Navbar() {
       <Container maxWidth="xl" sx={{position: "relative", top: "50%", transform: "translateY(-50%)"}}>
         <Toolbar disableGutters>
 
-          <Typography variant="h6" noWrap component={Link} to="/"
-                      sx={{textDecoration: "none", color: "white", mr: 2, display: {xs: "none", md: "flex"}}}>
-            LOGO
-          </Typography>
+          <Box component={Link} to="/" sx={{mr: 2, display: {xs: "none", sm: "flex"}}}>
+            <img src={Image} alt="Logo" style={{height: "60px"}}/>
+          </Box>
+
           <Box sx={{flexGrow: 1, display: {xs: "none", sm: "flex"}}}>
             {user &&
               (pagesLoggedIn).map((page) => (
