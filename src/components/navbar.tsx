@@ -71,9 +71,10 @@ export default function Navbar() {
       <Container maxWidth="xl" sx={{position: "relative", top: "50%", transform: "translateY(-50%)"}}>
         <Toolbar disableGutters>
 
-        <div id="logo-image" >
-          <img src={Image} style={{height:'70px'}}/>
-        </div>
+          <Box component={Link} to="/" sx={{mr: 2, display: {xs: "none", sm: "flex"}}}>
+            <img src={Image} alt="Logo" style={{height: "60px"}}/>
+          </Box>
+
           <Box sx={{flexGrow: 1, display: {xs: "none", sm: "flex"}}}>
             {user &&
               (pagesLoggedIn).map((page) => (
