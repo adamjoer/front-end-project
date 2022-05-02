@@ -1,5 +1,5 @@
 import "./home.css"
-import Image from "../../src/images/frontpage.png"
+import Image from "../../src/images/frontpage1.png"
 
 import Logo from "../../src/images/food_logo.png"
 import React, {useContext} from "react";
@@ -66,15 +66,14 @@ export default function Home() {
 
   return(
     <div id="content">
-      <div style={{display: "flex", width: "calc(100vw - 643px)", position: 'relative', height: '400px'}}>
-        <div id="welcome-box" >
+      <div style={{display: "flex"}}>
+        <div id="welcome-box" style={{width: "calc(100vw - 643px)"}}>
           
-          <p>Find popular dishes, make food and vote with *name *</p>
-          
+          <p> Be inspired by looking through popular dishes, get the reciepe and vote on your favourite dishes with Taste it!</p>
           
         </div>
-        <div id="welcome-image">
-          <img src={Image}/>
+        <div id="welcome-image" style={{width: "400px"}}>
+          <img src={Image} style={{width: '700px', height:'408px'}} alt='Food'/>
         </div>
 
       </div>
