@@ -45,7 +45,7 @@ interface ModalProps {
   ingredientRes: any[];
   saveRecipeList: string[];
   id: string;
-  removeOrAddIdToList: (id:string, type:string) => void,
+  removeOrAddIdToList: (id:string, type:any) => void,
 }
 
 export default function ModalText(props: ModalProps) {
@@ -102,7 +102,7 @@ export default function ModalText(props: ModalProps) {
               <Button 
                 variant={isSaved ? "contained" : "outlined"} 
                 style={{height: "40px", width: "100px"}}
-                // onClick={() => {props.removeOrAddIdToList(props.id.toString())}}
+                onClick={() => {props.removeOrAddIdToList(props.id.toString(), isSaved ? null : "aftenstest")}}
               >
                 {isSaved ? "Remove" : "Save"}
               </Button>

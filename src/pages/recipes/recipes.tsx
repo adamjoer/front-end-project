@@ -36,14 +36,13 @@ export default function Recipes() {
   const db = getDatabase();
   const starCountRef = ref(db, 'users/' + (user ? user.username : ""));
 
-  const removeOrAddIdFromList = (id:string, type:string) => {
+  const removeOrAddIdFromList = (id:string, type:any) => {
     if (saveRecipeList.includes(id)){
       setSaveRecipeList(saveRecipeList.filter((x:string) => {return x !== id}))
     } else {
-      const test = ref(db, 'users/' + (user ? user.username : "")+id);
-      // test.update({"hej": "hej"})
-      set(test, id)
-      console.log(test)
+      const test = ref(db, 'users/' + (user ? user.username : "")+'/list/'+id);
+      set(test, type)
+      
     }
 
   }
