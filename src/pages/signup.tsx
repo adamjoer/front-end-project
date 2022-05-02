@@ -60,7 +60,12 @@ export default function SignUp() {
     if (!validateForm())
       return;
 
-    logIn(username);
+    logIn({
+      firstName,
+      lastName,
+      username,
+      email: email.length > 0 ? email : null
+    });
     navigate("/");
   }
 
@@ -130,8 +135,8 @@ export default function SignUp() {
   }
 
   return (
-    <Box display="flex" flexDirection="column" alignItems="center" sx={{ml: 3, mr: 3, mt: 3}}>
-      <Card sx={{minWidth: '300px', maxWidth: '600px'}}>
+    <Box display="flex" flexDirection="column" alignItems="center" sx={{m: 2}}>
+      <Card sx={{maxWidth: "500px"}}>
         <CardContent>
           <Box component="form" onSubmit={handleSubmitForm} noValidate autoComplete="off">
             <Grid container spacing={2}>
@@ -144,11 +149,12 @@ export default function SignUp() {
                            error={lastNameError.length > 0} helperText={lastNameError} fullWidth/>
               </Grid>
 
-              <Grid item xs={12} sm={6}>
+              <Grid item xs={12}>
                 <TextField label="Username" type="text" required onChange={handleUsernameChange}
                            error={usernameError.length > 0} helperText={usernameError} fullWidth/>
               </Grid>
-              <Grid item xs={12} sm={6}>
+
+              <Grid item xs={12}>
                 <TextField label="E-mail" type="text" onChange={handleEmailChange}
                            error={emailError.length > 0} helperText={emailError} fullWidth/>
               </Grid>

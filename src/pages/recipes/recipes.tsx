@@ -1,19 +1,8 @@
-import './recipes.css';
-import { Component } from "react";
-import { Button, Checkbox, FormControlLabel, FormGroup, Grid, Modal, TextField, Typography } from "@mui/material";
+import React, {useState} from "react";
+import {Button, Grid, Modal, TextField} from "@mui/material";
 import ActionAreaCard from "../../components/recipecard/card";
 import { Box } from '@mui/system';
 import ModalText from "./ModalText";
-
-type recipeState = {
-  filterString: string,
-  typeFilter: string,
-  selectedRecipe: any;
-  listOfRecipies: {name: string, imageString: string, rank: number, skill: string, time: number, type: string, id: string}[],
-}
-
-const typeOfFood = ["Paste", "Pizza", "Salad", "Wok", "Soup", "Other"]
-
 
 const style = {
   position: 'absolute',
@@ -28,17 +17,16 @@ const style = {
   p: 4
 }
 
+type Recipe = { name: string, imageString: string, rank: number, skill: string, time: number, id: number }
 
-
-const testRecipe = [
+const testRecipe: Recipe[] = [
   {
     name: "Pizza",
     imageString: "https://img.mummum.dk/wp-content/uploads/2020/09/pizza-med-pepperoni-.jpg",
     rank: 1.1,
     skill: "Easy",
     time: 65,
-    type: "Pizza",
-    id: "0"
+    id: 0
   },
   {
     name: "Soup",
@@ -46,8 +34,7 @@ const testRecipe = [
     rank: 2.76,
     skill: "Easy",
     time: 25,
-    type: "Soup",
-    id: "1"
+    id: 1
   },
   {
     name: "Pizzza",
@@ -55,8 +42,7 @@ const testRecipe = [
     rank: 1.1,
     skill: "Easy",
     time: 65,
-    type: "Pizza",
-    id: "2"
+    id: 2
   },
   {
     name: "Soupsss",
@@ -64,8 +50,7 @@ const testRecipe = [
     rank: 2.76,
     skill: "Easy",
     time: 25,
-    type: "Soup",
-    id: "3"
+    id: 3
   },
   {
     name: "Fish N Chips",
@@ -73,8 +58,7 @@ const testRecipe = [
     rank: 4.26,
     skill: "Easy",
     time: 35,
-    type: "Other",
-    id: "9"
+    id: 9
   },
   {
     name: "Pizzzza",
@@ -82,8 +66,7 @@ const testRecipe = [
     rank: 1.1,
     skill: "Easy",
     time: 65,
-    type: "Pizza",
-    id: "4"
+    id: 4
   },
   {
     name: "Soupss",
@@ -91,8 +74,7 @@ const testRecipe = [
     rank: 2.76,
     skill: "Easy",
     time: 25,
-    type: "Soup",
-    id: "5"
+    id: 5
   },
   {
     name: "Pizzzzza",
@@ -100,8 +82,7 @@ const testRecipe = [
     rank: 1.1,
     skill: "Easy",
     time: 65,
-    type: "Pizza",
-    id: "6"
+    id: 6
   },
   {
     name: "Soups",
@@ -109,8 +90,7 @@ const testRecipe = [
     rank: 2.76,
     skill: "Easy",
     time: 25,
-    type: "Soup",
-    id: "7"
+    id: 7
   },
   {
     name: "Fish N Chips",
@@ -118,84 +98,73 @@ const testRecipe = [
     rank: 4.26,
     skill: "Easy",
     time: 35,
-    type: "Other",
-    id: "8"
+    id: 8
   }
 ]
 
-export class Recipes extends Component<{}, recipeState> {
-  componentWillMount() {
-    this.setState({
-      filterString: "",
-      typeFilter: "",
-      selectedRecipe: undefined,
-      listOfRecipies: [],
-    })
+export default function Recipes() {
+
+  const [filterString, setFilterString] = useState("");
+
+  const [selectedRecipe, setSelectedRecipe] = useState<Recipe | null>(null);
+
+  const [listOfRecipes, setListOfRecipes] = useState<Recipe[]>([]);
+
+  const handleSearch = (event: React.FormEvent) => {
+    event.preventDefault();
+
+    const newList = testRecipe.filter(y => y.name.toUpperCase().includes(filterString.toUpperCase()));
+    console.log(newList);
+
+    setListOfRecipes(newList);
   }
 
-  render() {
-    const { filterString, typeFilter, selectedRecipe, listOfRecipies } = this.state;
-    console.log(selectedRecipe)
-    return <div className="recipy_wrapper">
-
+  return (
+    <>
       <Modal
-        open={selectedRecipe !== undefined}
-        onClose={() => this.setState({ selectedRecipe: undefined })}
+        open={selectedRecipe !== null}
+        onClose={() => setSelectedRecipe(null)}
         aria-labelledby="modal-modal-title"
         aria-describedby="modal-modal-description"
       >
-        {/* <Box sx={style}> */}
         
         <div style={{width: "800px", height: "80%", position: "absolute", top: "50%", left: "50%", transform: "translate(-50%, -50%)"}}>
           <ModalText titleString={"hey"} imageString={"https://static.onecms.io/wp-content/uploads/sites/44/2021/05/28/spaghetti-squash-soup.jpg"} rank={3} skill={"easy"} time={420} />
         </div>
 
-
-        {/* </Box> */}
       </Modal>
-      <Grid container spacing={2}>
-        <Grid item xs={4} md={3} lg={3}>
-          <div className="recipy_filter_wrapper">
-            <h1>Recipes</h1>
-          </div>
-        </Grid>
-        <Grid item xs={8} md={9} lg={9}>
-          <div style={{ padding: "20px 15px 0px 0px" }}>
 
-            <TextField fullWidth id="outlined-basic" value={filterString} onChange={x => {
-              this.setState({ filterString: x.target.value })
-            }} label="Search for a recipe name" variant="outlined"
-              InputProps={{ endAdornment: <Button onClick={() => this.handleSearch()} variant="outlined">Search</Button> }}
+      <Grid container spacing={2}>
+        <Grid item xs={1} sm={3} display={{xs: "none", sm: "initial"}}>
+          <h1 style={{paddingLeft: "16px", marginBottom: "0"}}>Recipes</h1>
+        </Grid>
+        <Grid item xs={12} sm={9}>
+          <Box component="form" onSubmit={handleSearch} sx={{pt: 2, pr: 2, pb: 1, pl: 2}}>
+            <TextField fullWidth type="text" value={filterString}
+                       onChange={x => setFilterString(x.target.value)} label="Search for a recipe name"
+                       variant="outlined"
+                       InputProps={{
+                         endAdornment: <Button type="submit" variant="outlined" sx={{
+                           backgroundColor: "white",
+                           color: "#FD8270",
+                           ':hover': {backgroundColor: '#FD8270', color: "white", transition: '0.5s'}
+                         }}>Search</Button>
+                       }}
             />
-
-
-          </div>
+          </Box>
         </Grid>
       </Grid>
-      <hr />
-      <Grid container spacing={2}>
 
-        <Grid item xs={12}>
-          <Grid container spacing={2} style={{ marginTop: "0px", paddingLeft: "10px" }}>
-            {listOfRecipies.map(x => {
-              return <Grid key={x.id} item xs={4} md={3} lg={3}>
-                <ActionAreaCard imageString={x.imageString} titleString={x.name} rank={x.rank} skill={x.skill}
-                  time={x.time} selectFunc={() => { this.setState({ selectedRecipe: x }) }} />
-              </Grid>
-            })}
+      <hr/>
+
+      <Grid container spacing={2} sx={{pt: 1, pl: 2, pb: 2, pr: 2}}>
+        {listOfRecipes.map(x => (
+          <Grid key={x.id} item xs={12} sm={4} md={3} lg={2.4} xl={2}>
+            <ActionAreaCard imageString={x.imageString} titleString={x.name} rank={x.rank} skill={x.skill}
+                            time={x.time} selectFunc={() => setSelectedRecipe(x)}/>
           </Grid>
-        </Grid>
+        ))}
       </Grid>
-    </div>
-  }
-
-  handleSearch(){
-    const newList = testRecipe.filter(y => y.name.toUpperCase().includes(this.state.filterString.toUpperCase()))
-    console.log(newList)
-
-
-    this.setState({listOfRecipies: newList})
-
-  }
+    </>
+  )
 }
-
