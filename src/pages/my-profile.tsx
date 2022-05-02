@@ -24,7 +24,7 @@ export default function MyProfile() {
 
       <Card sx={{maxWidth: "500px"}}>
         <CardContent sx={{width: "auto"}}>
-          <Avatar sx={{width: 64, height: 64, margin: "auto", backgroundColor: '#FD8270'}}>
+          <Avatar sx={{width: 64, height: 64, margin: "auto", backgroundColor: (theme) => theme.palette.secondary.main}}>
             {`${user.firstName[0].toUpperCase()}${user.lastName[0].toUpperCase()}`}
           </Avatar>
 

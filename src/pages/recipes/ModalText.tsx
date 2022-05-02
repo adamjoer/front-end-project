@@ -6,7 +6,7 @@ import SoupKitchenIcon from '@mui/icons-material/SoupKitchen';
 import AvTimerIcon from '@mui/icons-material/AvTimer';
 import Grid from '@mui/material/Grid';
 import Card from '@mui/material/Card';
-import {Button, CardActionArea} from "@mui/material";
+import {Button, CardActionArea, Theme} from "@mui/material";
 import CardMedia from "@mui/material/CardMedia";
 import Typography from "@mui/material/Typography";
 import CardContent from "@mui/material/CardContent";
@@ -79,22 +79,22 @@ export default function ModalText(props: ModalProps) {
                 </Typography>
                 {counter.map(x => {
                   if (props.rank > (x - 0.25)) {
-                    return <StarIcon key={x} style={{fill: '#476051'}}/>
+                    return <StarIcon key={x} sx={{fill: (theme: Theme) => theme.palette.primary.main}}/>
                   } else if (props.rank > (x - 0.75)) {
-                    return <StarHalfIcon key={x} style={{fill: '#476051'}}/>
+                    return <StarHalfIcon key={x} sx={{fill: (theme: Theme) => theme.palette.primary.main}}/>
                   } else {
-                    return <StarOutlineIcon key={x} style={{fill: '#476051'}}/>
+                    return <StarOutlineIcon key={x} sx={{fill: (theme: Theme) => theme.palette.primary.main}}/>
                   }
                 })}
               </div>
               <div>
-                <SoupKitchenIcon style={{float: 'left', fill: '#476051'}}/>
+                <SoupKitchenIcon sx={{float: 'left', fill: (theme: Theme) => theme.palette.primary.main}}/>
                 <Typography variant="body1" color="text.secondary" className="card_text_footer">
                   {props.skill}
                 </Typography>
               </div>
               <div style={{display: 'flex'}}>
-                <AvTimerIcon style={{fill: '#476051'}}/>
+                <AvTimerIcon sx={{fill: (theme: Theme) => theme.palette.primary.main}}/>
                 <Typography variant="body1" color="text.secondary" className="card_text_footer">
                   About {props.time} min
                 </Typography>
@@ -113,8 +113,8 @@ export default function ModalText(props: ModalProps) {
             <Grid container spacing={2} style={{width: "calc(100%)", paddingLeft: "20px"}}>
               <Grid
                 item
-                style={{
-                  borderColor: '#476051',
+                sx={{
+                  borderColor: (theme) => theme.palette.primary.main,
                   borderStyle: 'solid',
                   borderWidth: '1px',
                   padding: '16px',
@@ -131,8 +131,8 @@ export default function ModalText(props: ModalProps) {
               </Grid>
               <Grid
                 item
-                style={{
-                  borderColor: '#476051',
+                sx={{
+                  borderColor: (theme) => theme.palette.primary.main,
                   borderStyle: 'solid',
                   borderWidth: '1px',
                   padding: '16px',
@@ -153,7 +153,7 @@ export default function ModalText(props: ModalProps) {
                 <Typography style={{margin: '10px', fontWeight: 'bold'}}> Give the reciepe a vote:</Typography>
                 <div style={{display: 'flex', justifyContent: 'space-between', padding: "0px 250px"}}>
                   {counter.map(x => {
-                      return <StarOutlineIcon key={x} style={{fill: '#476051', margin: '10px'}}/>
+                      return <StarOutlineIcon key={x} sx={{fill: (theme: Theme) => theme.palette.primary.main, margin: '10px'}}/>
                     }
                   )}
                 </div>

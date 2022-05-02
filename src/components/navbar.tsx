@@ -83,7 +83,7 @@ export default function Navbar() {
                           my: 2,
                           color: "white",
                           display: "block",
-                          ':hover': {backgroundColor: '#FD8270', transition: '0.5s', fontSize: '18px'}
+                          ':hover': {backgroundColor: (theme) => theme.palette.secondary.main, transition: '0.5s', fontSize: '18px'}
                         }}>
                   {page.name}
                 </Button>
@@ -134,7 +134,7 @@ export default function Navbar() {
                             mx: 1,
                             color: "white",
                             display: "block",
-                            ':hover': {backgroundColor: '#FD8270', transition: '0.5s', fontSize: '18px'}
+                            ':hover': {backgroundColor: (theme) => theme.palette.secondary.main, transition: '0.5s', fontSize: '18px'}
                           }}>
                     {page.name}
                   </Button>

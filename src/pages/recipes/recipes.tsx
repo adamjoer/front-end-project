@@ -140,8 +140,8 @@ export default function Recipes() {
                        InputProps={{
                          endAdornment: <Button type="submit" variant="outlined" sx={{
                            backgroundColor: "white",
-                           color: "#FD8270",
-                           ':hover': {backgroundColor: '#FD8270', color: "white", transition: '0.5s'}
+                           color: (theme) => theme.palette.secondary.main,
+                           ':hover': {backgroundColor: (theme) => theme.palette.secondary.main, color: "white", transition: '0.5s'}
                          }}>Search</Button>
                        }}
             />
