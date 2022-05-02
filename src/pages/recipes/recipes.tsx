@@ -1,8 +1,8 @@
 import React, {useState} from "react";
 import {Button, Grid, Modal, TextField} from "@mui/material";
 import ActionAreaCard from "../../components/recipecard/card";
-import {Box} from '@mui/system';
-import {ModalText} from './ModalText';
+import { Box } from '@mui/system';
+import ModalText from "./ModalText";
 
 const style = {
   position: 'absolute',
@@ -14,8 +14,7 @@ const style = {
   bgcolor: 'background.paper',
   border: '2px solid #000',
   boxShadow: 24,
-  p: 4,
-  overflow: "scroll"
+  p: 4
 }
 
 type Recipe = { name: string, imageString: string, rank: number, skill: string, time: number, id: number }
@@ -128,9 +127,11 @@ export default function Recipes() {
         aria-labelledby="modal-modal-title"
         aria-describedby="modal-modal-description"
       >
-        <Box sx={style}>
-          <ModalText titleString={"hey"} imageString={"image"} rank={3} skill={"easy"} time={420}/>
-        </Box>
+        
+        <div style={{width: "800px", height: "80%", position: "absolute", top: "50%", left: "50%", transform: "translate(-50%, -50%)"}}>
+          <ModalText titleString={"hey"} imageString={"https://static.onecms.io/wp-content/uploads/sites/44/2021/05/28/spaghetti-squash-soup.jpg"} rank={3} skill={"easy"} time={420} />
+        </div>
+
       </Modal>
 
       <Grid container spacing={2}>
