@@ -4,7 +4,7 @@ import ActionAreaCard from "../../components/recipecard/card";
 import {Box} from '@mui/system';
 import ModalText from "./ModalText";
 import RecipeApi from "../../api/spoonacularApi";
-import {getDatabase, ref, onValue, off, set} from "firebase/database";
+import {getDatabase, off, onValue, ref, set} from "firebase/database";
 import UserContext from "../../context/user-context";
 
 type Recipe = { name: string, imageString: string, rank: number, skill: string, time: number, id: string, directionRes: string[], ingredientRes: string[] }
@@ -24,17 +24,18 @@ export default function Recipes() {
   const [saveRecipeList, setSaveRecipeList] = useState<string[]>([])
 
   const db = getDatabase();
-  const starCountRef = ref(db, 'users/' + (user ? user.username : ""));
+  const starCountRef = ref(db, `users/${user && user.username}`);
 
   const removeOrAddIdFromList = (id: string, listName: string | null) => {
-    if (saveRecipeList.includes(id)) {
-      setSaveRecipeList(saveRecipeList.filter((x: string) => {
-        return x !== id
-      }))
-    } else {
-      const test = ref(db, 'users/' + (user ? user.username : "") + '/list/' + id);
-      set(test, listName?.toLowerCase())
-    }
+    const test = ref(db, `users/${user && user.username}/list/${id}`);
+    set(test, listName); //Setting data in data.
+
+    onValue(starCountRef, (snapshot) => {
+      const data = snapshot.val();
+      const keys = Object.keys(data.list);
+      setSaveRecipeList(keys)
+      off(starCountRef)
+    });
   }
 
   const handleSearch = (event: React.FormEvent) => {
@@ -67,6 +68,7 @@ export default function Recipes() {
   }
 
   const handleLoadMore = () => {
+
     onValue(starCountRef, (snapshot) => {
       const data = snapshot.val();
       const keys = Object.keys(data.list);
@@ -202,9 +204,9 @@ export default function Recipes() {
       {
         listOfRecipes.length < totalResults.current &&
           <Box display="flex" flexDirection="column" alignItems="center" sx={{pb: 2}}>
-            <Button variant="contained" onClick={handleLoadMore}>
-              Load more ({listOfRecipes.length}/{totalResults.current})
-            </Button>
+              <Button variant="contained" onClick={handleLoadMore}>
+                  Load more ({listOfRecipes.length}/{totalResults.current})
+              </Button>
           </Box>
       }
     </>

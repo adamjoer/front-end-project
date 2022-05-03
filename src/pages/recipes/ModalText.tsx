@@ -1,4 +1,4 @@
-import React from 'react';
+import React, {useState} from 'react';
 import StarIcon from '@mui/icons-material/Star';
 import StarHalfIcon from '@mui/icons-material/StarHalf';
 import StarOutlineIcon from '@mui/icons-material/StarOutline';
@@ -6,32 +6,14 @@ import SoupKitchenIcon from '@mui/icons-material/SoupKitchen';
 import AvTimerIcon from '@mui/icons-material/AvTimer';
 import Grid from '@mui/material/Grid';
 import Card from '@mui/material/Card';
-import {Button, CardActionArea, Theme} from "@mui/material";
+import Button from "@mui/material/Button"
+import CardActionArea from "@mui/material/CardActionArea"
+import {Theme} from "@mui/material";
 import CardMedia from "@mui/material/CardMedia";
 import Typography from "@mui/material/Typography";
 import CardContent from "@mui/material/CardContent";
-
-const dummyObject = {
-  ingredients: [
-    '1 1/2 cups warm water',
-    '1 dry yeast',
-    '3 cups bread flour',
-    '2 tablespoons extra virgin olive oil',
-    '2 teaspoons salt',
-    '1 teaspoon sugar',
-    'Tomato sauce',
-    'Mozarella',
-    'Ham',
-    'Onion',
-  ],
-  direction: [
-    'Place the warm water in the large bowl of a heavy duty stand mixer. Sprinkle the yeast over the warm water and let it sit for 5 minutes until the yeast is dissolved.',
-    'Add the flour, salt, sugar, and olive oil, and using the mixing paddle attachment, mix on low speed for a minute.',
-    'Knead the pizza dough on low to medium speed using the dough hook about 7-10 minutes.',
-    'For a quick rise, place the dough in a warm place (75°F to 85°F) for 1 1/2 hours',
-    'Spoon on the tomato sauce, sprinkle with cheese, and place your desired toppings on the pizza',
-  ],
-};
+import Box from "@mui/material/Box";
+import TextField from "@mui/material/TextField";
 
 const counter = [1, 2, 3, 4, 5]
 
@@ -42,20 +24,28 @@ interface ModalProps {
   skill: string;
   time: Number;
   directionRes: string[];
-  ingredientRes: any[];
+  ingredientRes: string[];
   saveRecipeList: string[];
   id: string;
-  removeOrAddIdToList: (id:string, type:any) => void,
+  removeOrAddIdToList: (id: string, listName: string | null) => void,
 }
 
 export default function ModalText(props: ModalProps) {
-  const isSaved = props.saveRecipeList.includes(props.id.toString());
-  console.log(isSaved)
 
-  
+  const [isSaved, setSaved] = useState(props.saveRecipeList.includes(props.id.toString()))
+  const [listName, setListName] = useState("");
+
+  const handleAddToOrRemoveFromList = (event: React.FormEvent) => {
+    event.preventDefault();
+
+    props.removeOrAddIdToList(props.id.toString(), isSaved ? null : listName);
+    setSaved(prevState => !prevState);
+  }
+
   return (
     <div className='content_wrapper_1' style={{height: "100%", width: "100%", overflow: "hidden"}}>
-      <div className='content_wrapper_2' style={{height: "100%", width: "100%", overflow: "auto", paddingRight: "20px"}}>
+      <div className='content_wrapper_2'
+           style={{height: "100%", width: "100%", overflow: "auto", paddingRight: "20px"}}>
 
         <Card>
           <CardActionArea>
@@ -68,9 +58,9 @@ export default function ModalText(props: ModalProps) {
           </CardActionArea>
 
           <CardContent className='cardcontentwrap'>
-              <Typography gutterBottom variant="h5" style={{textAlign: "center"}}>
-                {props.titleString}
-              </Typography>
+            <Typography gutterBottom variant="h5" style={{textAlign: "center"}}>
+              {props.titleString}
+            </Typography>
 
             <div style={{display: "flex", flexWrap: "nowrap", justifyContent: "space-evenly", margin: '20px'}}>
               <div>
@@ -98,35 +88,27 @@ export default function ModalText(props: ModalProps) {
                 <Typography variant="body1" color="text.secondary" className="card_text_footer">
                   About {props.time} min
                 </Typography>
-              </div>x
-              <Button 
-                variant={isSaved ? "contained" : "outlined"} 
-                style={{height: "40px", width: "100px"}}
-                onClick={() => {props.removeOrAddIdToList(props.id.toString(), isSaved ? null : "aftenstest")}}
-              >
-                {isSaved ? "Remove" : "Save"}
-              </Button>
-               
-
+              </div>
             </div>
 
-            <Grid container spacing={2} style={{width: "calc(100%)", paddingLeft: "20px"}}>
+            <Grid container spacing={2} style={{paddingLeft: "20px"}}>
               <Grid
                 item
                 sx={{
                   borderColor: (theme) => theme.palette.primary.main,
                   borderStyle: 'solid',
                   borderWidth: '1px',
-                  padding: '16px',
                 }}
                 xs={6}
               >
-                <div className='ingredients'>
+                <div className='ingredients' style={{padding: "16px"}}>
                   <h2 style={{textAlign: 'center'}}>Ingredients:</h2>
 
-                  {props.ingredientRes.map(x => {
-                    return <Typography key={x}>{x}</Typography>
-                  })}
+                  <ul>
+                    {props.ingredientRes.map(x =>
+                      <li key={x}>{x}</li>
+                    )}
+                  </ul>
                 </div>
               </Grid>
               <Grid
@@ -135,29 +117,55 @@ export default function ModalText(props: ModalProps) {
                   borderColor: (theme) => theme.palette.primary.main,
                   borderStyle: 'solid',
                   borderWidth: '1px',
-                  padding: '16px',
                 }}
                 xs={6}
               >
-                <div className='direction'>
+                <div className='direction' style={{padding: "16px"}}>
                   <h2 style={{textAlign: 'center'}}>Direction:</h2>
 
                   <ol>
-                    {props.directionRes.map(x => {
-                      return <li key={x}>{x}</li>
-                    })}
+                    {props.directionRes.map(x =>
+                      <li key={x}>{x}</li>
+                    )}
                   </ol>
                 </div>
               </Grid>
-              <div style={{width: "100%", textAlign: "center"}}>
-                <Typography style={{margin: '10px', fontWeight: 'bold'}}> Give the reciepe a vote:</Typography>
-                <div style={{display: 'flex', justifyContent: 'space-between', padding: "0px 250px"}}>
-                  {counter.map(x => {
-                      return <StarOutlineIcon key={x} sx={{fill: (theme: Theme) => theme.palette.primary.main, margin: '10px'}}/>
-                    }
+              <Grid item xs={6} sx={{pr: 2}}>
+                <Typography style={{margin: '10px', fontWeight: 'bold', textAlign: 'center'}}>
+                  Give the recipe a vote:
+                </Typography>
+                <div style={{display: 'flex', justifyContent: 'space-between'}}>
+                  {counter.map(x =>
+                    <StarOutlineIcon key={x} sx={{fill: (theme: Theme) => theme.palette.primary.main, margin: '10px'}}/>
                   )}
                 </div>
-              </div>
+              </Grid>
+              <Grid item xs={6} sx={{pr: 2}}>
+                <Typography style={{margin: '10px', fontWeight: 'bold', textAlign: 'center'}}>
+                  Save the recipe in a list:
+                </Typography>
+                <Box component="form" onSubmit={handleAddToOrRemoveFromList} display="flex" flexDirection="column"
+                     alignItems="center">
+                  {
+                    isSaved ?
+                      <Button type="submit" variant="contained">Remove from list</Button>
+                      :
+                      <TextField type="text" required label="List name"
+                                 onChange={(event) => setListName(event.target.value)} variant="outlined" fullWidth
+                                 InputProps={{
+                                   endAdornment: <Button type="submit" variant="outlined" sx={{
+                                     backgroundColor: "white",
+                                     color: (theme) => theme.palette.secondary.main,
+                                     ':hover': {
+                                       backgroundColor: (theme) => theme.palette.secondary.main,
+                                       color: "white",
+                                       transition: '0.5s'
+                                     }
+                                   }}>Save</Button>
+                                 }}/>
+                  }
+                </Box>
+              </Grid>
             </Grid>
           </CardContent>
         </Card>
