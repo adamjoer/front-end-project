@@ -1,16 +1,17 @@
-import React, {useContext, useRef, useState} from "react";
+import React, {useRef, useState} from "react";
 import {Backdrop, Button, CircularProgress, Grid, Modal, TextField} from "@mui/material";
 import ActionAreaCard from "../../components/recipecard/card";
 import {Box} from '@mui/system';
 import ModalText from "./ModalText";
 import RecipeApi from "../../api/spoonacularApi";
 import {getDatabase, off, onValue, ref, set} from "firebase/database";
-import UserContext from "../../context/user-context";
+import {getAuth} from "firebase/auth";
 
 type Recipe = { name: string, imageString: string, rank: number, skill: string, time: number, id: string, directionRes: string[], ingredientRes: string[] }
 
 export default function Recipes() {
-  const {user} = useContext(UserContext);
+
+  const auth = getAuth();
 
   const searchQuery = useRef("");
   const offset = useRef(0);
@@ -24,10 +25,10 @@ export default function Recipes() {
   const [saveRecipeList, setSaveRecipeList] = useState<string[]>([])
 
   const db = getDatabase();
-  const starCountRef = ref(db, `users/${user && user.username}`);
+  const starCountRef = ref(db, `users/${auth.currentUser && auth.currentUser.uid}`);
 
   const removeOrAddIdFromList = (id: string, listName: string | null) => {
-    const test = ref(db, `users/${user && user.username}/list/${id}`);
+    const test = ref(db, `users/${auth.currentUser && auth.currentUser.uid}/list/${id}`);
     set(test, listName); //Setting data in data.
 
     onValue(starCountRef, (snapshot) => {

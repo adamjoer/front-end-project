@@ -1,6 +1,6 @@
 import {BrowserRouter, Route, Routes, Navigate} from 'react-router-dom';
 import {useState} from "react";
-import UserContext, {User} from "./context/user-context";
+import AuthenticationContext from "./context/authentication-context";
 import Home from './pages/home';
 import Layout from './pages/Layout';
 import MyProfile from './pages/my-profile';
@@ -10,16 +10,16 @@ import Lists from './pages/lists/lists';
 import Recipes from './pages/recipes/recipes';
 import SignUp from "./pages/signup";
 import {createTheme, ThemeProvider} from "@mui/material";
+import {initializeApp} from "firebase/app";
+import {getAnalytics} from "firebase/analytics";
+import {
+  getAuth,
+  signOut,
+  signInWithEmailAndPassword,
+  createUserWithEmailAndPassword
+} from "firebase/auth";
+import {getDatabase, ref, set} from "firebase/database";
 
-// Import the functions you need from the SDKs you need
-import { initializeApp } from "firebase/app";
-import { getAnalytics } from "firebase/analytics";
-import { getAuth, signInWithPopup, GoogleAuthProvider, signOut,signInWithEmailAndPassword, createUserWithEmailAndPassword} from "firebase/auth";
-// TODO: Add SDKs for Firebase products that you want to use
-// https://firebase.google.com/docs/web/setup#available-libraries
-
-// Your web app's Firebase configuration
-// For Firebase JS SDK v7.20.0 and later, measurementId is optional
 const firebaseConfig = {
   apiKey: "AIzaSyD43KvYWj6dAG_ILb5tkDgXLKXbHxXYuf0",
   authDomain: "food2side.firebaseapp.com",
@@ -31,39 +31,38 @@ const firebaseConfig = {
   measurementId: "G-N5ST53G5HR"
 };
 
-
 // Initialize Firebase
 const app = initializeApp(firebaseConfig);
 const analytics = getAnalytics(app);
 const auth = getAuth();
+const db = getDatabase();
 
-function App() {  
-  const [user, setUser] = useState<User | null>(null)
+function App() {
+  const [isLoggedIn, setIsLoggedIn] = useState(false);
 
   auth.onAuthStateChanged(fbuser => {
-    if (fbuser) {
-      if (!user){
-        setUser({firstName: "r", lastName: "d", username: fbuser.uid, email: fbuser.email})
-      } 
-    } else {
-      setUser(null)
-    }
+    setIsLoggedIn(fbuser != null);
   })
 
-  const logIn = (user: User, pw: string, email: string) => {
-    // setUser(user)
+  const logIn = (pw: string, email: string) => {
 
     signInWithEmailAndPassword(auth, email, pw);
   }
-  const createAccount = (user: User, pw: string, email: string) => {
-    // setUser(user)
-    createUserWithEmailAndPassword(auth, email, pw);
-    
+
+  const createAccount = (email: string, pw: string) => {
+    createUserWithEmailAndPassword(auth, email, pw).then((userCredential) => {
+
+      // Signed in
+      const firstNameRef = ref(db, `users/${userCredential && userCredential.user.uid}/info/firstname`);
+      const lastNameRef = ref(db, `users/${userCredential && userCredential.user.uid}/info/lastname`);
+      set(firstNameRef, "FIRSTNAME"); //Setting data in data.
+      set(lastNameRef, "LASTNAME"); //Setting data in data.
+    })
   }
 
   const logOut = () => {
     signOut(auth);
-    setUser(null)
+    setIsLoggedIn(false);
   }
 
   const theme = createTheme({
@@ -79,21 +78,21 @@ function App() {
 
   return (
     <ThemeProvider theme={theme}>
-      <UserContext.Provider value={{user, logIn, logOut}}>
+      <AuthenticationContext.Provider value={{isLoggedIn, logIn, logOut}}>
         <BrowserRouter>
           <Routes>
             <Route path="/" element={<Layout/>}>
               <Route index element={<Home/>}/>
-              <Route path="signup" element={!user ? (<SignUp/>) : (<Navigate replace to="/"/>)}/>
-              <Route path="login" element={!user ? (<Login/>) : (<Navigate replace to="/"/>)}/>
-              <Route path="my-profile" element={user ? (<MyProfile/>) : (<Navigate replace to="/"/>)}/>
-              <Route path="recipes" element={user ? (<Recipes/>) : (<Navigate replace to="/"/>)}/>
-              <Route path="favorites" element={user ? (<Favorites/>) : (<Navigate replace to="/"/>)}/>
-              <Route path="lists" element={user ? (<Lists/>) : (<Navigate replace to="/"/>)}/>
+              <Route path="signup" element={!isLoggedIn ? (<SignUp/>) : (<Navigate replace to="/"/>)}/>
+              <Route path="login" element={!isLoggedIn ? (<Login/>) : (<Navigate replace to="/"/>)}/>
+              <Route path="my-profile" element={isLoggedIn ? (<MyProfile/>) : (<Navigate replace to="/"/>)}/>
+              <Route path="recipes" element={isLoggedIn ? (<Recipes/>) : (<Navigate replace to="/"/>)}/>
+              <Route path="favorites" element={isLoggedIn ? (<Favorites/>) : (<Navigate replace to="/"/>)}/>
+              <Route path="lists" element={isLoggedIn ? (<Lists/>) : (<Navigate replace to="/"/>)}/>
             </Route>
           </Routes>
         </BrowserRouter>
-      </UserContext.Provider>
+      </AuthenticationContext.Provider>
     </ThemeProvider>
   );
 }

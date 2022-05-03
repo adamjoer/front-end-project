@@ -4,7 +4,7 @@ import Image from "../../src/images/frontpage1.png"
 import React, {useContext} from "react";
 import {Button, Grid} from "@mui/material";
 import {Link} from "react-router-dom";
-import UserContext from "../context/user-context";
+import AuthenticationContext from "../context/authentication-context";
 import ActionAreaCard from "../components/recipecard/card";
 
 const dummyRecipes = [
@@ -53,7 +53,7 @@ const dummyRecipes = [
 
 export default function Home() {
 
-  const {user} = useContext(UserContext);
+  const {isLoggedIn} = useContext(AuthenticationContext);
 
   return (
     <div id="content">
@@ -82,7 +82,7 @@ export default function Home() {
             </Grid>
           })}
         </Grid>
-        <Button component={Link} to={user ? "/recipes" : "/signup"}
+        <Button component={Link} to={isLoggedIn ? "/recipes" : "/signup"}
                 sx={{color: "white", ':hover': {transition: '0.5s', fontSize: '18px'}}} id="btn-all-recipes"
                 color="secondary" variant="contained">See all recipes</Button>
       </div>

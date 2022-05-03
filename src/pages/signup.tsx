@@ -1,5 +1,5 @@
 import React, {useContext, useState} from "react";
-import UserContext from "../context/user-context";
+import AuthenticationContext from "../context/authentication-context";
 import {Link, useNavigate} from "react-router-dom";
 import Card from "@mui/material/Card"
 import CardContent from "@mui/material/CardContent"
@@ -9,7 +9,7 @@ import Button from "@mui/material/Button"
 import Grid from "@mui/material/Grid";
 
 export default function SignUp() {
-  const {logIn} = useContext(UserContext);
+  const {logIn} = useContext(AuthenticationContext);
   const navigate = useNavigate();
 
   const [firstName, setFirstName] = useState("");
@@ -60,12 +60,7 @@ export default function SignUp() {
     if (!validateForm())
       return;
 
-    logIn({
-      firstName,
-      lastName,
-      username,
-      email: email.length > 0 ? email : null
-    }, "PASSWORD", "EMAIL");
+    logIn("PASSWORD", "EMAIL");
     navigate("/");
   }
 
@@ -116,7 +111,7 @@ export default function SignUp() {
       formIsValid = false;
     }
 
-    // Validate email if it has been submitted
+    // Validate email
     if (validateLength(email, emailMinLength, emailMaxLength, setEmailError) && email.length > 0 && !emailRegex.test(email)) {
       setEmailError("Must to be a valid email address");
       formIsValid = false;

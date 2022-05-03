@@ -12,10 +12,10 @@ import {
   CircularProgress
 } from "@mui/material";
 import ActionAreaCard from "../../components/recipecard/card";
-import UserContext from "../../context/user-context";
 import {getDatabase, off, onValue, ref, set} from "firebase/database";
 import RecipeApi from "../../api/spoonacularApi";
 import ModalText from "../recipes/ModalText";
+import {getAuth} from "firebase/auth";
 
 type Recipe = { name: string, imageString: string, rank: number, skill: string, time: number, id: string, directionRes: string[], ingredientRes: string[], groupe: string }
 
@@ -30,14 +30,14 @@ export default function Lists() {
   const [listFilters, setListFilters] = useState<string[]>([])
   const [update, setUpdate] = useState(false);
   const [onlyOnce, setOnlyOnce] = useState(false);
-  const {user} = useContext(UserContext);
+  const auth = getAuth();
 
   const [isLoadingAnimationEnabled, setLoadingAnimationEnabled] = useState(false);
 
   const db = getDatabase();
-  const starCountRef = ref(db, 'users/' + (user ? user.username : ""));
+  const starCountRef = ref(db, 'users/' + (auth.currentUser ? auth.currentUser.uid : ""));
   const removeOrAddIdFromList = (id: string, type: any) => {
-    const test = ref(db, 'users/' + (user ? user.username : "") + '/list/' + id);
+    const test = ref(db, 'users/' + (auth.currentUser ? auth.currentUser.uid : "") + '/list/' + id);
     set(test, type); //Setting data in data.
 
   }
