@@ -1,5 +1,5 @@
 import "./lists.css"
-import React, {ChangeEvent, useContext, useEffect, useState} from "react";
+import React, {ChangeEvent, useEffect, useState} from "react";
 import {
   Checkbox,
   FormControlLabel,
@@ -17,8 +17,7 @@ import RecipeApi from "../../api/spoonacularApi";
 import ModalText from "../recipes/ModalText";
 import {getAuth} from "firebase/auth";
 
-type Recipe = { name: string, imageString: string, rank: number, skill: string, time: number, id: string, directionRes: string[], ingredientRes: string[], groupe: string }
-
+type Recipe = { name: string, imageString: string, rank: number, skill: string, time: number, id: number, directionRes: string[], ingredientRes: string[], groupe: string }
 
 export default function Lists() {
 
@@ -29,7 +28,6 @@ export default function Lists() {
   const [listOfMenuTypes, setListOfMenuTypes] = useState<string[]>([]);
   const [listFilters, setListFilters] = useState<string[]>([])
   const [update, setUpdate] = useState(false);
-  const [onlyOnce, setOnlyOnce] = useState(false);
   const auth = getAuth();
 
   const [isLoadingAnimationEnabled, setLoadingAnimationEnabled] = useState(false);
@@ -40,15 +38,20 @@ export default function Lists() {
     const test = ref(db, 'users/' + (auth.currentUser ? auth.currentUser.uid : "") + '/list/' + id);
     set(test, type); //Setting data in data.
 
+    if (!type)
+      setListOfRecipes(listOfRecipes.filter(recipe => recipe.id.toString() !== id));
   }
   useEffect(() => {
     onValue(starCountRef, (snapshot) => {
       const data = snapshot.val();
+      if (!data.list)
+        return;
+
       const keys: string[] = Object.keys(data.list);
       const listOfMenuTypes_opdate: string[] = [];
       setSaveRecipeList(keys);
-      var paramString = "";
-      for (var i = 0; i < keys.length; i++) {
+      let paramString = "";
+      for (let i = 0; i < keys.length; i++) {
         if (i === 0) {
           paramString = keys[i]
         } else {
@@ -97,7 +100,7 @@ export default function Lists() {
       })
     });
 
-  }, [onlyOnce])
+  }, [null])
 
   const handleFilterListChange = (event: ChangeEvent<HTMLInputElement>) => {
     if (listFilters.includes(event.target.name)) {
@@ -138,7 +141,7 @@ export default function Lists() {
             imageString={selectedRecipe ? selectedRecipe.imageString : ""}
             rank={selectedRecipe ? selectedRecipe.rank : 0}
             skill={selectedRecipe ? selectedRecipe.skill : ""}
-            id={selectedRecipe ? selectedRecipe.id : "0"}
+            id={selectedRecipe ? selectedRecipe.id.toString() : "0"}
             time={selectedRecipe ? selectedRecipe.time : 0}
             directionRes={selectedRecipe ? selectedRecipe.directionRes : [""]}
             ingredientRes={selectedRecipe ? selectedRecipe.ingredientRes : [""]}
