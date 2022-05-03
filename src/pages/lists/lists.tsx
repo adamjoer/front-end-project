@@ -1,15 +1,22 @@
 import "./lists.css"
-import React, { ChangeEvent, useContext, useEffect, useState } from "react";
-import { Checkbox, FormControlLabel, FormGroup, TextField, Grid, Box, Modal, Button } from "@mui/material";
+import React, {ChangeEvent, useContext, useEffect, useState} from "react";
+import {
+  Checkbox,
+  FormControlLabel,
+  FormGroup,
+  TextField,
+  Grid,
+  Box,
+  Modal,
+  Backdrop,
+  CircularProgress
+} from "@mui/material";
 import ActionAreaCard from "../../components/recipecard/card";
 import UserContext from "../../context/user-context";
-import { getDatabase, off, onValue, ref, set } from "firebase/database";
+import {getDatabase, off, onValue, ref, set} from "firebase/database";
 import RecipeApi from "../../api/spoonacularApi";
 import ModalText from "../recipes/ModalText";
-import { FilterList } from "@mui/icons-material";
 
-// type Recipe = { name: string, imageString: string, rank: number, skill: string, time: number, id: number }
-// type List = { name: string, recipes: Recipe[], id: number }
 type Recipe = { name: string, imageString: string, rank: number, skill: string, time: number, id: string, directionRes: string[], ingredientRes: string[], groupe: string }
 
 
@@ -23,7 +30,9 @@ export default function Lists() {
   const [listFilters, setListFilters] = useState<string[]>([])
   const [update, setUpdate] = useState(false);
   const [onlyOnce, setOnlyOnce] = useState(false);
-  const { user } = useContext(UserContext);
+  const {user} = useContext(UserContext);
+
+  const [isLoadingAnimationEnabled, setLoadingAnimationEnabled] = useState(false);
 
   const db = getDatabase();
   const starCountRef = ref(db, 'users/' + (user ? user.username : ""));
@@ -47,104 +56,131 @@ export default function Lists() {
         }
       }
       off(starCountRef)
+
+      setLoadingAnimationEnabled(true);
+
       RecipeApi.getRecipesFromIdBulk(paramString).then((result: any) => {
         const spoonacularList: Recipe[] = [];
         result.forEach((element: any) => {
           const listOfSteps: string[] = [];
           const listOfIngre: string[] = [];
-          element.analyzedInstructions[0].steps.forEach((step: any) => {
-            listOfSteps.push(step.step)
-            step.ingredients.forEach((ingredientInStep: any) => {
-              if (!listOfIngre.includes(ingredientInStep.name)) {
-                listOfIngre.push(ingredientInStep.name)
-              }
+          if (element.analyzedInstructions.length > 0) {
+            element.analyzedInstructions[0].steps.forEach((step: any) => {
+              listOfSteps.push(step.step)
+              step.ingredients.forEach((ingredientInStep: any) => {
+                if (!listOfIngre.includes(ingredientInStep.name)) {
+                  listOfIngre.push(ingredientInStep.name)
+                }
+              })
             })
+          }
+          spoonacularList.push({
+            "name": element.title,
+            "imageString": element.image,
+            "rank": 3,
+            skill: "easy",
+            "time": element.readyInMinutes,
+            "id": element.id,
+            "directionRes": listOfSteps,
+            "ingredientRes": listOfIngre,
+            "groupe": data.list[element.id]
           })
-          spoonacularList.push({ "name": element.title, "imageString": element.image, "rank": 3, skill: "easy", "time": element.readyInMinutes, "id": element.id, "directionRes": listOfSteps, "ingredientRes": listOfIngre, "groupe": data.list[element.id] })
-          if (!listOfMenuTypes_opdate.includes(data.list[element.id])){
+          if (!listOfMenuTypes_opdate.includes(data.list[element.id])) {
             listOfMenuTypes_opdate.push(data.list[element.id]);
             listFilters.push(data.list[element.id])
           }
         });
         setListOfMenuTypes(listOfMenuTypes_opdate);
         setListOfRecipes(spoonacularList)
+
+        setLoadingAnimationEnabled(false);
       })
     });
 
   }, [onlyOnce])
 
+  const handleFilterListChange = (event: ChangeEvent<HTMLInputElement>) => {
+    if (listFilters.includes(event.target.name)) {
+      setListFilters(listFilters.filter(list => list !== event.target.name))
 
+    } else {
+      listFilters.push(event.target.name)
+      setUpdate(!update)
+    }
+  }
 
-  console.log(listFilters)
-  return <div>
-    <Modal
-      open={selectedRecipe !== null}
-      onClose={() => setSelectedRecipe(null)}
-      aria-labelledby="modal-modal-title"
-      aria-describedby="modal-modal-description"
-    >
+  return (
+    <>
+      <Backdrop open={isLoadingAnimationEnabled} onClick={() => setLoadingAnimationEnabled(false)}
+                sx={{zIndex: (theme) => theme.zIndex.drawer + 1}}>
+        <CircularProgress color="secondary"/>
+      </Backdrop>
 
-      <div style={{ width: "800px", height: "80%", position: "absolute", top: "50%", left: "50%", transform: "translate(-50%, -50%)" }}>
-        <ModalText
-          removeOrAddIdToList={removeOrAddIdFromList}
-          saveRecipeList={saveRecipeList ? saveRecipeList : [""]}
-          titleString={selectedRecipe ? selectedRecipe.name : ""}
-          imageString={selectedRecipe ? selectedRecipe.imageString : ""}
-          rank={selectedRecipe ? selectedRecipe.rank : 0}
-          skill={selectedRecipe ? selectedRecipe.skill : ""}
-          id={selectedRecipe ? selectedRecipe.id : "0"}
-          time={selectedRecipe ? selectedRecipe.time : 0}
-          directionRes={selectedRecipe ? selectedRecipe.directionRes : [""]}
-          ingredientRes={selectedRecipe ? selectedRecipe.ingredientRes : [""]}
-        />
-      </div>
-    </Modal>
+      <Modal
+        open={selectedRecipe !== null}
+        onClose={() => setSelectedRecipe(null)}
+        aria-labelledby="modal-modal-title"
+        aria-describedby="modal-modal-description"
+      >
 
-    <Grid container spacing={2}>
-      <Grid item xs={1} sm={3} display={{ xs: "none", sm: "initial" }}>
-        <h1 style={{ paddingLeft: "16px", marginBottom: "0" }}>Recipes</h1>
-      </Grid>
-      <Grid item xs={12} sm={9}>
-        <Box component="form" sx={{ pt: 2, pr: 2, pb: 1, pl: 2 }}>
-          <TextField fullWidth type="text" value={filterString}
-                     onChange={(x: any) => setFilterString(x.target.value)} label="Search for a recipe name"
-                     variant="outlined"
+        <div style={{
+          width: "800px",
+          height: "80%",
+          position: "absolute",
+          top: "50%",
+          left: "50%",
+          transform: "translate(-50%, -50%)"
+        }}>
+          <ModalText
+            removeOrAddIdToList={removeOrAddIdFromList}
+            saveRecipeList={saveRecipeList ? saveRecipeList : [""]}
+            titleString={selectedRecipe ? selectedRecipe.name : ""}
+            imageString={selectedRecipe ? selectedRecipe.imageString : ""}
+            rank={selectedRecipe ? selectedRecipe.rank : 0}
+            skill={selectedRecipe ? selectedRecipe.skill : ""}
+            id={selectedRecipe ? selectedRecipe.id : "0"}
+            time={selectedRecipe ? selectedRecipe.time : 0}
+            directionRes={selectedRecipe ? selectedRecipe.directionRes : [""]}
+            ingredientRes={selectedRecipe ? selectedRecipe.ingredientRes : [""]}
           />
-        </Box>
-      </Grid>
-      <Grid item xs={1} sm={3} sx={{ pl: 2 }}>
-        <Box component="aside" sx={{ position: { xs: "static", sm: "sticky" }, top: "86px" }}>
-          <u><h3 id="filter-header">Filter</h3></u>
-          <FormGroup>
-            {listOfMenuTypes.map((listName) => (
-              <FormControlLabel key={listName} label={listName}
-                                control={<Checkbox name={listName} checked={listFilters.includes(listName)}
-                                                   onChange={(x) => {
-                                                     let newFilter: string[];
-                                                     if(listFilters.includes(x.target.name)){
-                                                       newFilter = listFilters.filter(y => y !== x.target.name)
-                                                       setListFilters(listFilters.filter(y => y !== x.target.name))
-                                                     } else {
-                                                       listFilters.push(x.target.name)
-                                                       setUpdate(!update)
-                                                       // setListFilters(listFilters.filter(y => true))
+        </div>
+      </Modal>
 
-                                                     }
-                                                   }} />} />
+      <Grid container spacing={2}>
+        <Grid item xs={1} sm={3} display={{xs: "none", sm: "initial"}}>
+          <h1 style={{paddingLeft: "16px", marginBottom: "0"}}>Recipes</h1>
+        </Grid>
+        <Grid item xs={12} sm={9}>
+          <Box component="form" sx={{pt: 2, pr: 2, pb: 1, pl: 2}}>
+            <TextField fullWidth type="text" value={filterString}
+                       onChange={(x: any) => setFilterString(x.target.value)} label="Search for a recipe name"
+                       variant="outlined"
+            />
+          </Box>
+        </Grid>
+        <Grid item xs={1} sm={3} sx={{pl: 2}}>
+          <Box component="aside" sx={{position: {xs: "static", sm: "sticky"}, top: "86px"}}>
+            <u><h3 id="filter-header">Filter</h3></u>
+            <FormGroup>
+              {listOfMenuTypes.map((listName) => (
+                <FormControlLabel key={listName} label={listName}
+                                  control={<Checkbox name={listName} checked={listFilters.includes(listName)}
+                                                     onChange={handleFilterListChange}/>}/>
+              ))}
+            </FormGroup>
+          </Box>
+        </Grid>
+        <Grid container item spacing={2} xs={12} sm={9} sx={{pt: 1, pl: 2, pb: 2, pr: 2}}>
+          {listOfRecipes.filter(x1 => x1.name.toLowerCase().includes(filterString.toLowerCase()))
+            .filter(x2 => listFilters.includes(x2.groupe))
+            .map(x => (
+              <Grid key={x.id} item xs={12} sm={4} md={3} lg={2.4} xl={2}>
+                <ActionAreaCard imageString={x.imageString} titleString={x.name} rank={x.rank} skill={x.skill}
+                                time={x.time} selectFunc={() => setSelectedRecipe(x)}/>
+              </Grid>
             ))}
-          </FormGroup>
-        </Box>
+        </Grid>
       </Grid>
-      <Grid container spacing={2}  xs={12} sm={9} sx={{ pt: 1, pl: 2, pb: 2, pr: 2 }}>
-        {listOfRecipes.filter(x1 => x1.name.toLowerCase().includes(filterString.toLowerCase()))
-          .filter(x2 => listFilters.includes(x2.groupe))
-          .map(x => (
-            <Grid key={x.id} item xs={12} sm={4} md={3} lg={2.4} xl={2}>
-              <ActionAreaCard imageString={x.imageString} titleString={x.name} rank={x.rank} skill={x.skill}
-                              time={x.time} selectFunc={() => setSelectedRecipe(x)} />
-            </Grid>
-          ))}
-      </Grid>
-    </Grid>
-  </div>
+    </>
+  )
 }
