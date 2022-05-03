@@ -1,4 +1,4 @@
-import React, {useContext, useState} from "react";
+import React, {useContext, useRef, useState} from "react";
 import {Backdrop, Button, CircularProgress, Grid, Modal, TextField} from "@mui/material";
 import ActionAreaCard from "../../components/recipecard/card";
 import {Box} from '@mui/system';
@@ -8,10 +8,13 @@ import {getDatabase, ref, onValue, off, set} from "firebase/database";
 import UserContext from "../../context/user-context";
 
 type Recipe = { name: string, imageString: string, rank: number, skill: string, time: number, id: string, directionRes: string[], ingredientRes: string[] }
-type SaveRecipeType = { id: string, list: string }
 
 export default function Recipes() {
   const {user} = useContext(UserContext);
+
+  const searchQuery = useRef("");
+  const offset = useRef(0);
+  const totalResults = useRef(0);
 
   const [filterString, setFilterString] = useState("");
   const [isLoadingAnimationEnabled, setLoadingAnimationEnabled] = useState(false);
@@ -36,60 +39,94 @@ export default function Recipes() {
 
   const handleSearch = (event: React.FormEvent) => {
     event.preventDefault();
+    if (filterString.length === 0 || filterString === searchQuery.current)
+      return;
 
     onValue(starCountRef, (snapshot) => {
       const data = snapshot.val();
       const keys = Object.keys(data.list);
-      setSaveRecipeList(keys)
-      off(starCountRef)
+      setSaveRecipeList(keys);
+      off(starCountRef);
     });
+
+    offset.current = 0;
+    searchQuery.current = filterString;
 
     setLoadingAnimationEnabled(true);
 
-    // const newList = testRecipe.filter(y => y.name.toUpperCase().includes(filterString.toUpperCase()));
-    // console.log(newList);
-    const spoonacularList: Recipe[] = [];
-    RecipeApi.getRecipeFromString(filterString, 10).then(result => {
-        result.results.forEach((element: any) => {
-          const listOfSteps: string[] = [];
-          const listOfIngredients: string[] = [];
+    RecipeApi.getRecipeFromString(searchQuery.current, 10, 0).then(result => {
+        const spoonacularList = getDataFromJson(result);
 
-          if (element.analyzedInstructions.length > 0) {
-            element.analyzedInstructions[0].steps.forEach((step: any) => {
-              listOfSteps.push(step.step)
-              step.ingredients.forEach((ingredientInStep: any) => {
-                if (!listOfIngredients.includes(ingredientInStep.name)) {
-                  listOfIngredients.push(ingredientInStep.name)
-                }
-              })
-            })
-          }
-
-          // console.log(listOfIngredients)
-          spoonacularList.push({
-            name: element.title,
-            imageString: element.image,
-            rank: 3,
-            skill: "easy",
-            time: element.readyInMinutes,
-            id: element.id,
-            directionRes: listOfSteps,
-            ingredientRes: listOfIngredients,
-          })
-          // console.log(element)
-        });
         setListOfRecipes(spoonacularList);
+        totalResults.current = result.totalResults;
 
         setLoadingAnimationEnabled(false);
       },
       (reason) => console.error(reason)
-    )
+    );
+  }
+
+  const handleLoadMore = () => {
+    onValue(starCountRef, (snapshot) => {
+      const data = snapshot.val();
+      const keys = Object.keys(data.list);
+      setSaveRecipeList(keys);
+      off(starCountRef);
+    });
+
+    offset.current = offset.current + 10;
+
+    setLoadingAnimationEnabled(true);
+
+    RecipeApi.getRecipeFromString(searchQuery.current, 10, offset.current).then(result => {
+        const spoonacularList = getDataFromJson(result);
+
+        setListOfRecipes(prevState => prevState.concat(spoonacularList));
+        totalResults.current = result.totalResults;
+
+        setLoadingAnimationEnabled(false);
+      },
+      (reason) => console.error(reason)
+    );
+  }
+
+  const getDataFromJson = (result: any): Recipe[] => {
+    const spoonacularList: Recipe[] = [];
+
+    result.results.forEach((element: any) => {
+      const listOfSteps: string[] = [];
+      const listOfIngredients: string[] = [];
+
+      if (element.analyzedInstructions.length > 0) {
+        element.analyzedInstructions[0].steps.forEach((step: any) => {
+          listOfSteps.push(step.step);
+          step.ingredients.forEach((ingredientInStep: any) => {
+            if (!listOfIngredients.includes(ingredientInStep.name)) {
+              listOfIngredients.push(ingredientInStep.name)
+            }
+          });
+        });
+      }
+
+      spoonacularList.push({
+        name: element.title,
+        imageString: element.image,
+        rank: 3,
+        skill: "easy",
+        time: element.readyInMinutes,
+        id: element.id,
+        directionRes: listOfSteps,
+        ingredientRes: listOfIngredients,
+      });
+    });
+
+    return spoonacularList;
   }
 
   return (
     <>
-      <Backdrop open={isLoadingAnimationEnabled} onClick={() => setLoadingAnimationEnabled(!isLoadingAnimationEnabled)}
-                sx={{zIndex: (theme) => theme.zIndex.drawer + 1 }}>
+      <Backdrop open={isLoadingAnimationEnabled} onClick={() => setLoadingAnimationEnabled(false)}
+                sx={{zIndex: (theme) => theme.zIndex.drawer + 1}}>
         <CircularProgress color="secondary"/>
       </Backdrop>
 
@@ -123,9 +160,7 @@ export default function Recipes() {
                   ingredientRes={selectedRecipe.ingredientRes}
               />
           }
-          {console.log(selectedRecipe)}
         </div>
-
       </Modal>
 
       <Grid container spacing={2}>
@@ -141,7 +176,11 @@ export default function Recipes() {
                          endAdornment: <Button type="submit" variant="outlined" sx={{
                            backgroundColor: "white",
                            color: (theme) => theme.palette.secondary.main,
-                           ':hover': {backgroundColor: (theme) => theme.palette.secondary.main, color: "white", transition: '0.5s'}
+                           ':hover': {
+                             backgroundColor: (theme) => theme.palette.secondary.main,
+                             color: "white",
+                             transition: '0.5s'
+                           }
                          }}>Search</Button>
                        }}
             />
@@ -159,6 +198,15 @@ export default function Recipes() {
           </Grid>
         ))}
       </Grid>
+
+      {
+        listOfRecipes.length < totalResults.current &&
+          <Box display="flex" flexDirection="column" alignItems="center" sx={{pb: 2}}>
+            <Button variant="contained" onClick={handleLoadMore}>
+              Load more ({listOfRecipes.length}/{totalResults.current})
+            </Button>
+          </Box>
+      }
     </>
   )
 }

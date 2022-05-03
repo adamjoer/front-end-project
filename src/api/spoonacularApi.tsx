@@ -22,8 +22,8 @@ class RecipeApi {
     return this.instance || (this.instance = new this());
   }
 
-  public getRecipeFromString(searchQuery: string, amount: number) {
-    return axios.get(`${this.BASE_URL}/complexSearch?apiKey=${this.apiKey}&query=${searchQuery}&number=${amount}&addRecipeInformation=true`).then(value => value.data)
+  public getRecipeFromString(searchQuery: string, amount: number, offset: number) {
+    return axios.get(`${this.BASE_URL}/complexSearch?apiKey=${this.apiKey}&query=${searchQuery}&number=${amount}&offset=${offset}&addRecipeInformation=true`).then(value => value.data)
   }
 
   public getRandomRecipes(amount: number) {
