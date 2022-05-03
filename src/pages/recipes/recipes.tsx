@@ -124,7 +124,7 @@ export default function Recipes() {
 
     return spoonacularList;
   }
-
+  
   return (
     <>
       <Backdrop open={isLoadingAnimationEnabled} onClick={() => setLoadingAnimationEnabled(false)}
