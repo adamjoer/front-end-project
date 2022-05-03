@@ -32,8 +32,7 @@ export default function Login() {
     if (!validateForm())
       return;
 
-    logIn("test12", "test@test.com");
-    navigate("/");
+    logIn(email, password, () => navigate("/"));
   }
 
   const validateForm = (): boolean => {

@@ -9,7 +9,7 @@ import Button from "@mui/material/Button"
 import Grid from "@mui/material/Grid";
 
 export default function SignUp() {
-  const {logIn} = useContext(AuthenticationContext);
+  const {createAccount} = useContext(AuthenticationContext);
   const navigate = useNavigate();
 
   const [firstName, setFirstName] = useState("");
@@ -17,9 +17,6 @@ export default function SignUp() {
 
   const [lastName, setLastName] = useState("");
   const [lastNameError, setLastNameError] = useState("");
-
-  const [username, setUsername] = useState("");
-  const [usernameError, setUsernameError] = useState("");
 
   const [email, setEmail] = useState("");
   const [emailError, setEmailError] = useState("");
@@ -36,10 +33,6 @@ export default function SignUp() {
 
   const handleLastNameChange = (event: React.ChangeEvent<HTMLInputElement>) => {
     setLastName(event.target.value);
-  }
-
-  const handleUsernameChange = (event: React.ChangeEvent<HTMLInputElement>) => {
-    setUsername(event.target.value);
   }
 
   const handleEmailChange = (event: React.ChangeEvent<HTMLInputElement>) => {
@@ -60,8 +53,7 @@ export default function SignUp() {
     if (!validateForm())
       return;
 
-    logIn("PASSWORD", "EMAIL");
-    navigate("/");
+    createAccount(firstName, lastName, email, password, () => navigate("/"));
   }
 
   const validateForm = (): boolean => {
@@ -72,10 +64,6 @@ export default function SignUp() {
 
     const lastNameMinLength = 2;
     const lastNameMaxLength = 30;
-
-    const usernameMinLength = 3;
-    const usernameMaxLength = 30;
-    const usernameRegex = /^[a-zA-Z0-9-_]+$/;
 
     const passwordMinLength = 3;
     const passwordMaxLength = 30;
@@ -105,14 +93,8 @@ export default function SignUp() {
     // Validate last name
     validateLength(lastName, lastNameMinLength, lastNameMaxLength, setLastNameError);
 
-    // Validate username
-    if (validateLength(username, usernameMinLength, usernameMaxLength, setUsernameError) && !usernameRegex.test(username)) {
-      setUsernameError("Must only contain letters, numbers, dashes, and underscores.");
-      formIsValid = false;
-    }
-
     // Validate email
-    if (validateLength(email, emailMinLength, emailMaxLength, setEmailError) && email.length > 0 && !emailRegex.test(email)) {
+    if (validateLength(email, emailMinLength, emailMaxLength, setEmailError) && !emailRegex.test(email)) {
       setEmailError("Must to be a valid email address");
       formIsValid = false;
     }
@@ -142,11 +124,6 @@ export default function SignUp() {
               <Grid item xs={12} sm={6}>
                 <TextField label="Last name" type="text" required onChange={handleLastNameChange}
                            error={lastNameError.length > 0} helperText={lastNameError} fullWidth/>
-              </Grid>
-
-              <Grid item xs={12}>
-                <TextField label="Username" type="text" required onChange={handleUsernameChange}
-                           error={usernameError.length > 0} helperText={usernameError} fullWidth/>
               </Grid>
 
               <Grid item xs={12}>

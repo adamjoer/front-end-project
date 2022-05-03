@@ -33,6 +33,7 @@ const firebaseConfig = {
 
 // Initialize Firebase
 const app = initializeApp(firebaseConfig);
+// eslint-disable-next-line @typescript-eslint/no-unused-vars
 const analytics = getAnalytics(app);
 const auth = getAuth();
 const db = getDatabase();
@@ -44,19 +45,28 @@ function App() {
     setIsLoggedIn(fbuser != null);
   })
 
-  const logIn = (pw: string, email: string) => {
+  const logIn = (email: string, password: string, successCallback?: () => void) => {
 
-    signInWithEmailAndPassword(auth, email, pw);
+    signInWithEmailAndPassword(auth, email, password)
+      .then(() => {
+        if (successCallback)
+          successCallback();
+      })
+      .catch((error) => {
+        alert(error.message);
+      });
   }
 
-  const createAccount = (email: string, pw: string) => {
-    createUserWithEmailAndPassword(auth, email, pw).then((userCredential) => {
+  const createAccount = (firstName: string, lastName: string, email: string, password: string, successCallback?: () => void) => {
+    createUserWithEmailAndPassword(auth, email, password).then((userCredential) => {
 
-      // Signed in
       const firstNameRef = ref(db, `users/${userCredential && userCredential.user.uid}/info/firstname`);
       const lastNameRef = ref(db, `users/${userCredential && userCredential.user.uid}/info/lastname`);
-      set(firstNameRef, "FIRSTNAME"); //Setting data in data.
-      set(lastNameRef, "LASTNAME"); //Setting data in data.
+      set(firstNameRef, firstName);
+      set(lastNameRef, lastName);
+
+      if (successCallback)
+        successCallback();
     })
   }
 
@@ -78,7 +88,7 @@ function App() {
 
   return (
     <ThemeProvider theme={theme}>
-      <AuthenticationContext.Provider value={{isLoggedIn, logIn, logOut}}>
+      <AuthenticationContext.Provider value={{isLoggedIn, createAccount, logIn, logOut}}>
         <BrowserRouter>
           <Routes>
             <Route path="/" element={<Layout/>}>
