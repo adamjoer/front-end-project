@@ -47,7 +47,7 @@ export default function Recipes() {
     // const newList = testRecipe.filter(y => y.name.toUpperCase().includes(filterString.toUpperCase()));
     // console.log(newList);
     const spoonacularList: Recipe[] = [];
-    RecipeApi.getRecipeFromString("148c595d613541f1aa97db48517343ba", filterString, 10).then(result => {
+    RecipeApi.getRecipeFromString("148c595d613541f1aa97db48517343ba", filterString, 50).then(result => {
       result.results.forEach((element: any) => {
         const listOfSteps: string[] = [];
         const listOfIngre: string[] = [];

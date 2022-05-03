@@ -14,7 +14,7 @@ import {createTheme, ThemeProvider} from "@mui/material";
 // Import the functions you need from the SDKs you need
 import { initializeApp } from "firebase/app";
 import { getAnalytics } from "firebase/analytics";
-import { getAuth, signInWithPopup, GoogleAuthProvider, signOut,signInWithEmailAndPassword} from "firebase/auth";
+import { getAuth, signInWithPopup, GoogleAuthProvider, signOut,signInWithEmailAndPassword, createUserWithEmailAndPassword} from "firebase/auth";
 // TODO: Add SDKs for Firebase products that you want to use
 // https://firebase.google.com/docs/web/setup#available-libraries
 
@@ -50,10 +50,15 @@ function App() {
     }
   })
 
-  const logIn = (user: User, pw: string) => {
+  const logIn = (user: User, pw: string, email: string) => {
     // setUser(user)
 
-    signInWithEmailAndPassword(auth, "test@test.com", "test12");
+    signInWithEmailAndPassword(auth, email, pw);
+  }
+  const createAccount = (user: User, pw: string, email: string) => {
+    // setUser(user)
+    createUserWithEmailAndPassword(auth, email, pw);
+    
   }
 
   const logOut = () => {

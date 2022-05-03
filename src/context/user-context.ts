@@ -9,7 +9,7 @@ export type User = {
 
 export type UserContextType = {
   user: User | null,
-  logIn: (user: User, pw: string) => void,
+  logIn: (user: User, pw: string, email: string) => void,
   logOut: () => void,
 }
 
