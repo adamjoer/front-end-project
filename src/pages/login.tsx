@@ -36,8 +36,8 @@ export default function Login() {
       firstName: "John",
       lastName: "Doe",
       username,
-      email: "johndoe@example.com"
-    }, "tester12");
+      email: "test@test.com"
+    }, "test12", "test@test.com");
     navigate("/");
   }
 
@@ -47,7 +47,6 @@ export default function Login() {
     const usernameMinLength = 3;
     const usernameMaxLength = 30;
     const usernameRegex = /^[a-zA-Z0-9-_]+$/;
-
     const passwordMinLength = 3;
     const passwordMaxLength = 30;
 
