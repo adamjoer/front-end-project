@@ -29,11 +29,11 @@ export default function Recipes() {
 
   const removeOrAddIdFromList = (id: string, listName: string | null) => {
     const test = ref(db, `users/${auth.currentUser && auth.currentUser.uid}/list/${id}`);
-    set(test, listName); //Setting data in data.
+    set(test, listName);
 
     onValue(starCountRef, (snapshot) => {
       const data = snapshot.val();
-      const keys = Object.keys(data.list);
+      const keys = data.list ? Object.keys(data.list) : [];
       setSaveRecipeList(keys)
       off(starCountRef)
     });
@@ -46,7 +46,7 @@ export default function Recipes() {
 
     onValue(starCountRef, (snapshot) => {
       const data = snapshot.val();
-      const keys = Object.keys(data.list);
+      const keys = data.list ? Object.keys(data.list) : [];
       setSaveRecipeList(keys);
       off(starCountRef);
     });
@@ -72,7 +72,7 @@ export default function Recipes() {
 
     onValue(starCountRef, (snapshot) => {
       const data = snapshot.val();
-      const keys = Object.keys(data.list);
+      const keys = data.list ? Object.keys(data.list) : [];
       setSaveRecipeList(keys);
       off(starCountRef);
     });
