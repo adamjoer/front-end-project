@@ -1,150 +1,233 @@
 import "./lists.css"
-import React, { ChangeEvent, useContext, useEffect, useState } from "react";
-import { Checkbox, FormControlLabel, FormGroup, TextField, Grid, Box, Modal, Button } from "@mui/material";
+import React, {ChangeEvent, useState} from "react";
+import {Checkbox, FormControlLabel, FormGroup, TextField, Grid, Box} from "@mui/material";
 import ActionAreaCard from "../../components/recipecard/card";
-import UserContext from "../../context/user-context";
-import { getDatabase, off, onValue, ref, set } from "firebase/database";
-import RecipeApi from "../../api/spoonacularApi";
-import ModalText from "../recipes/ModalText";
-import { FilterList } from "@mui/icons-material";
 
-// type Recipe = { name: string, imageString: string, rank: number, skill: string, time: number, id: number }
-// type List = { name: string, recipes: Recipe[], id: number }
-type Recipe = { name: string, imageString: string, rank: number, skill: string, time: number, id: string, directionRes: string[], ingredientRes: string[], groupe: string }
+type Recipe = { name: string, imageString: string, rank: number, skill: string, time: number, id: number }
+type List = { name: string, recipes: Recipe[], id: number }
 
+const dummyData: List[] = [
+  {
+    name: "Breakfast",
+    recipes: [
+      {
+        name: "Oatmeal",
+        imageString: "https://skinnyfitalicious.com/wp-content/uploads/2017/12/protein-oatmeal-img3-733x1100.jpg",
+        rank: 2.1,
+        skill: "Easy",
+        time: 15,
+        id: 0
+      },
+      {
+        name: "Scrambled Eggs",
+        imageString: "https://cd334822a6c8931fc94e2436473c553e.s3.us-west-2.amazonaws.com/images/1578961936_91mJa2%2BcURL.jpg",
+        rank: 2.94,
+        skill: "Medium",
+        time: 25,
+        id: 1
+      },
+      {
+        name: "Corn Flakes",
+        imageString: "https://vaya.in/recipes/wp-content/uploads/2018/05/Corn-Flakes.jpg",
+        rank: 1.3,
+        skill: "Easy",
+        time: 5,
+        id: 2
+      },
+      {
+        name: "Toast",
+        imageString: "https://www.simplyrecipes.com/thmb/lEb_Dr_2M6tdkdZ6YqYAiF6dfPw=/1800x1200/filters:fill(auto,1)/__opt__aboutcom__coeus__resources__content_migration__simply_recipes__uploads__2010__01__cinnamon-toast-horiz-a-1800-5cb4bf76bb254da796a137885af8cb09.jpg",
+        rank: 2.4,
+        skill: "Hard",
+        time: 50,
+        id: 3
+      },
+      {
+        name: "Yogurt",
+        imageString: "http://www.theorganicdietitian.com/wp-content/uploads/2015/08/Cococnut-Yogurt.jpg",
+        rank: 4.2,
+        skill: "Medium",
+        time: 15,
+        id: 4
+      }
+    ],
+    id: 0
+  },
+  {
+    name: "Lunch",
+    recipes: [
+      {
+        name: "Sandwich",
+        imageString: "https://i.ytimg.com/vi/Pq4E1BlPFHw/maxresdefault.jpg",
+        rank: 3.2,
+        skill: "Easy",
+        time: 30,
+        id: 5
+      },
+      {
+        name: "Salad",
+        imageString: "http://www.crazyvegankitchen.com/wp-content/uploads/2016/08/Vegan-Roasted-Vegetable-Salad-with-Avocado-Dressing-5.jpg",
+        rank: 1.3,
+        skill: "Medium",
+        time: 25,
+        id: 6
+      },
+      {
+        name: "Soup",
+        imageString: "https://toriavey.com/images/2013/12/Okra-Soup.jpg",
+        rank: 1.2,
+        skill: "Easy",
+        time: 60,
+        id: 7
+      },
+      {
+        name: "Fish N Chips",
+        imageString: "https://madfilosofie.dk/wp-content/uploads/2019/03/fish-n-chips13.jpg",
+        rank: 4.26,
+        skill: "Easy",
+        time: 35,
+        id: 9
+      },
+    ],
+    id: 1
+  },
+  {
+    name: "Dinner",
+    recipes: [
+      {
+        name: "Pizza",
+        imageString: "https://img.mummum.dk/wp-content/uploads/2020/09/pizza-med-pepperoni-.jpg",
+        rank: 1.1,
+        skill: "Easy",
+        time: 65,
+        id: 8
+      },
+      {
+        name: "Sushi",
+        imageString: "http://mannersandmischief.com/wp-content/uploads/2014/11/maki-sushi.jpg",
+        rank: 4.5,
+        skill: "Hard",
+        time: 45,
+        id: 9
+      },
+      {
+        name: "Steak",
+        imageString: "https://149410494.v2.pressablecdn.com/wp-content/uploads/2020/03/beef-steak-tomahawk-S3JHQLN.jpg",
+        rank: 4.6,
+        skill: "Medium",
+        time: 35,
+        id: 10
+      },
+      {
+        name: "Lasagna",
+        imageString: "https://restaurantetortelli.com/wp-content/uploads/2020/07/Lasagna-Mixta.jpg",
+        rank: 2.3,
+        skill: "Medium",
+        time: 120,
+        id: 11
+      },
+      {
+        name: "Roast Chicken",
+        imageString: "http://www.simplysated.com/wp-content/uploads/2015/09/2-roast-chicken-25-P9150025.jpg",
+        rank: 1.4,
+        skill: "Easy",
+        time: 90,
+        id: 12
+      },
+      {
+        name: "Grilled Salmon",
+        imageString: "https://allrecipesblog.com/wp-content/uploads/2016/08/Grilled-Salmon.jpg",
+        rank: 2.3,
+        skill: "Medium",
+        time: 30,
+        id: 13,
+      }
+    ],
+    id: 2
+  }
+]
 
 export default function Lists() {
 
+  const listNames = dummyData.map(list => list.name);
+
   const [filterString, setFilterString] = useState("");
-  const [selectedRecipe, setSelectedRecipe] = useState<Recipe | null>(null);
-  const [listOfRecipes, setListOfRecipes] = useState<Recipe[]>([]);
-  const [saveRecipeList, setSaveRecipeList] = useState<string[]>([]);
-  const [listOfMenuTypes, setListOfMenuTypes] = useState<string[]>([]);
-  const [listFilters, setListFilters] = useState<string[]>([])
-  const [update, setUpdate] = useState(false);
-  const [onlyOnce, setOnlyOnce] = useState(false);
-  const { user } = useContext(UserContext);
 
-  const db = getDatabase();
-  const starCountRef = ref(db, 'users/' + (user ? user.username : ""));
-  const removeOrAddIdFromList = (id: string, type: any) => {
-    const test = ref(db, 'users/' + (user ? user.username : "") + '/list/' + id);
-    set(test, type); //Setting data in data.
-
-  }
-  useEffect(() => {
-    onValue(starCountRef, (snapshot) => {
-      const data = snapshot.val();
-      const keys: string[] = Object.keys(data.list);
-      const listOfMenuTypes_opdate: string[] = [];
-      setSaveRecipeList(keys);
-      var paramString = "";
-      for (var i = 0; i < keys.length; i++) {
-        if (i === 0) {
-          paramString = keys[i]
-        } else {
-          paramString = paramString + "," + keys[i]
+  const [listFilters, setListFilters] = useState<{ [key: string]: boolean }>(
+    listNames.reduce(
+      (listOptions, listOption) => (
+        {
+          ...listOptions,
+          [listOption]: true
         }
-      }
-      off(starCountRef)
-      RecipeApi.getRecipesFromIdBulk("5e233864d2fd4fd890ea20ed6645c268", paramString).then((result: any) => {
-        const spoonacularList: Recipe[] = [];
-        result.forEach((element: any) => {
-          const listOfSteps: string[] = [];
-          const listOfIngre: string[] = [];
-          element.analyzedInstructions[0].steps.forEach((step: any) => {
-            listOfSteps.push(step.step)
-            step.ingredients.forEach((ingredientInStep: any) => {
-              if (!listOfIngre.includes(ingredientInStep.name)) {
-                listOfIngre.push(ingredientInStep.name)
-              }
-            })
-          })
-          spoonacularList.push({ "name": element.title, "imageString": element.image, "rank": 3, skill: "easy", "time": element.readyInMinutes, "id": element.id, "directionRes": listOfSteps, "ingredientRes": listOfIngre, "groupe": data.list[element.id] })
-          if (!listOfMenuTypes_opdate.includes(data.list[element.id])){
-            listOfMenuTypes_opdate.push(data.list[element.id]);
-            listFilters.push(data.list[element.id])
-          }
-        });
-        setListOfMenuTypes(listOfMenuTypes_opdate);
-        setListOfRecipes(spoonacularList)
-      })
-    });
+      ),
+      {}
+    )
+  );
 
-  }, [onlyOnce])
+  const handleFilterStringChange = (event: ChangeEvent<HTMLInputElement>) => {
+    setFilterString(event.target.value);
+  }
 
+  const handleListFilterChange = (event: ChangeEvent<HTMLInputElement>, checked: boolean) => {
+    setListFilters(
+      prevState => (
+        {
+          ...prevState,
+          [event.target.name]: checked
+        }
+      )
+    );
+  }
 
-
-  console.log(listFilters)
-  return <div>
-    <Modal
-      open={selectedRecipe !== null}
-      onClose={() => setSelectedRecipe(null)}
-      aria-labelledby="modal-modal-title"
-      aria-describedby="modal-modal-description"
-    >
-
-      <div style={{ width: "800px", height: "80%", position: "absolute", top: "50%", left: "50%", transform: "translate(-50%, -50%)" }}>
-        <ModalText
-          removeOrAddIdToList={removeOrAddIdFromList}
-          saveRecipeList={saveRecipeList ? saveRecipeList : [""]}
-          titleString={selectedRecipe ? selectedRecipe.name : ""}
-          imageString={selectedRecipe ? selectedRecipe.imageString : ""}
-          rank={selectedRecipe ? selectedRecipe.rank : 0}
-          skill={selectedRecipe ? selectedRecipe.skill : ""}
-          id={selectedRecipe ? selectedRecipe.id : "0"}
-          time={selectedRecipe ? selectedRecipe.time : 0}
-          directionRes={selectedRecipe ? selectedRecipe.directionRes : [""]}
-          ingredientRes={selectedRecipe ? selectedRecipe.ingredientRes : [""]}
-        />
-      </div>
-    </Modal>
-
-    <Grid container spacing={2}>
-      <Grid item xs={1} sm={3} display={{ xs: "none", sm: "initial" }}>
-        <h1 style={{ paddingLeft: "16px", marginBottom: "0" }}>Recipes</h1>
+  return (
+    <>
+      <Grid container spacing={2}>
+        <Grid item xs={1} sm={3} lg={3} display={{xs: "none", sm: "initial"}}>
+          <h1 id="main-header">Lists</h1>
+        </Grid>
+        <Grid item xs={12} sm={9} lg={9}>
+          <Box component="form" sx={{pt: 2, pr: 2, pb: 1, pl: 2}}>
+            <TextField onChange={handleFilterStringChange} fullWidth label="Search for a recipe name"
+                       variant="outlined"/>
+          </Box>
+        </Grid>
       </Grid>
-      <Grid item xs={12} sm={9}>
-        <Box component="form" sx={{ pt: 2, pr: 2, pb: 1, pl: 2 }}>
-          <TextField fullWidth type="text" value={filterString}
-            onChange={(x: any) => setFilterString(x.target.value)} label="Search for a recipe name"
-            variant="outlined"
-          />
-        </Box>
-      </Grid>
-      <Grid item xs={1} sm={3} sx={{ pl: 2 }}>
-        <Box component="aside" sx={{ position: { xs: "static", sm: "sticky" }, top: "86px" }}>
-          <u><h3 id="filter-header">Filter</h3></u>
-          <FormGroup>
-            {listOfMenuTypes.map((listName) => (
-              <FormControlLabel key={listName} label={listName}
-                control={<Checkbox name={listName} checked={listFilters.includes(listName)}
-                  onChange={(x) => {
-                    let newFilter: string[];
-                    if(listFilters.includes(x.target.name)){
-                      newFilter = listFilters.filter(y => y !== x.target.name)
-                      setListFilters(listFilters.filter(y => y !== x.target.name))
-                    } else {
-                      listFilters.push(x.target.name)
-                      setUpdate(!update)
-                      // setListFilters(listFilters.filter(y => true))
 
-                    }
-                  }} />} />
-            ))}
-          </FormGroup>
-        </Box>
+      <hr/>
+
+      <Grid container>
+        <Grid item xs={12} sm={4} md={3} lg={2.4} xl={2} sx={{pl: 2}}>
+          <Box component="aside" sx={{position: {xs: "static", sm: "sticky"}, top: "86px"}}>
+            <u><h3 id="filter-header">Filter</h3></u>
+            <FormGroup>
+              {listNames.map((listName) => (
+                <FormControlLabel key={listName} label={listName}
+                                  control={<Checkbox name={listName} checked={listFilters[listName]}
+                                                     onChange={handleListFilterChange}/>}/>
+              ))}
+            </FormGroup>
+          </Box>
+        </Grid>
+        <Grid item xs={12} display={{xs: "initial", sm: "none"}}>
+          <hr/>
+        </Grid>
+        <Grid item xs={12} sm={8} md={9} lg={9.6} xl={10}>
+          {dummyData.filter((list) => listFilters[list.name]).map((list) => (
+            <Box key={list.id} component="div" sx={{mt: 1, pr: 2, pl: 2}}>
+              <h2 className="list-header">{list.name}</h2>
+              <Grid container spacing={2} sx={{pt: 1, pb: 2}}>
+                {list.recipes.filter(recipe => recipe.name.toUpperCase().includes(filterString.toUpperCase())).map((recipe) => (
+                  <Grid key={recipe.id} item xs={12} sm={6} md={4} lg={3} xl={2.4}>
+                    <ActionAreaCard imageString={recipe.imageString} titleString={recipe.name} rank={recipe.rank}
+                                    skill={recipe.skill} time={recipe.time} selectFunc={() => console.log(recipe)}/>
+                  </Grid>
+                ))}
+              </Grid>
+            </Box>
+          ))}
+        </Grid>
       </Grid>
-      <Grid container spacing={2}  xs={12} sm={9} sx={{ pt: 1, pl: 2, pb: 2, pr: 2 }}>
-        {listOfRecipes.filter(x1 => x1.name.toLowerCase().includes(filterString.toLowerCase()))
-          .filter(x2 => listFilters.includes(x2.groupe))
-          .map(x => (
-          <Grid key={x.id} item xs={12} sm={4} md={3} lg={2.4} xl={2}>
-            <ActionAreaCard imageString={x.imageString} titleString={x.name} rank={x.rank} skill={x.skill}
-              time={x.time} selectFunc={() => setSelectedRecipe(x)} />
-          </Grid>
-        ))}
-      </Grid>
-    </Grid>
-  </div>
+    </>
+  )
 }

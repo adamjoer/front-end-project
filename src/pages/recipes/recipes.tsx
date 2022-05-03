@@ -1,29 +1,34 @@
-import React, {useContext, useState} from "react";
-import {Button, Grid, Modal, TextField} from "@mui/material";
+import React, {useContext, useRef, useState} from "react";
+import {Backdrop, Button, CircularProgress, Grid, Modal, TextField} from "@mui/material";
 import ActionAreaCard from "../../components/recipecard/card";
-import { Box } from '@mui/system';
+import {Box} from '@mui/system';
 import ModalText from "./ModalText";
 import RecipeApi from "../../api/spoonacularApi";
-import { getDatabase, ref, onValue, off, set} from "firebase/database";
+import {getDatabase, off, onValue, ref, set} from "firebase/database";
 import UserContext from "../../context/user-context";
 
 type Recipe = { name: string, imageString: string, rank: number, skill: string, time: number, id: string, directionRes: string[], ingredientRes: string[] }
 
-
 export default function Recipes() {
+  const {user} = useContext(UserContext);
+
+  const searchQuery = useRef("");
+  const offset = useRef(0);
+  const totalResults = useRef(0);
 
   const [filterString, setFilterString] = useState("");
+  const [isLoadingAnimationEnabled, setLoadingAnimationEnabled] = useState(false);
+
   const [selectedRecipe, setSelectedRecipe] = useState<Recipe | null>(null);
   const [listOfRecipes, setListOfRecipes] = useState<Recipe[]>([]);
-  const {user} = useContext(UserContext);
   const [saveRecipeList, setSaveRecipeList] = useState<string[]>([])
-  
-  const db = getDatabase();
-  const starCountRef = ref(db, 'users/' + (user ? user.username : ""));
 
-  const removeOrAddIdFromList = (id:string, type:any) => {
-    const test = ref(db, 'users/' + (user ? user.username : "")+'/list/'+id);
-    set(test, type); //Setting data in data.
+  const db = getDatabase();
+  const starCountRef = ref(db, `users/${user && user.username}`);
+
+  const removeOrAddIdFromList = (id: string, listName: string | null) => {
+    const test = ref(db, `users/${user && user.username}/list/${id}`);
+    set(test, listName); //Setting data in data.
 
     onValue(starCountRef, (snapshot) => {
       const data = snapshot.val();
@@ -35,65 +40,129 @@ export default function Recipes() {
 
   const handleSearch = (event: React.FormEvent) => {
     event.preventDefault();
+    if (filterString.length === 0 || filterString === searchQuery.current)
+      return;
 
     onValue(starCountRef, (snapshot) => {
-        const data = snapshot.val();
-        const keys = Object.keys(data.list);
-        setSaveRecipeList(keys)
-        off(starCountRef)
+      const data = snapshot.val();
+      const keys = Object.keys(data.list);
+      setSaveRecipeList(keys);
+      off(starCountRef);
     });
 
+    offset.current = 0;
+    searchQuery.current = filterString;
 
-    // const newList = testRecipe.filter(y => y.name.toUpperCase().includes(filterString.toUpperCase()));
-    // console.log(newList);
+    setLoadingAnimationEnabled(true);
+
+    RecipeApi.getRecipeFromString(searchQuery.current, 10, 0).then(result => {
+        const spoonacularList = getDataFromJson(result);
+
+        setListOfRecipes(spoonacularList);
+        totalResults.current = result.totalResults;
+
+        setLoadingAnimationEnabled(false);
+      },
+      (reason) => console.error(reason)
+    );
+  }
+
+  const handleLoadMore = () => {
+
+    onValue(starCountRef, (snapshot) => {
+      const data = snapshot.val();
+      const keys = Object.keys(data.list);
+      setSaveRecipeList(keys);
+      off(starCountRef);
+    });
+
+    offset.current = offset.current + 10;
+
+    setLoadingAnimationEnabled(true);
+
+    RecipeApi.getRecipeFromString(searchQuery.current, 10, offset.current).then(result => {
+        const spoonacularList = getDataFromJson(result);
+
+        setListOfRecipes(prevState => prevState.concat(spoonacularList));
+        totalResults.current = result.totalResults;
+
+        setLoadingAnimationEnabled(false);
+      },
+      (reason) => console.error(reason)
+    );
+  }
+
+  const getDataFromJson = (result: any): Recipe[] => {
     const spoonacularList: Recipe[] = [];
-    RecipeApi.getRecipeFromString("148c595d613541f1aa97db48517343ba", filterString, 50).then(result => {
-      result.results.forEach((element: any) => {
-        const listOfSteps: string[] = [];
-        const listOfIngre: string[] = [];
 
+    result.results.forEach((element: any) => {
+      const listOfSteps: string[] = [];
+      const listOfIngredients: string[] = [];
 
+      if (element.analyzedInstructions.length > 0) {
         element.analyzedInstructions[0].steps.forEach((step: any) => {
-          listOfSteps.push(step.step)
+          listOfSteps.push(step.step);
           step.ingredients.forEach((ingredientInStep: any) => {
-            if (!listOfIngre.includes(ingredientInStep.name)){
-              listOfIngre.push(ingredientInStep.name)
+            if (!listOfIngredients.includes(ingredientInStep.name)) {
+              listOfIngredients.push(ingredientInStep.name)
             }
-          })
-        })
-          // console.log(listOfIngre)
-          spoonacularList.push({"name": element.title, "imageString": element.image, "rank": 3, skill: "easy", "time": element.readyInMinutes, "id": element.id, "directionRes": listOfSteps, "ingredientRes": listOfIngre})
-          // console.log(element)
+          });
+        });
+      }
+
+      spoonacularList.push({
+        name: element.title,
+        imageString: element.image,
+        rank: 3,
+        skill: "easy",
+        time: element.readyInMinutes,
+        id: element.id,
+        directionRes: listOfSteps,
+        ingredientRes: listOfIngredients,
       });
-      setListOfRecipes(spoonacularList);
-    })
+    });
+
+    return spoonacularList;
   }
   
   return (
     <>
+      <Backdrop open={isLoadingAnimationEnabled} onClick={() => setLoadingAnimationEnabled(false)}
+                sx={{zIndex: (theme) => theme.zIndex.drawer + 1}}>
+        <CircularProgress color="secondary"/>
+      </Backdrop>
+
       <Modal
         open={selectedRecipe !== null}
         onClose={() => setSelectedRecipe(null)}
         aria-labelledby="modal-modal-title"
         aria-describedby="modal-modal-description"
-      > 
-        
-        <div style={{width: "800px", height: "80%", position: "absolute", top: "50%", left: "50%", transform: "translate(-50%, -50%)"}}>
-          <ModalText 
-            removeOrAddIdToList={ removeOrAddIdFromList}
-            saveRecipeList={saveRecipeList ? saveRecipeList : [""]} 
-            titleString={selectedRecipe ? selectedRecipe.name : ""} 
-            imageString={selectedRecipe ? selectedRecipe.imageString : ""} 
-            rank={selectedRecipe ? selectedRecipe.rank : 0} 
-            skill={selectedRecipe ? selectedRecipe.skill : ""}
-            id={selectedRecipe ? selectedRecipe.id : "0"} 
-            time={selectedRecipe ? selectedRecipe.time : 0} 
-            directionRes={selectedRecipe ? selectedRecipe.directionRes : [""]}
-            ingredientRes={selectedRecipe ? selectedRecipe.ingredientRes : [""]}
-          />
-          {console.log(selectedRecipe)}
-        </div>
+      >
 
+        <div style={{
+          width: "800px",
+          height: "80%",
+          position: "absolute",
+          top: "50%",
+          left: "50%",
+          transform: "translate(-50%, -50%)"
+        }}>
+          {
+            selectedRecipe &&
+              <ModalText
+                  removeOrAddIdToList={removeOrAddIdFromList}
+                  saveRecipeList={saveRecipeList}
+                  titleString={selectedRecipe.name}
+                  imageString={selectedRecipe.imageString}
+                  rank={selectedRecipe.rank}
+                  skill={selectedRecipe.skill}
+                  id={selectedRecipe.id}
+                  time={selectedRecipe.time}
+                  directionRes={selectedRecipe.directionRes}
+                  ingredientRes={selectedRecipe.ingredientRes}
+              />
+          }
+        </div>
       </Modal>
 
       <Grid container spacing={2}>
@@ -103,13 +172,17 @@ export default function Recipes() {
         <Grid item xs={12} sm={9}>
           <Box component="form" onSubmit={handleSearch} sx={{pt: 2, pr: 2, pb: 1, pl: 2}}>
             <TextField fullWidth type="text" value={filterString}
-                       onChange={(x:any) => setFilterString(x.target.value)} label="Search for a recipe name"
+                       onChange={event => setFilterString(event.target.value)} label="Search for a recipe name"
                        variant="outlined"
                        InputProps={{
                          endAdornment: <Button type="submit" variant="outlined" sx={{
                            backgroundColor: "white",
-                           color: "#FD8270",
-                           ':hover': {backgroundColor: '#FD8270', color: "white", transition: '0.5s'}
+                           color: (theme) => theme.palette.secondary.main,
+                           ':hover': {
+                             backgroundColor: (theme) => theme.palette.secondary.main,
+                             color: "white",
+                             transition: '0.5s'
+                           }
                          }}>Search</Button>
                        }}
             />
@@ -127,6 +200,15 @@ export default function Recipes() {
           </Grid>
         ))}
       </Grid>
+
+      {
+        listOfRecipes.length < totalResults.current &&
+          <Box display="flex" flexDirection="column" alignItems="center" sx={{pb: 2}}>
+              <Button variant="contained" onClick={handleLoadMore}>
+                  Load more ({listOfRecipes.length}/{totalResults.current})
+              </Button>
+          </Box>
+      }
     </>
   )
 }
