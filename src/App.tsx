@@ -41,9 +41,7 @@ const db = getDatabase();
 function App() {
   const [isLoggedIn, setIsLoggedIn] = useState(false);
 
-  auth.onAuthStateChanged(fbuser => {
-    setIsLoggedIn(fbuser != null);
-  })
+  auth.onAuthStateChanged(firebaseUser => setIsLoggedIn(firebaseUser != null))
 
   const logIn = (email: string, password: string, onFulfilled?: () => void, onRejected?: (error: any) => void,
                  onFinally?: () => void) => {

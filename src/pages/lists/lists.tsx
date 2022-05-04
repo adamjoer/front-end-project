@@ -57,7 +57,7 @@ export default function Lists() {
     if (!listName) {
       setListOfRecipes(listOfRecipes.filter(recipe => recipe.id.toString() !== id));
       let listToRemove: string | null = null;
-      for (let i = 0; i  < lists.length; ++i) {
+      for (let i = 0; i < lists.length; ++i) {
         const list = lists[i];
 
         const recipe = list.recipes.find((recipe) => recipe.id.toString() === id);
@@ -112,7 +112,7 @@ export default function Lists() {
                       listOfIngredients.push(ingredientInStep.name)
                     }
                   })
-                })
+                });
               }
               spoonacularList.push({
                 name: element.title,
@@ -124,7 +124,7 @@ export default function Lists() {
                 directionRes: listOfSteps,
                 ingredientRes: listOfIngredients,
                 list: data.list[element.id],
-              })
+              });
             });
 
             let temporaryLists: List[] = [];
@@ -138,9 +138,11 @@ export default function Lists() {
                 temporaryLists.push({
                   name: recipe.list,
                   recipes: [recipe],
-                })
+                });
               }
             });
+
+            temporaryLists.sort((a, b) => a.name.localeCompare(b.name));
 
             const listNames = temporaryLists.map(list => list.name);
 
@@ -156,7 +158,6 @@ export default function Lists() {
               )
             );
 
-            temporaryLists.sort((a, b) => a.name.localeCompare(b.name));
             setLists(temporaryLists);
           },
           reason => console.error(reason)
@@ -229,6 +230,7 @@ export default function Lists() {
             <FormGroup>
               {lists.map((list) => list.name).map((listName) => (
                 <FormControlLabel key={listName} label={listName}
+                                  sx={{textTransform: "capitalize"}}
                                   control={<Checkbox name={listName} checked={listFilters[listName]}
                                                      onChange={handleListFilterChange}/>}/>
               ))}
@@ -246,7 +248,8 @@ export default function Lists() {
                 {list.recipes.filter(recipe => recipe.name.toUpperCase().includes(filterString.toUpperCase())).map((recipe) => (
                   <Grid key={recipe.id} item xs={12} sm={6} md={4} lg={3} xl={2.4}>
                     <ActionAreaCard imageString={recipe.imageString} titleString={recipe.name} rank={recipe.rank}
-                                    skill={recipe.skill} time={recipe.time} selectFunc={() => setSelectedRecipe(recipe)}/>
+                                    skill={recipe.skill} time={recipe.time}
+                                    selectFunc={() => setSelectedRecipe(recipe)}/>
                   </Grid>
                 ))}
               </Grid>
