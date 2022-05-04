@@ -51,25 +51,27 @@ export default function Recipes() {
       off(starCountRef);
     });
 
-    offset.current = 0;
-    searchQuery.current = filterString;
-
     setLoadingAnimationEnabled(true);
 
-    RecipeApi.getRecipeFromString(searchQuery.current, 10, 0).then(result => {
-        const spoonacularList = getDataFromJson(result);
+    RecipeApi.getRecipeFromString(filterString, 10, 0)
+      .then(result => {
+          const spoonacularList = getDataFromJson(result);
 
-        setListOfRecipes(spoonacularList);
-        totalResults.current = result.totalResults;
+          setListOfRecipes(spoonacularList);
+          totalResults.current = result.totalResults;
 
+          searchQuery.current = filterString;
+          offset.current = 0;
+        },
+        reason => console.error(reason)
+      )
+
+      .finally(() => {
         setLoadingAnimationEnabled(false);
-      },
-      (reason) => console.error(reason)
-    );
+      });
   }
 
   const handleLoadMore = () => {
-
     onValue(starCountRef, (snapshot) => {
       const data = snapshot.val();
       const keys = data.list ? Object.keys(data.list) : [];
@@ -81,16 +83,20 @@ export default function Recipes() {
 
     setLoadingAnimationEnabled(true);
 
-    RecipeApi.getRecipeFromString(searchQuery.current, 10, offset.current).then(result => {
-        const spoonacularList = getDataFromJson(result);
+    RecipeApi.getRecipeFromString(searchQuery.current, 10, offset.current)
+      .then(result => {
+          const spoonacularList = getDataFromJson(result);
 
-        setListOfRecipes(prevState => prevState.concat(spoonacularList));
-        totalResults.current = result.totalResults;
+          setListOfRecipes(prevState => prevState.concat(spoonacularList));
+          totalResults.current = result.totalResults;
 
+        },
+        reason => console.error(reason)
+      )
+
+      .finally(() => {
         setLoadingAnimationEnabled(false);
-      },
-      (reason) => console.error(reason)
-    );
+      });
   }
 
   const getDataFromJson = (result: any): Recipe[] => {
@@ -125,7 +131,7 @@ export default function Recipes() {
 
     return spoonacularList;
   }
-  
+
   return (
     <>
       <Backdrop open={isLoadingAnimationEnabled} onClick={() => setLoadingAnimationEnabled(false)}

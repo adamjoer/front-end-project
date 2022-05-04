@@ -17,7 +17,7 @@ import RecipeApi from "../../api/spoonacularApi";
 import ModalText from "../recipes/ModalText";
 import {getAuth} from "firebase/auth";
 
-type Recipe = { name: string, imageString: string, rank: number, skill: string, time: number, id: number, directionRes: string[], ingredientRes: string[], groupe: string }
+type Recipe = { name: string, imageString: string, rank: number, skill: string, time: number, id: number, directionRes: string[], ingredientRes: string[], list: string }
 
 export default function Lists() {
 
@@ -36,7 +36,7 @@ export default function Lists() {
   const starCountRef = ref(db, 'users/' + (auth.currentUser ? auth.currentUser.uid : ""));
   const removeOrAddIdFromList = (id: string, type: any) => {
     const test = ref(db, 'users/' + (auth.currentUser ? auth.currentUser.uid : "") + '/list/' + id);
-    set(test, type); //Setting data in data.
+    set(test, type);
 
     if (!type)
       setListOfRecipes(listOfRecipes.filter(recipe => recipe.id.toString() !== id));
@@ -62,45 +62,51 @@ export default function Lists() {
 
       setLoadingAnimationEnabled(true);
 
-      RecipeApi.getRecipesFromIdBulk(paramString).then((result: any) => {
-        const spoonacularList: Recipe[] = [];
-        result.forEach((element: any) => {
-          const listOfSteps: string[] = [];
-          const listOfIngre: string[] = [];
-          if (element.analyzedInstructions.length > 0) {
-            element.analyzedInstructions[0].steps.forEach((step: any) => {
-              listOfSteps.push(step.step)
-              step.ingredients.forEach((ingredientInStep: any) => {
-                if (!listOfIngre.includes(ingredientInStep.name)) {
-                  listOfIngre.push(ingredientInStep.name)
-                }
+      RecipeApi.getRecipesFromIdBulk(paramString)
+        .then(result => {
+            const spoonacularList: Recipe[] = [];
+            result.forEach((element: any) => {
+              const listOfSteps: string[] = [];
+              const listOfIngre: string[] = [];
+              if (element.analyzedInstructions.length > 0) {
+                element.analyzedInstructions[0].steps.forEach((step: any) => {
+                  listOfSteps.push(step.step)
+                  step.ingredients.forEach((ingredientInStep: any) => {
+                    if (!listOfIngre.includes(ingredientInStep.name)) {
+                      listOfIngre.push(ingredientInStep.name)
+                    }
+                  })
+                })
+              }
+              spoonacularList.push({
+                name: element.title,
+                imageString: element.image,
+                rank: 3,
+                skill: "easy",
+                time: element.readyInMinutes,
+                id: element.id,
+                directionRes: listOfSteps,
+                ingredientRes: listOfIngre,
+                list: data.list[element.id]
               })
-            })
-          }
-          spoonacularList.push({
-            "name": element.title,
-            "imageString": element.image,
-            "rank": 3,
-            skill: "easy",
-            "time": element.readyInMinutes,
-            "id": element.id,
-            "directionRes": listOfSteps,
-            "ingredientRes": listOfIngre,
-            "groupe": data.list[element.id]
-          })
-          if (!listOfMenuTypes_opdate.includes(data.list[element.id])) {
-            listOfMenuTypes_opdate.push(data.list[element.id]);
-            listFilters.push(data.list[element.id])
-          }
-        });
-        setListOfMenuTypes(listOfMenuTypes_opdate);
-        setListOfRecipes(spoonacularList)
+              if (!listOfMenuTypes_opdate.includes(data.list[element.id])) {
+                listOfMenuTypes_opdate.push(data.list[element.id]);
+                listFilters.push(data.list[element.id])
+              }
+            });
+            setListOfMenuTypes(listOfMenuTypes_opdate);
+            setListOfRecipes(spoonacularList)
+          },
+          reason => console.error(reason)
+        )
 
-        setLoadingAnimationEnabled(false);
-      })
+        .finally(() => {
+            setLoadingAnimationEnabled(false);
+          }
+        )
     });
 
-  }, [null])
+  }, [null]);
 
   const handleFilterListChange = (event: ChangeEvent<HTMLInputElement>) => {
     if (listFilters.includes(event.target.name)) {
@@ -175,7 +181,7 @@ export default function Lists() {
         </Grid>
         <Grid container item spacing={2} xs={12} sm={9} sx={{pt: 1, pl: 2, pb: 2, pr: 2}}>
           {listOfRecipes.filter(x1 => x1.name.toLowerCase().includes(filterString.toLowerCase()))
-            .filter(x2 => listFilters.includes(x2.groupe))
+            .filter(x2 => listFilters.includes(x2.list))
             .map(x => (
               <Grid key={x.id} item xs={12} sm={4} md={3} lg={2.4} xl={2}>
                 <ActionAreaCard imageString={x.imageString} titleString={x.name} rank={x.rank} skill={x.skill}
