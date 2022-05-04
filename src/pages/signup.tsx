@@ -1,6 +1,7 @@
 import React, {useContext, useState} from "react";
 import AuthenticationContext from "../context/authentication-context";
 import {Link, useNavigate} from "react-router-dom";
+import {Alert, Backdrop, CircularProgress} from "@mui/material";
 import Card from "@mui/material/Card"
 import CardContent from "@mui/material/CardContent"
 import Box from "@mui/material/Box"
@@ -26,6 +27,10 @@ export default function SignUp() {
 
   const [confirmationPassword, setConfirmationPassword] = useState("");
   const [confirmationPasswordError, setConfirmationPasswordError] = useState("");
+
+  const [isLoadingAnimationEnabled, setLoadingAnimationEnabled] = useState(false);
+
+  const [signupErrorMessage, setSignupErrorMessage] = useState("");
 
   const handleFirstNameChange = (event: React.ChangeEvent<HTMLInputElement>) => {
     setFirstName(event.target.value);
@@ -53,7 +58,13 @@ export default function SignUp() {
     if (!validateForm())
       return;
 
-    createAccount(firstName, lastName, email, password, () => navigate("/"));
+    setLoadingAnimationEnabled(true);
+
+    createAccount(firstName, lastName, email, password,
+      () => navigate("/"),
+      (error) => setSignupErrorMessage(error.message),
+      () => setLoadingAnimationEnabled(false)
+    );
   }
 
   const validateForm = (): boolean => {
@@ -65,7 +76,7 @@ export default function SignUp() {
     const lastNameMinLength = 2;
     const lastNameMaxLength = 30;
 
-    const passwordMinLength = 3;
+    const passwordMinLength = 6;
     const passwordMaxLength = 30;
 
     const emailMinLength = 0;
@@ -112,43 +123,57 @@ export default function SignUp() {
   }
 
   return (
-    <Box display="flex" flexDirection="column" alignItems="center" sx={{m: 2}}>
-      <Card sx={{maxWidth: "500px"}}>
-        <CardContent>
-          <Box component="form" onSubmit={handleSubmitForm} noValidate autoComplete="off">
-            <Grid container spacing={2}>
-              <Grid item xs={12} sm={6}>
-                <TextField label="First name" type="text" required onChange={handleFirstNameChange}
-                           error={firstNameError.length > 0} helperText={firstNameError} fullWidth/>
-              </Grid>
-              <Grid item xs={12} sm={6}>
-                <TextField label="Last name" type="text" required onChange={handleLastNameChange}
-                           error={lastNameError.length > 0} helperText={lastNameError} fullWidth/>
-              </Grid>
+    <>
+      <Backdrop open={isLoadingAnimationEnabled} onClick={() => setLoadingAnimationEnabled(false)}
+                sx={{zIndex: (theme) => theme.zIndex.drawer + 1}}>
+        <CircularProgress color="secondary"/>
+      </Backdrop>
 
-              <Grid item xs={12}>
-                <TextField label="E-mail" type="text" onChange={handleEmailChange}
-                           error={emailError.length > 0} helperText={emailError} fullWidth/>
-              </Grid>
+      <Box display="flex" flexDirection="column" alignItems="center" sx={{m: 2}}>
+        <Alert severity="error" sx={{
+          display: signupErrorMessage.length > 0 ? "flex" : "none",
+          maxWidth: "500px",
+          mb: 2
+        }}>{signupErrorMessage}</Alert>
 
-              <Grid item xs={12} sm={6}>
-                <TextField label="Password" type="password" required onChange={handlePasswordChange}
-                           error={passwordError.length > 0} helperText={passwordError} fullWidth/>
-              </Grid>
-              <Grid item xs={12} sm={6}>
-                <TextField label="Confirm password" type="password" required onChange={handleConfirmationPasswordChange}
-                           error={confirmationPasswordError.length > 0} helperText={confirmationPasswordError}
-                           fullWidth/>
-              </Grid>
+        <Card sx={{maxWidth: "500px"}}>
+          <CardContent>
+            <Box component="form" onSubmit={handleSubmitForm} noValidate autoComplete="off">
+              <Grid container spacing={2}>
+                <Grid item xs={12} sm={6}>
+                  <TextField label="First name" type="text" required onChange={handleFirstNameChange}
+                             error={firstNameError.length > 0} helperText={firstNameError} fullWidth/>
+                </Grid>
+                <Grid item xs={12} sm={6}>
+                  <TextField label="Last name" type="text" required onChange={handleLastNameChange}
+                             error={lastNameError.length > 0} helperText={lastNameError} fullWidth/>
+                </Grid>
 
-              <Grid item xs={12} display="flex" flexDirection="column" alignItems="center">
-                <Button type="submit" variant="contained" color="secondary" sx={{color: "white"}}>Sign up</Button>
+                <Grid item xs={12}>
+                  <TextField label="E-mail" type="text" onChange={handleEmailChange}
+                             error={emailError.length > 0} helperText={emailError} fullWidth/>
+                </Grid>
+
+                <Grid item xs={12} sm={6}>
+                  <TextField label="Password" type="password" required onChange={handlePasswordChange}
+                             error={passwordError.length > 0} helperText={passwordError} fullWidth/>
+                </Grid>
+                <Grid item xs={12} sm={6}>
+                  <TextField label="Confirm password" type="password" required
+                             onChange={handleConfirmationPasswordChange}
+                             error={confirmationPasswordError.length > 0} helperText={confirmationPasswordError}
+                             fullWidth/>
+                </Grid>
+
+                <Grid item xs={12} display="flex" flexDirection="column" alignItems="center">
+                  <Button type="submit" variant="contained" color="secondary" sx={{color: "white"}}>Sign up</Button>
+                </Grid>
               </Grid>
-            </Grid>
-          </Box>
-        </CardContent>
-      </Card>
-      <p>Already have an account? <Link to="/login">Log in</Link></p>
-    </Box>
+            </Box>
+          </CardContent>
+        </Card>
+        <p>Already have an account? <Link to="/login">Log in</Link></p>
+      </Box>
+    </>
   )
 }

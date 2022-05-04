@@ -45,29 +45,30 @@ function App() {
     setIsLoggedIn(fbuser != null);
   })
 
-  const logIn = (email: string, password: string, successCallback?: () => void) => {
+  const logIn = (email: string, password: string, onFulfilled?: () => void, onRejected?: (error: any) => void,
+                 onFinally?: () => void) => {
 
     signInWithEmailAndPassword(auth, email, password)
-      .then(() => {
-        if (successCallback)
-          successCallback();
-      })
-      .catch((error) => {
-        alert(error.message);
-      });
+      .then(() => onFulfilled && onFulfilled())
+      .catch((error) => onRejected && onRejected(error))
+      .finally(() => onFinally && onFinally());
   }
 
-  const createAccount = (firstName: string, lastName: string, email: string, password: string, successCallback?: () => void) => {
-    createUserWithEmailAndPassword(auth, email, password).then((userCredential) => {
+  const createAccount = (firstName: string, lastName: string, email: string, password: string, onFulfilled?: () => void,
+                         onRejected?: (error: any) => void, onFinally?: () => void) => {
+    createUserWithEmailAndPassword(auth, email, password)
+      .then((userCredential) => {
 
-      const firstNameRef = ref(db, `users/${userCredential && userCredential.user.uid}/info/firstname`);
-      const lastNameRef = ref(db, `users/${userCredential && userCredential.user.uid}/info/lastname`);
-      set(firstNameRef, firstName);
-      set(lastNameRef, lastName);
+        const firstNameRef = ref(db, `users/${userCredential && userCredential.user.uid}/info/firstname`);
+        const lastNameRef = ref(db, `users/${userCredential && userCredential.user.uid}/info/lastname`);
+        set(firstNameRef, firstName);
+        set(lastNameRef, lastName);
 
-      if (successCallback)
-        successCallback();
-    })
+        onFulfilled && onFulfilled();
+      })
+
+      .catch((error) => onRejected && onRejected(error))
+      .finally(() => onFinally && onFinally());
   }
 
   const logOut = () => {
