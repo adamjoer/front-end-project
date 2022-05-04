@@ -79,7 +79,7 @@ export default function SignUp() {
     const passwordMinLength = 6;
     const passwordMaxLength = 30;
 
-    const emailMinLength = 0;
+    const emailMinLength = 6;
     const emailMaxLength = 50;
     // From https://www.emailregex.com/
     const emailRegex = /^(([^<>()[\]\\.,;:\s@"]+(\.[^<>()[\]\\.,;:\s@"]+)*)|(".+"))@((\[[0-9]{1,3}\.[0-9]{1,3}\.[0-9]{1,3}\.[0-9]{1,3}])|(([a-zA-Z\-0-9]+\.)+[a-zA-Z]{2,}))$/;
@@ -150,7 +150,7 @@ export default function SignUp() {
                 </Grid>
 
                 <Grid item xs={12}>
-                  <TextField label="E-mail" type="text" onChange={handleEmailChange}
+                  <TextField label="E-mail" type="text" required onChange={handleEmailChange}
                              error={emailError.length > 0} helperText={emailError} fullWidth/>
                 </Grid>
 

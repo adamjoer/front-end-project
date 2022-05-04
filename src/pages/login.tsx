@@ -49,7 +49,7 @@ export default function Login() {
   const validateForm = (): boolean => {
 
     // TODO: Put these constants a more appropriate place
-    const emailMinLength = 3;
+    const emailMinLength = 6;
     const emailMaxLength = 50;
     // From https://www.emailregex.com/
     const emailRegex = /^(([^<>()[\]\\.,;:\s@"]+(\.[^<>()[\]\\.,;:\s@"]+)*)|(".+"))@((\[[0-9]{1,3}\.[0-9]{1,3}\.[0-9]{1,3}\.[0-9]{1,3}])|(([a-zA-Z\-0-9]+\.)+[a-zA-Z]{2,}))$/;
@@ -102,7 +102,7 @@ export default function Login() {
             <Box component="form" onSubmit={handleSubmitForm} noValidate autoComplete="off">
               <Grid container spacing={2}>
                 <Grid item xs={12}>
-                  <TextField label="Email" type="email" onChange={handleEmailChange}
+                  <TextField label="Email" type="email" required onChange={handleEmailChange}
                              error={emailError.length > 0} helperText={emailError} fullWidth/>
                 </Grid>
 
