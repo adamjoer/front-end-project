@@ -1,16 +1,14 @@
 import "./lists.css"
 import React, {ChangeEvent, useEffect, useState} from "react";
-import {
-  Checkbox,
-  FormControlLabel,
-  FormGroup,
-  TextField,
-  Grid,
-  Box,
-  Modal,
-  Backdrop,
-  CircularProgress
-} from "@mui/material";
+import Checkbox from "@mui/material/Checkbox"
+import FormControlLabel from "@mui/material/FormControlLabel"
+import FormGroup from "@mui/material/FormGroup"
+import TextField from "@mui/material/TextField"
+import Grid from "@mui/material/Grid"
+import Box from "@mui/material/Box"
+import Modal from "@mui/material/Modal"
+import Backdrop from "@mui/material/Backdrop"
+import CircularProgress from "@mui/material/CircularProgress"
 import ActionAreaCard from "../../components/recipecard/card";
 import {getDatabase, off, onValue, ref, set} from "firebase/database";
 import RecipeApi from "../../api/spoonacularApi";
@@ -26,11 +24,8 @@ export default function Lists() {
   const [selectedRecipe, setSelectedRecipe] = useState<Recipe | null>(null);
   const [listOfRecipes, setListOfRecipes] = useState<Recipe[]>([]);
   const [saveRecipeList, setSaveRecipeList] = useState<string[]>([]);
-  const auth = getAuth();
-
   const [lists, setLists] = useState<List[]>([]);
   const [listFilters, setListFilters] = useState<{ [key: string]: boolean }>({});
-
   const [isLoadingAnimationEnabled, setLoadingAnimationEnabled] = useState(false);
 
   const handleFilterStringChange = (event: ChangeEvent<HTMLInputElement>) => {
@@ -47,6 +42,8 @@ export default function Lists() {
       )
     );
   }
+
+  const auth = getAuth();
 
   const db = getDatabase();
   const starCountRef = ref(db, 'users/' + (auth.currentUser ? auth.currentUser.uid : ""));
@@ -159,6 +156,7 @@ export default function Lists() {
               )
             );
 
+            temporaryLists.sort((a, b) => a.name.localeCompare(b.name));
             setLists(temporaryLists);
           },
           reason => console.error(reason)
