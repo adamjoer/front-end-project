@@ -1,6 +1,7 @@
 import React, {useContext, useState} from "react";
-import UserContext from "../context/user-context";
+import AuthenticationContext from "../context/authentication-context";
 import {Link, useNavigate} from "react-router-dom";
+import {Alert, Backdrop, CircularProgress} from "@mui/material";
 import Card from "@mui/material/Card"
 import CardContent from "@mui/material/CardContent"
 import Box from "@mui/material/Box"
@@ -9,17 +10,21 @@ import Button from "@mui/material/Button"
 import Grid from "@mui/material/Grid";
 
 export default function Login() {
-  const {logIn} = useContext(UserContext);
+  const {logIn} = useContext(AuthenticationContext);
   const navigate = useNavigate();
 
-  const [username, setUsername] = useState("");
-  const [usernameError, setUsernameError] = useState("");
+  const [email, setEmail] = useState("");
+  const [emailError, setEmailError] = useState("");
 
   const [password, setPassword] = useState("");
   const [passwordError, setPasswordError] = useState("");
 
-  const handleUsernameChange = (event: React.ChangeEvent<HTMLInputElement>) => {
-    setUsername(event.target.value);
+  const [isLoadingAnimationEnabled, setLoadingAnimationEnabled] = useState(false);
+
+  const [loginErrorMessage, setLoginErrorMessage] = useState("");
+
+  const handleEmailChange = (event: React.ChangeEvent<HTMLInputElement>) => {
+    setEmail(event.target.value);
   }
 
   const handlePasswordChange = (event: React.ChangeEvent<HTMLInputElement>) => {
@@ -32,23 +37,24 @@ export default function Login() {
     if (!validateForm())
       return;
 
-    logIn({
-      firstName: "John",
-      lastName: "Doe",
-      username,
-      email: "johndoe@example.com"
-    });
-    navigate("/");
+    setLoadingAnimationEnabled(true);
+
+    logIn(email, password,
+      () => navigate("/"),
+      (error) => setLoginErrorMessage(error.message),
+      () => setLoadingAnimationEnabled(false)
+    );
   }
 
   const validateForm = (): boolean => {
 
     // TODO: Put these constants a more appropriate place
-    const usernameMinLength = 3;
-    const usernameMaxLength = 30;
-    const usernameRegex = /^[a-zA-Z0-9-_]+$/;
+    const emailMinLength = 6;
+    const emailMaxLength = 50;
+    // From https://www.emailregex.com/
+    const emailRegex = /^(([^<>()[\]\\.,;:\s@"]+(\.[^<>()[\]\\.,;:\s@"]+)*)|(".+"))@((\[[0-9]{1,3}\.[0-9]{1,3}\.[0-9]{1,3}\.[0-9]{1,3}])|(([a-zA-Z\-0-9]+\.)+[a-zA-Z]{2,}))$/;
 
-    const passwordMinLength = 3;
+    const passwordMinLength = 6;
     const passwordMaxLength = 30;
 
     const validateLength = (input: string, minLength: number, maxLength: number, errorFunc: (errorMsg: string) => void): boolean => {
@@ -65,9 +71,9 @@ export default function Login() {
 
     let formIsValid = true;
 
-    // Validate username
-    if (validateLength(username, usernameMinLength, usernameMaxLength, setUsernameError) && !usernameRegex.test(username)) {
-      setUsernameError("Must only contain letters, numbers, dashes, and underscores.");
+    // Validate email
+    if (validateLength(email, emailMinLength, emailMaxLength, setEmailError) && !emailRegex.test(email)) {
+      setEmailError("Must to be a valid email address");
       formIsValid = false;
     }
 
@@ -78,29 +84,43 @@ export default function Login() {
   }
 
   return (
-    <Box display="flex" flexDirection="column" alignItems="center" sx={{m: 2}}>
-      <Card sx={{maxWidth: "500px"}}>
-        <CardContent>
-          <Box component="form" onSubmit={handleSubmitForm} noValidate autoComplete="off">
-            <Grid container spacing={2}>
-              <Grid item xs={12}>
-                <TextField label="Username" type="text" required onChange={handleUsernameChange}
-                           error={usernameError.length > 0} helperText={usernameError} fullWidth/>
-              </Grid>
+    <>
+      <Backdrop open={isLoadingAnimationEnabled} onClick={() => setLoadingAnimationEnabled(false)}
+                sx={{zIndex: (theme) => theme.zIndex.drawer + 1}}>
+        <CircularProgress color="secondary"/>
+      </Backdrop>
 
-              <Grid item xs={12}>
-                <TextField label="Password" type="password" required onChange={handlePasswordChange}
-                           error={passwordError.length > 0} helperText={passwordError} fullWidth/>
-              </Grid>
+      <Box display="flex" flexDirection="column" alignItems="center" sx={{m: 2}}>
+        <Alert severity="error" sx={{
+          display: loginErrorMessage.length > 0 ? "flex" : "none",
+          maxWidth: "500px",
+          mb: 2
+        }}>{loginErrorMessage}</Alert>
 
-              <Grid item xs={12} display="flex" flexDirection="column" alignItems="center">
-                <Button type="submit" variant="contained" color="secondary" sx={{color: "white", ':hover':{ transition: '0.5s', fontSize:'18px'}}}>Log in</Button>
+        <Card sx={{maxWidth: "500px"}}>
+          <CardContent>
+            <Box component="form" onSubmit={handleSubmitForm} noValidate autoComplete="off">
+              <Grid container spacing={2}>
+                <Grid item xs={12}>
+                  <TextField label="Email" type="email" required onChange={handleEmailChange}
+                             error={emailError.length > 0} helperText={emailError} fullWidth/>
+                </Grid>
+
+                <Grid item xs={12}>
+                  <TextField label="Password" type="password" required onChange={handlePasswordChange}
+                             error={passwordError.length > 0} helperText={passwordError} fullWidth/>
+                </Grid>
+
+                <Grid item xs={12} display="flex" flexDirection="column" alignItems="center">
+                  <Button type="submit" variant="contained" color="secondary"
+                          sx={{color: "white", ':hover': {transition: '0.5s', fontSize: '18px'}}}>Log in</Button>
+                </Grid>
               </Grid>
-            </Grid>
-          </Box>
-        </CardContent>
-      </Card>
-      <p>No account? <Link to="/signup">Sign up</Link></p>
-    </Box>
+            </Box>
+          </CardContent>
+        </Card>
+        <p>No account? <Link to="/signup">Sign up</Link></p>
+      </Box>
+    </>
   )
 }

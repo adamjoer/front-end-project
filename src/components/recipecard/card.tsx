@@ -59,7 +59,8 @@ export default function ActionAreaCard(props: ActionAreaCardProps) {
           loading="lazy"
         />
         <CardContent className="cardcontentwrap">
-          <Typography gutterBottom variant="h5">
+          <Typography gutterBottom variant="h5"
+                      sx={{whiteSpace: "nowrap", textOverflow: "ellipsis", overflow: "hidden", display: "inherit"}}>
             {props.titleString}
           </Typography>
           <div style={{display: "flex", flexWrap: "nowrap", justifyContent: "space-evenly"}}>
@@ -75,13 +76,15 @@ export default function ActionAreaCard(props: ActionAreaCardProps) {
           </div>
           <div style={{display: "flex"}}>
             <SoupKitchenIcon/>
-            <Typography variant="body1" color="text.secondary" className="card_text_footer">
+            <Typography variant="body1" color="text.secondary" className="card_text_footer"
+                        sx={{whiteSpace: "nowrap", textOverflow: "ellipsis", overflow: "hidden", display: "inherit"}}>
               {props.skill}
             </Typography>
           </div>
           <div style={{display: "flex"}}>
             <AvTimerIcon/>
-            <Typography variant="body1" color="text.secondary" className="card_text_footer">
+            <Typography variant="body1" color="text.secondary" className="card_text_footer"
+                        sx={{whiteSpace: "nowrap", textOverflow: "ellipsis", overflow: "hidden", display: "inherit"}}>
               {getStringFromTime(props.time)}
             </Typography>
           </div>

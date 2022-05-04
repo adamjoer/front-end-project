@@ -11,12 +11,12 @@ import Button from "@mui/material/Button";
 import Tooltip from "@mui/material/Tooltip";
 import MenuItem from "@mui/material/MenuItem";
 import {Link, useNavigate} from "react-router-dom";
-import UserContext from "../context/user-context";
+import AuthenticationContext from "../context/authentication-context";
 import React, {useContext, useState} from "react";
 import Image from "../images/logo2.png"
 
 export default function Navbar() {
-  const {user, logOut} = useContext(UserContext);
+  const {isLoggedIn, logOut} = useContext(AuthenticationContext);
   const navigate = useNavigate();
 
   const [anchorElNav, setAnchorElNav] = useState<HTMLElement | null>(null);
@@ -24,7 +24,7 @@ export default function Navbar() {
 
   const pagesLoggedIn = [
     {name: "Recipes", to: "/recipes"},
-    {name: "Favorites", to: "/favorites"},
+    // {name: "Favorites", to: "/favorites"},
     {name: "Lists", to: "/lists"},
   ];
 
@@ -76,14 +76,14 @@ export default function Navbar() {
           </Box>
 
           <Box sx={{flexGrow: 1, display: {xs: "none", sm: "flex"}}}>
-            {user &&
+            {isLoggedIn &&
               (pagesLoggedIn).map((page) => (
                 <Button key={page.name} component={Link} to={page.to}
                         sx={{
                           my: 2,
                           color: "white",
                           display: "block",
-                          ':hover': {backgroundColor: '#FD8270', transition: '0.5s', fontSize: '18px'}
+                          ':hover': {backgroundColor: (theme) => theme.palette.secondary.main, transition: '0.5s', fontSize: '18px'}
                         }}>
                   {page.name}
                 </Button>
@@ -98,7 +98,7 @@ export default function Navbar() {
             <Menu id="menu-appbar" anchorEl={anchorElNav} anchorOrigin={{vertical: "bottom", horizontal: "left",}}
                   keepMounted transformOrigin={{vertical: "top", horizontal: "left",}} open={anchorElNav != null}
                   onClose={handleCloseNavMenu} sx={{display: {xs: "block", sm: "none"},}}>
-              {[{name: "Home", to: "/"}].concat(user ? pagesLoggedIn : pagesLoggedOut).map((page) => (
+              {[{name: "Home", to: "/"}].concat(isLoggedIn ? pagesLoggedIn : pagesLoggedOut).map((page) => (
                 <MenuItem key={page.name} component={Link} to={page.to} onClick={handleCloseNavMenu}>
                   <Typography textAlign="center">{page.name}</Typography>
                 </MenuItem>
@@ -107,7 +107,7 @@ export default function Navbar() {
           </Box>
 
           {
-            user ?
+            isLoggedIn ?
               <Box sx={{flexGrow: 0}}>
                 <Tooltip title="Open settings">
                   <IconButton onClick={handleOpenUserMenu} sx={{p: 0}}>
@@ -134,7 +134,7 @@ export default function Navbar() {
                             mx: 1,
                             color: "white",
                             display: "block",
-                            ':hover': {backgroundColor: '#FD8270', transition: '0.5s', fontSize: '18px'}
+                            ':hover': {backgroundColor: (theme) => theme.palette.secondary.main, transition: '0.5s', fontSize: '18px'}
                           }}>
                     {page.name}
                   </Button>

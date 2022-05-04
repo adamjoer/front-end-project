@@ -5,6 +5,6 @@ p.card_text_footer {
   overflow: hidden;
 }
 
-div.cardcontentwrap div {
-  padding: 5px 0px;
+.cardcontentwrap > div {
+  padding: 5px 0;
 }

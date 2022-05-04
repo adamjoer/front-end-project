@@ -1,137 +1,207 @@
-import React, {useState} from "react";
-import {Button, Grid, Modal, TextField} from "@mui/material";
+import React, {useEffect, useRef, useState} from "react";
+import {Backdrop, Button, CircularProgress, Grid, Modal, TextField} from "@mui/material";
 import ActionAreaCard from "../../components/recipecard/card";
-import { Box } from '@mui/system';
+import {Box} from '@mui/system';
 import ModalText from "./ModalText";
+import RecipeApi from "../../api/spoonacularApi";
+import {getDatabase, off, onValue, ref, set} from "firebase/database";
+import {getAuth} from "firebase/auth";
+import {useLocation} from 'react-router-dom';
 
-const style = {
-  position: 'absolute',
-  top: '50%',
-  left: '50%',
-  transform: 'translate(-50%, -50%)',
-  width: 800,
-  height: '80%',
-  bgcolor: 'background.paper',
-  border: '2px solid #000',
-  boxShadow: 24,
-  p: 4
-}
-
-type Recipe = { name: string, imageString: string, rank: number, skill: string, time: number, id: number }
-
-const testRecipe: Recipe[] = [
-  {
-    name: "Pizza",
-    imageString: "https://img.mummum.dk/wp-content/uploads/2020/09/pizza-med-pepperoni-.jpg",
-    rank: 1.1,
-    skill: "Easy",
-    time: 65,
-    id: 0
-  },
-  {
-    name: "Soup",
-    imageString: "https://static.onecms.io/wp-content/uploads/sites/44/2021/05/28/spaghetti-squash-soup.jpg",
-    rank: 2.76,
-    skill: "Easy",
-    time: 25,
-    id: 1
-  },
-  {
-    name: "Pizzza",
-    imageString: "https://img.mummum.dk/wp-content/uploads/2020/09/pizza-med-pepperoni-.jpg",
-    rank: 1.1,
-    skill: "Easy",
-    time: 65,
-    id: 2
-  },
-  {
-    name: "Soupsss",
-    imageString: "https://static.onecms.io/wp-content/uploads/sites/44/2021/05/28/spaghetti-squash-soup.jpg",
-    rank: 2.76,
-    skill: "Easy",
-    time: 25,
-    id: 3
-  },
-  {
-    name: "Fish N Chips",
-    imageString: "https://madfilosofie.dk/wp-content/uploads/2019/03/fish-n-chips13.jpg",
-    rank: 4.26,
-    skill: "Easy",
-    time: 35,
-    id: 9
-  },
-  {
-    name: "Pizzzza",
-    imageString: "https://img.mummum.dk/wp-content/uploads/2020/09/pizza-med-pepperoni-.jpg",
-    rank: 1.1,
-    skill: "Easy",
-    time: 65,
-    id: 4
-  },
-  {
-    name: "Soupss",
-    imageString: "https://static.onecms.io/wp-content/uploads/sites/44/2021/05/28/spaghetti-squash-soup.jpg",
-    rank: 2.76,
-    skill: "Easy",
-    time: 25,
-    id: 5
-  },
-  {
-    name: "Pizzzzza",
-    imageString: "https://img.mummum.dk/wp-content/uploads/2020/09/pizza-med-pepperoni-.jpg",
-    rank: 1.1,
-    skill: "Easy",
-    time: 65,
-    id: 6
-  },
-  {
-    name: "Soups",
-    imageString: "https://static.onecms.io/wp-content/uploads/sites/44/2021/05/28/spaghetti-squash-soup.jpg",
-    rank: 2.76,
-    skill: "Easy",
-    time: 25,
-    id: 7
-  },
-  {
-    name: "Fish N Chips",
-    imageString: "https://madfilosofie.dk/wp-content/uploads/2019/03/fish-n-chips13.jpg",
-    rank: 4.26,
-    skill: "Easy",
-    time: 35,
-    id: 8
-  }
-]
+type Recipe = { name: string, imageString: string, rank: number, skill: string, time: number, id: string, directionRes: string[], ingredientRes: string[] }
 
 export default function Recipes() {
 
+  const auth = getAuth();
+
+  const searchQuery = useRef("");
+  const offset = useRef(0);
+  const totalResults = useRef(0);
+
   const [filterString, setFilterString] = useState("");
+  const [isLoadingAnimationEnabled, setLoadingAnimationEnabled] = useState(false);
 
   const [selectedRecipe, setSelectedRecipe] = useState<Recipe | null>(null);
-
   const [listOfRecipes, setListOfRecipes] = useState<Recipe[]>([]);
+  const [saveRecipeList, setSaveRecipeList] = useState<string[]>([])
+
+  const db = getDatabase();
+  const starCountRef = ref(db, `users/${auth.currentUser && auth.currentUser.uid}`);
+
+  const removeOrAddIdFromList = (id: string, listName: string | null) => {
+    if (listName !== null)
+      listName = listName.toLowerCase()
+
+    const test = ref(db, `users/${auth.currentUser && auth.currentUser.uid}/list/${id}`);
+    set(test, listName);
+
+    onValue(starCountRef, (snapshot) => {
+      const data = snapshot.val();
+      const keys = data.list ? Object.keys(data.list) : [];
+      setSaveRecipeList(keys)
+      off(starCountRef)
+    });
+  }
 
   const handleSearch = (event: React.FormEvent) => {
     event.preventDefault();
+    if (filterString.length === 0 || filterString === searchQuery.current)
+      return;
 
-    const newList = testRecipe.filter(y => y.name.toUpperCase().includes(filterString.toUpperCase()));
-    console.log(newList);
+    onValue(starCountRef, (snapshot) => {
+      const data = snapshot.val();
+      const keys = data.list ? Object.keys(data.list) : [];
+      setSaveRecipeList(keys);
+      off(starCountRef);
+    });
 
-    setListOfRecipes(newList);
+    setLoadingAnimationEnabled(true);
+
+    RecipeApi.getRecipeFromString(filterString, 10, 0)
+      .then(result => {
+          const spoonacularList = getDataFromJson(result);
+
+          setListOfRecipes(spoonacularList);
+          totalResults.current = result.totalResults;
+
+          searchQuery.current = filterString;
+          offset.current = 0;
+        },
+        reason => console.error(reason)
+      )
+
+      .finally(() => {
+        setLoadingAnimationEnabled(false);
+      });
   }
 
+  const handleLoadMore = () => {
+    onValue(starCountRef, (snapshot) => {
+      const data = snapshot.val();
+      const keys = data.list ? Object.keys(data.list) : [];
+      setSaveRecipeList(keys);
+      off(starCountRef);
+    });
+
+    offset.current = offset.current + 10;
+
+    setLoadingAnimationEnabled(true);
+
+    RecipeApi.getRecipeFromString(searchQuery.current, 10, offset.current)
+      .then(result => {
+          const spoonacularList = getDataFromJson(result);
+          setListOfRecipes(prevState => prevState.concat(spoonacularList));
+          totalResults.current = result.totalResults;
+        },
+        reason => console.error(reason)
+      )
+      .finally(() => {
+        setLoadingAnimationEnabled(false);
+      });
+  }
+
+  const getDataFromJson = (result: any): Recipe[] => {
+    const spoonacularList: Recipe[] = [];
+    result.results.forEach((element: any) => {
+      const listOfSteps: string[] = [];
+      const listOfIngredients: string[] = [];
+
+      if (element.analyzedInstructions.length > 0) {
+        element.analyzedInstructions[0].steps.forEach((step: any) => {
+          listOfSteps.push(step.step);
+          step.ingredients.forEach((ingredientInStep: any) => {
+            if (!listOfIngredients.includes(ingredientInStep.name)) {
+              listOfIngredients.push(ingredientInStep.name)
+            }
+          });
+        });
+      }
+
+      spoonacularList.push({
+        name: element.title,
+        imageString: element.image,
+        rank: 3,
+        skill: "easy",
+        time: element.readyInMinutes,
+        id: element.id,
+        directionRes: listOfSteps,
+        ingredientRes: listOfIngredients,
+      });
+    });
+    return spoonacularList;
+  }
+
+  const location:any = useLocation().state;
+
+  useEffect(() => {
+    if (location){
+      setFilterString(location.searchToLookFor)
+      onValue(starCountRef, (snapshot) => {
+        const data = snapshot.val();
+        const keys = data.list ? Object.keys(data.list) : [];
+        setSaveRecipeList(keys);
+        off(starCountRef);
+      });
+  
+      setLoadingAnimationEnabled(true);
+  
+      RecipeApi.getRecipeFromString(location.searchToLookFor, 10, 0)
+        .then(result => {
+            const spoonacularList = getDataFromJson(result);
+  
+            setListOfRecipes(spoonacularList);
+            totalResults.current = result.totalResults;
+  
+            searchQuery.current = location.searchToLookFor;
+            offset.current = 0;
+          },
+          reason => console.error(reason)
+        )
+  
+        .finally(() => {
+          setLoadingAnimationEnabled(false);
+        });
+    }
+  }, [null])
+  
   return (
     <>
+      <Backdrop open={isLoadingAnimationEnabled} onClick={() => setLoadingAnimationEnabled(false)}
+                sx={{zIndex: (theme) => theme.zIndex.drawer + 1}}>
+        <CircularProgress color="secondary"/>
+      </Backdrop>
+
       <Modal
         open={selectedRecipe !== null}
         onClose={() => setSelectedRecipe(null)}
         aria-labelledby="modal-modal-title"
         aria-describedby="modal-modal-description"
       >
-        
-        <div style={{width: "800px", height: "80%", position: "absolute", top: "50%", left: "50%", transform: "translate(-50%, -50%)"}}>
-          <ModalText titleString={"hey"} imageString={"https://static.onecms.io/wp-content/uploads/sites/44/2021/05/28/spaghetti-squash-soup.jpg"} rank={3} skill={"easy"} time={420} />
-        </div>
 
+        <div style={{
+          width: "800px",
+          height: "80%",
+          position: "absolute",
+          top: "50%",
+          left: "50%",
+          transform: "translate(-50%, -50%)"
+        }}>
+          {
+            selectedRecipe &&
+              <ModalText
+                  removeOrAddIdToList={removeOrAddIdFromList}
+                  saveRecipeList={saveRecipeList}
+                  titleString={selectedRecipe.name}
+                  imageString={selectedRecipe.imageString}
+                  rank={selectedRecipe.rank}
+                  skill={selectedRecipe.skill}
+                  id={selectedRecipe.id}
+                  time={selectedRecipe.time}
+                  directionRes={selectedRecipe.directionRes}
+                  ingredientRes={selectedRecipe.ingredientRes}
+              />
+          }
+        </div>
       </Modal>
 
       <Grid container spacing={2}>
@@ -141,13 +211,17 @@ export default function Recipes() {
         <Grid item xs={12} sm={9}>
           <Box component="form" onSubmit={handleSearch} sx={{pt: 2, pr: 2, pb: 1, pl: 2}}>
             <TextField fullWidth type="text" value={filterString}
-                       onChange={x => setFilterString(x.target.value)} label="Search for a recipe name"
+                       onChange={event => setFilterString(event.target.value)} label="Search for a recipe name"
                        variant="outlined"
                        InputProps={{
                          endAdornment: <Button type="submit" variant="outlined" sx={{
                            backgroundColor: "white",
-                           color: "#FD8270",
-                           ':hover': {backgroundColor: '#FD8270', color: "white", transition: '0.5s'}
+                           color: (theme) => theme.palette.secondary.main,
+                           ':hover': {
+                             backgroundColor: (theme) => theme.palette.secondary.main,
+                             color: "white",
+                             transition: '0.5s'
+                           }
                          }}>Search</Button>
                        }}
             />
@@ -165,6 +239,15 @@ export default function Recipes() {
           </Grid>
         ))}
       </Grid>
+
+      {
+        listOfRecipes.length < totalResults.current &&
+          <Box display="flex" flexDirection="column" alignItems="center" sx={{pb: 2}}>
+              <Button variant="contained" onClick={handleLoadMore}>
+                  Load more ({listOfRecipes.length}/{totalResults.current})
+              </Button>
+          </Box>
+      }
     </>
   )
 }
