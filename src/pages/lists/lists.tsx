@@ -18,6 +18,7 @@ import ModalText from "../recipes/ModalText";
 import {getAuth} from "firebase/auth";
 
 type Recipe = { name: string, imageString: string, rank: number, skill: string, time: number, id: number, directionRes: string[], ingredientRes: string[], list: string }
+type List = { name: string, recipes: Recipe[] }
 
 export default function Lists() {
 
@@ -25,22 +26,59 @@ export default function Lists() {
   const [selectedRecipe, setSelectedRecipe] = useState<Recipe | null>(null);
   const [listOfRecipes, setListOfRecipes] = useState<Recipe[]>([]);
   const [saveRecipeList, setSaveRecipeList] = useState<string[]>([]);
-  const [listOfMenuTypes, setListOfMenuTypes] = useState<string[]>([]);
-  const [listFilters, setListFilters] = useState<string[]>([])
-  const [update, setUpdate] = useState(false);
   const auth = getAuth();
+
+  const [lists, setLists] = useState<List[]>([]);
+  const [listFilters, setListFilters] = useState<{ [key: string]: boolean }>({});
 
   const [isLoadingAnimationEnabled, setLoadingAnimationEnabled] = useState(false);
 
+  const handleFilterStringChange = (event: ChangeEvent<HTMLInputElement>) => {
+    setFilterString(event.target.value);
+  }
+
+  const handleListFilterChange = (event: ChangeEvent<HTMLInputElement>, checked: boolean) => {
+    setListFilters(
+      prevState => (
+        {
+          ...prevState,
+          [event.target.name]: checked
+        }
+      )
+    );
+  }
+
   const db = getDatabase();
   const starCountRef = ref(db, 'users/' + (auth.currentUser ? auth.currentUser.uid : ""));
-  const removeOrAddIdFromList = (id: string, type: any) => {
-    const test = ref(db, 'users/' + (auth.currentUser ? auth.currentUser.uid : "") + '/list/' + id);
-    set(test, type);
+  const removeOrAddIdFromList = (id: string, listName: string | null) => {
+    if (listName !== null)
+      listName = listName.toLowerCase()
 
-    if (!type)
+    const test = ref(db, 'users/' + (auth.currentUser ? auth.currentUser.uid : "") + '/list/' + id);
+    set(test, listName);
+
+    if (!listName) {
       setListOfRecipes(listOfRecipes.filter(recipe => recipe.id.toString() !== id));
+      let listToRemove: string | null = null;
+      for (let i = 0; i  < lists.length; ++i) {
+        const list = lists[i];
+
+        const recipe = list.recipes.find((recipe) => recipe.id.toString() === id);
+        if (recipe) {
+          const index = list.recipes.indexOf(recipe);
+          list.recipes.splice(index, 1);
+          if (list.recipes.length === 0) {
+            listToRemove = list.name;
+          }
+          break;
+        }
+      }
+
+      if (listToRemove !== null)
+        setLists(lists.filter((list) => list.name !== listToRemove));
+    }
   }
+
   useEffect(() => {
     onValue(starCountRef, (snapshot) => {
       const data = snapshot.val();
@@ -48,16 +86,17 @@ export default function Lists() {
         return;
 
       const keys: string[] = Object.keys(data.list);
-      const listOfMenuTypes_opdate: string[] = [];
       setSaveRecipeList(keys);
-      let paramString = "";
-      for (let i = 0; i < keys.length; i++) {
-        if (i === 0) {
-          paramString = keys[i]
-        } else {
-          paramString = paramString + "," + keys[i]
-        }
-      }
+
+      const paramString = keys.reduce(
+        (previousValue, currentValue, currentIndex) => {
+          if (currentIndex === 0)
+            return currentValue.toString();
+          else
+            return `${previousValue},${currentValue}`
+        },
+        ""
+      );
       off(starCountRef)
 
       setLoadingAnimationEnabled(true);
@@ -67,13 +106,13 @@ export default function Lists() {
             const spoonacularList: Recipe[] = [];
             result.forEach((element: any) => {
               const listOfSteps: string[] = [];
-              const listOfIngre: string[] = [];
+              const listOfIngredients: string[] = [];
               if (element.analyzedInstructions.length > 0) {
                 element.analyzedInstructions[0].steps.forEach((step: any) => {
                   listOfSteps.push(step.step)
                   step.ingredients.forEach((ingredientInStep: any) => {
-                    if (!listOfIngre.includes(ingredientInStep.name)) {
-                      listOfIngre.push(ingredientInStep.name)
+                    if (!listOfIngredients.includes(ingredientInStep.name)) {
+                      listOfIngredients.push(ingredientInStep.name)
                     }
                   })
                 })
@@ -86,16 +125,41 @@ export default function Lists() {
                 time: element.readyInMinutes,
                 id: element.id,
                 directionRes: listOfSteps,
-                ingredientRes: listOfIngre,
-                list: data.list[element.id]
+                ingredientRes: listOfIngredients,
+                list: data.list[element.id],
               })
-              if (!listOfMenuTypes_opdate.includes(data.list[element.id])) {
-                listOfMenuTypes_opdate.push(data.list[element.id]);
-                listFilters.push(data.list[element.id])
+            });
+
+            let temporaryLists: List[] = [];
+
+            spoonacularList.forEach((recipe) => {
+              const list = temporaryLists.find((list) => list.name === recipe.list);
+              if (list) {
+                list.recipes.push(recipe);
+
+              } else {
+                temporaryLists.push({
+                  name: recipe.list,
+                  recipes: [recipe],
+                })
               }
             });
-            setListOfMenuTypes(listOfMenuTypes_opdate);
-            setListOfRecipes(spoonacularList)
+
+            const listNames = temporaryLists.map(list => list.name);
+
+            setListFilters(
+              listNames.reduce(
+                (listOptions, listOption) => (
+                  {
+                    ...listOptions,
+                    [listOption]: true
+                  }
+                ),
+                {}
+              )
+            );
+
+            setLists(temporaryLists);
           },
           reason => console.error(reason)
         )
@@ -107,16 +171,6 @@ export default function Lists() {
     });
 
   }, [null]);
-
-  const handleFilterListChange = (event: ChangeEvent<HTMLInputElement>) => {
-    if (listFilters.includes(event.target.name)) {
-      setListFilters(listFilters.filter(list => list !== event.target.name))
-
-    } else {
-      listFilters.push(event.target.name)
-      setUpdate(!update)
-    }
-  }
 
   return (
     <>
@@ -140,54 +194,66 @@ export default function Lists() {
           left: "50%",
           transform: "translate(-50%, -50%)"
         }}>
-          <ModalText
-            removeOrAddIdToList={removeOrAddIdFromList}
-            saveRecipeList={saveRecipeList ? saveRecipeList : [""]}
-            titleString={selectedRecipe ? selectedRecipe.name : ""}
-            imageString={selectedRecipe ? selectedRecipe.imageString : ""}
-            rank={selectedRecipe ? selectedRecipe.rank : 0}
-            skill={selectedRecipe ? selectedRecipe.skill : ""}
-            id={selectedRecipe ? selectedRecipe.id.toString() : "0"}
-            time={selectedRecipe ? selectedRecipe.time : 0}
-            directionRes={selectedRecipe ? selectedRecipe.directionRes : [""]}
-            ingredientRes={selectedRecipe ? selectedRecipe.ingredientRes : [""]}
-          />
+          {selectedRecipe && saveRecipeList &&
+              <ModalText
+                  removeOrAddIdToList={removeOrAddIdFromList}
+                  saveRecipeList={saveRecipeList}
+                  titleString={selectedRecipe.name}
+                  imageString={selectedRecipe.imageString}
+                  rank={selectedRecipe.rank}
+                  skill={selectedRecipe.skill}
+                  id={selectedRecipe.id.toString()}
+                  time={selectedRecipe.time}
+                  directionRes={selectedRecipe.directionRes}
+                  ingredientRes={selectedRecipe.ingredientRes}
+              />}
         </div>
       </Modal>
 
       <Grid container spacing={2}>
-        <Grid item xs={1} sm={3} display={{xs: "none", sm: "initial"}}>
-          <h1 style={{paddingLeft: "16px", marginBottom: "0"}}>Recipes</h1>
+        <Grid item xs={1} sm={3} lg={3} display={{xs: "none", sm: "initial"}}>
+          <h1 id="main-header">Lists</h1>
         </Grid>
-        <Grid item xs={12} sm={9}>
+        <Grid item xs={12} sm={9} lg={9}>
           <Box component="form" sx={{pt: 2, pr: 2, pb: 1, pl: 2}}>
-            <TextField fullWidth type="text" value={filterString}
-                       onChange={(x: any) => setFilterString(x.target.value)} label="Search for a recipe name"
-                       variant="outlined"
-            />
+            <TextField onChange={handleFilterStringChange} fullWidth label="Search for a recipe name"
+                       variant="outlined" autoComplete="off"/>
           </Box>
         </Grid>
-        <Grid item xs={1} sm={3} sx={{pl: 2}}>
+      </Grid>
+
+      <hr/>
+
+      <Grid container>
+        <Grid item xs={12} sm={4} md={3} lg={2.4} xl={2} sx={{pl: 2}}>
           <Box component="aside" sx={{position: {xs: "static", sm: "sticky"}, top: "86px"}}>
             <u><h3 id="filter-header">Filter</h3></u>
             <FormGroup>
-              {listOfMenuTypes.map((listName) => (
+              {lists.map((list) => list.name).map((listName) => (
                 <FormControlLabel key={listName} label={listName}
-                                  control={<Checkbox name={listName} checked={listFilters.includes(listName)}
-                                                     onChange={handleFilterListChange}/>}/>
+                                  control={<Checkbox name={listName} checked={listFilters[listName]}
+                                                     onChange={handleListFilterChange}/>}/>
               ))}
             </FormGroup>
           </Box>
         </Grid>
-        <Grid container item spacing={2} xs={12} sm={9} sx={{pt: 1, pl: 2, pb: 2, pr: 2}}>
-          {listOfRecipes.filter(x1 => x1.name.toLowerCase().includes(filterString.toLowerCase()))
-            .filter(x2 => listFilters.includes(x2.list))
-            .map(x => (
-              <Grid key={x.id} item xs={12} sm={4} md={3} lg={2.4} xl={2}>
-                <ActionAreaCard imageString={x.imageString} titleString={x.name} rank={x.rank} skill={x.skill}
-                                time={x.time} selectFunc={() => setSelectedRecipe(x)}/>
+        <Grid item xs={12} display={{xs: "initial", sm: "none"}}>
+          <hr/>
+        </Grid>
+        <Grid item xs={12} sm={8} md={9} lg={9.6} xl={10}>
+          {lists.filter((list) => listFilters[list.name]).map((list) => (
+            <Box key={list.name} component="div" sx={{mt: 1, pr: 2, pl: 2}}>
+              <h2 className="list-header">{list.name}</h2>
+              <Grid container spacing={2} sx={{pt: 1, pb: 2}}>
+                {list.recipes.filter(recipe => recipe.name.toUpperCase().includes(filterString.toUpperCase())).map((recipe) => (
+                  <Grid key={recipe.id} item xs={12} sm={6} md={4} lg={3} xl={2.4}>
+                    <ActionAreaCard imageString={recipe.imageString} titleString={recipe.name} rank={recipe.rank}
+                                    skill={recipe.skill} time={recipe.time} selectFunc={() => setSelectedRecipe(recipe)}/>
+                  </Grid>
+                ))}
               </Grid>
-            ))}
+            </Box>
+          ))}
         </Grid>
       </Grid>
     </>

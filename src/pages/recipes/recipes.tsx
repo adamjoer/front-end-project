@@ -28,6 +28,9 @@ export default function Recipes() {
   const starCountRef = ref(db, `users/${auth.currentUser && auth.currentUser.uid}`);
 
   const removeOrAddIdFromList = (id: string, listName: string | null) => {
+    if (listName !== null)
+      listName = listName.toLowerCase()
+
     const test = ref(db, `users/${auth.currentUser && auth.currentUser.uid}/list/${id}`);
     set(test, listName);
 
