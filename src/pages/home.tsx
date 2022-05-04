@@ -3,14 +3,14 @@ import Image from "../../src/images/frontpage1.png"
 
 import React, {useContext} from "react";
 import {Button, Grid} from "@mui/material";
-import {Link} from "react-router-dom";
+import {Link, useNavigate} from "react-router-dom";
 import AuthenticationContext from "../context/authentication-context";
 import ActionAreaCard from "../components/recipecard/card";
 
 const dummyRecipes = [
   {
-    imageUrl: "https://spoonacular.com/recipeImages/362230-556x370.jpeg",
-    recipeName: "burger",
+    imageUrl: "https://spoonacular.com/recipeImages/680975-312x231.jpg",
+    recipeName: "Pizza",
     rank: 2,
     skill: "easy",
     time: 30,
@@ -26,23 +26,23 @@ const dummyRecipes = [
   },
   {
     imageUrl: "https://spoonacular.com/recipeImages/716429-556x370.jpg",
-    recipeName: "Pasta with Garlic, Scallions, Cauliflower & Breadcrumbs",
+    recipeName: "Pasta",
     rank: 4,
     skill: "easy",
     time: 30,
     id: 3,
   },
   {
-    imageUrl: "https://spoonacular.com/recipeImages/362230-556x370.jpeg",
-    recipeName: "burger",
+    imageUrl: "https://spoonacular.com/recipeImages/638693-312x231.jpg",
+    recipeName: "chinese",
     rank: 2,
     skill: "easy",
     time: 30,
     id: 4,
   },
   {
-    imageUrl: "https://spoonacular.com/recipeImages/716429-556x370.jpg",
-    recipeName: "Pasta with Garlic, Scallions, Cauliflower & Breadcrumbs",
+    imageUrl: "https://spoonacular.com/recipeImages/660225-312x231.jpg",
+    recipeName: "Scandinavian",
     rank: 4,
     skill: "easy",
     time: 30,
@@ -52,6 +52,7 @@ const dummyRecipes = [
 ]
 
 export default function Home() {
+  const navigate = useNavigate();
 
   const {isLoggedIn} = useContext(AuthenticationContext);
 
@@ -59,14 +60,11 @@ export default function Home() {
     <div id="content">
       <div style={{display: "flex"}}>
         <div id="welcome-box">
-
           <p>Be inspired by looking through popular dishes, get the recipe and vote on your favorite dishes with Taste It!</p>
-
         </div>
         <div id="welcome-image">
           <img src={Image} style={{width: '700px', height: '408px'}} alt='Food'/>
         </div>
-
       </div>
 
       <div id="row">
@@ -78,6 +76,7 @@ export default function Home() {
               <ActionAreaCard imageString={x.imageUrl} titleString={x.recipeName} rank={x.rank} skill={x.skill}
                               time={x.time}
                               selectFunc={() => {
+                                navigate('/recipes', {state: {searchToLookFor: x.recipeName}})
                               }}/>
             </Grid>
           })}

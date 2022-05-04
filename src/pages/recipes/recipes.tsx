@@ -1,4 +1,4 @@
-import React, {useRef, useState} from "react";
+import React, {useEffect, useRef, useState} from "react";
 import {Backdrop, Button, CircularProgress, Grid, Modal, TextField} from "@mui/material";
 import ActionAreaCard from "../../components/recipecard/card";
 import {Box} from '@mui/system';
@@ -6,6 +6,7 @@ import ModalText from "./ModalText";
 import RecipeApi from "../../api/spoonacularApi";
 import {getDatabase, off, onValue, ref, set} from "firebase/database";
 import {getAuth} from "firebase/auth";
+import {useLocation} from 'react-router-dom';
 
 type Recipe = { name: string, imageString: string, rank: number, skill: string, time: number, id: string, directionRes: string[], ingredientRes: string[] }
 
@@ -89,14 +90,11 @@ export default function Recipes() {
     RecipeApi.getRecipeFromString(searchQuery.current, 10, offset.current)
       .then(result => {
           const spoonacularList = getDataFromJson(result);
-
           setListOfRecipes(prevState => prevState.concat(spoonacularList));
           totalResults.current = result.totalResults;
-
         },
         reason => console.error(reason)
       )
-
       .finally(() => {
         setLoadingAnimationEnabled(false);
       });
@@ -104,7 +102,6 @@ export default function Recipes() {
 
   const getDataFromJson = (result: any): Recipe[] => {
     const spoonacularList: Recipe[] = [];
-
     result.results.forEach((element: any) => {
       const listOfSteps: string[] = [];
       const listOfIngredients: string[] = [];
@@ -131,10 +128,42 @@ export default function Recipes() {
         ingredientRes: listOfIngredients,
       });
     });
-
     return spoonacularList;
   }
 
+  const location:any = useLocation().state;
+
+  useEffect(() => {
+    if (location){
+      setFilterString(location.searchToLookFor)
+      onValue(starCountRef, (snapshot) => {
+        const data = snapshot.val();
+        const keys = data.list ? Object.keys(data.list) : [];
+        setSaveRecipeList(keys);
+        off(starCountRef);
+      });
+  
+      setLoadingAnimationEnabled(true);
+  
+      RecipeApi.getRecipeFromString(location.searchToLookFor, 10, 0)
+        .then(result => {
+            const spoonacularList = getDataFromJson(result);
+  
+            setListOfRecipes(spoonacularList);
+            totalResults.current = result.totalResults;
+  
+            searchQuery.current = location.searchToLookFor;
+            offset.current = 0;
+          },
+          reason => console.error(reason)
+        )
+  
+        .finally(() => {
+          setLoadingAnimationEnabled(false);
+        });
+    }
+  }, [null])
+  
   return (
     <>
       <Backdrop open={isLoadingAnimationEnabled} onClick={() => setLoadingAnimationEnabled(false)}
